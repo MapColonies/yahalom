@@ -36,8 +36,6 @@ jobs:
     steps:
       - name: Checkout project
         uses: actions/checkout@v4
-        with:
-          lfs: true
 
       - name: Run Unity Tests
         uses: game-ci/unity-test-runner@v4
@@ -67,7 +65,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          lfs: true
 
       # Cache Unity Library folder.
       - uses: actions/cache@v3
