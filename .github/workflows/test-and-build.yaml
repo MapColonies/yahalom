@@ -1,9 +1,6 @@
 name: Build project
 
 on:
-  push:
-    branches:
-      - master
   pull_request: {}
   workflow_dispatch: {}
 
@@ -53,7 +50,7 @@ jobs:
   buildForAllSupportedPlatforms:
     name: Build for ${{ matrix.targetPlatform }}
     needs: [checklicense, test]
-    if: needs.checklicense.outputs.is_unity_license_set == 'true' 
+    if: needs.checklicense.outputs.is_unity_license_set == 'true'
     runs-on: windows-latest
     strategy:
       fail-fast: false
