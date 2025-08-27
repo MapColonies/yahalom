@@ -10,13 +10,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
-        -name: Setup .NET
-         uses: actions/setup-dotnet@v4
-         with:
-           dotnet-version: '8.0.x'
 
-      - name: Download JetBrains ReSharper Command-Line Tools (jb)
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install JetBrains ReSharper Global Tools (jb)
         run: |
           dotnet tool install --global JetBrains.ReSharper.GlobalTools
           echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
