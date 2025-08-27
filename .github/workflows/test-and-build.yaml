@@ -25,6 +25,9 @@ jobs:
             echo "is_unity_license_set=false" >> $GITHUB_OUTPUT
           fi
 
+  format_check:
+    uses: ./.github/workflows/format.yml
+  
   test:
     name: Run Unity Tests
     needs: checklicense

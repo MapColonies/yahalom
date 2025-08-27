@@ -1,0 +1,60 @@
+name: Format
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  format_check:
+    name: Verify Rider formatting (no changes kept)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download JetBrains ReSharper Command-Line Tools (jb)
+        env:
+          JB_VERSION: 2024.1.0
+        run: |
+          curl -sSL "https://download.jetbrains.com/resharper/JetBrains.ReSharper.CommandLineTools.Unix.${JB_VERSION}.tar.gz" -o jbcli.tar.gz
+          mkdir -p jbcli
+          tar -xzf jbcli.tar.gz -C jbcli
+          echo "$PWD/jbcli" >> "$GITHUB_PATH"
+
+      - name: Run Rider cleanup (dry-check via diff)
+        shell: bash
+        run: |
+          jb cleanupcode \
+            --profile="Built-in: Reformat & Apply Syntax Style" \
+            --no-build \
+            --verbosity=WARN \
+            --exclude="**/bin/**" \
+            --exclude="**/obj/**" \
+            .
+
+      - name: Detect formatting changes
+        id: diff
+        shell: bash
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "The following files would be reformatted:"
+            git status --porcelain | awk '{print $2}'
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Revert any changes (keep workspace clean)
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git restore --staged .
+          git checkout -- .
+          git clean -fd
+
+      - name: Fail if formatting needed
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          echo "❌ Formatting check failed. Please run Rider 'Code Cleanup' (Reformat & Apply Syntax Style) locally and commit the results."
+          exit 1
