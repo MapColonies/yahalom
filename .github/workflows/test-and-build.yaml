@@ -25,9 +25,12 @@ jobs:
             echo "is_unity_license_set=false" >> $GITHUB_OUTPUT
           fi
 
+  format_check:
+    uses: ./.github/workflows/format.yaml
+  
   test:
     name: Run Unity Tests
-    needs: checklicense
+    needs: [checklicense, format_check]
     if: needs.checklicense.outputs.is_unity_license_set == 'true'
     runs-on: windows-latest
     steps:
@@ -49,7 +52,7 @@ jobs:
 
   buildForAllSupportedPlatforms:
     name: Build for ${{ matrix.targetPlatform }}
-    needs: [checklicense, test]
+    needs: [checklicense, test, format_check]
     if: needs.checklicense.outputs.is_unity_license_set == 'true'
     runs-on: windows-latest
     strategy:

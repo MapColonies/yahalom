@@ -1,0 +1,81 @@
+name: Format
+
+on:
+  workflow_call:
+
+jobs:
+  format_check:
+    name: Verify Rider formatting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install JetBrains ReSharper Global Tools (jb)
+        run: |
+          dotnet tool install --global JetBrains.ReSharper.GlobalTools
+          echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
+
+      - name: Run Rider cleanup (dry-check via diff)
+        run: |
+          jb cleanupcode \
+            --profile="Built-in: Reformat Code" \
+            --no-build \
+            --verbosity=WARN \
+            --include="**/*.cs" \
+            --exclude="**/bin/**" \
+            --exclude="**/obj/**" \
+            --exclude="**/.idea/**" \
+            .
+
+      - name: Detect formatting changes (code files only)
+        id: diff
+        run: |
+          LIST_FILE="$RUNNER_TEMP/files_needing_format.txt"
+          CHANGED="$(git status --porcelain --untracked-files=no -- '*.cs' '*.csproj' '*.sln' | awk '{print $2}' | sort -u)"
+          if [[ -n "$CHANGED" ]]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "$CHANGED" | tee "$LIST_FILE"
+            echo "list_file=$LIST_FILE" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "list_file=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Summarize unformatted files
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          {
+            echo "### ❌ Formatting check failed"
+            echo
+            echo "The following code files are not formatted properly:"
+            echo
+            echo '```'
+            cat "${{ steps.diff.outputs.list_file }}"
+            echo '```'
+            echo
+            echo "➡️ Run Rider **Code Cleanup** (Built-in: *Reformat Code*) locally and commit."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Annotate files in Checks UI
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          while IFS= read -r f; do
+            echo "::error file=$f,title=Not formatted::Run Rider Code Cleanup (Built-in: Reformat Code) and commit."
+          done < "${{ steps.diff.outputs.list_file }}"
+
+      - name: Revert any changes (always clean workspace)
+        if: always()
+        run: |
+          git restore --staged .
+          git checkout -- .
+          git clean -fd
+
+      - name: Fail job if formatting needed
+        if: steps.diff.outputs.changed == 'true'
+        run: exit 1
