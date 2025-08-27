@@ -13,7 +13,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "rider.code.cleanup.on.save": "true",
-    "rider.code.cleanup.on.save.profile": "Built-in: Reformat & Apply Syntax Style",
+    "rider.code.cleanup.on.save.profile": "Built-in: Reformat Code",
     "settings.editor.selected.configurable": "actions.on.save"
   }
 }]]></component>
