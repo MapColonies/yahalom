@@ -36,8 +36,7 @@ jobs:
         run: |
           if [[ -n "$(git status --porcelain)" ]]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
-            echo "The following files would be reformatted:"
-            git status --porcelain | awk '{print $2}'
+            git status --porcelain | awk '{print $2}' > files_needing_format.txt
           else
             echo "changed=false" >> "$GITHUB_OUTPUT"
           fi
@@ -52,5 +51,8 @@ jobs:
       - name: Fail if formatting needed
         if: steps.diff.outputs.changed == 'true'
         run: |
-          echo "❌ Formatting check failed. Please run Rider 'Code Cleanup' (Reformat & Apply Syntax Style) locally and commit the results."
+          echo "❌ Formatting check failed. The following files are not formatted properly:"
+          cat files_needing_format.txt
+          echo
+          echo "➡️ Run Rider 'Code Cleanup' (Reformat & Apply Syntax Style) locally and commit the changes."
           exit 1
