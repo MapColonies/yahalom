@@ -1,9 +1,15 @@
-using com.mapcolonies.core;
+using System;
+using UnityEngine;
 
 namespace com.mapcolonies.yahalom.Preloader
 {
-    public class PreloaderViewModel : BaseMvvmViewModel
+    [Serializable]
+    public class PreloaderViewModel
     {
-    
+        [SerializeField] public float Progress { get; set; } = 0f;
+
+        public PreloaderViewModel()
+        {
+        }
     }
 }

@@ -1,8 +1,0 @@
-#PreloaderRoot {
-    background-color: #000000; /* black background */
-}
-
-#LoadingBar {
-    unity-font-style: bold;
-    color: white;
-}

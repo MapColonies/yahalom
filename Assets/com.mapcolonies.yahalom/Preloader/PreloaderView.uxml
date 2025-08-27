@@ -1,6 +1,9 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <Style src="project://database/Assets/com.mapcolonies.yahalom/Preloader/PreloaderView.uss?fileID=7433441132597879392&amp;guid=09cd177f0e84ae54b8cd29a0e7bc9679&amp;type=3#PreloaderView" />
-    <ui:VisualElement name="PreloaderRoot" style="flex-grow: 1; justify-content: center; align-items: center;">
-        <ui:ProgressBar name="LoadingBar" title="Loading..." style="width: 300px; height: 20px;" />
+    <ui:VisualElement name="PreloaderRoot" data-source-type="com.mapcolonies.yahalom.Preloader.PreloaderViewModel, Assembly-CSharp" style="flex-grow: 1; justify-content: center; align-items: center; background-color: rgb(0, 0, 0);">
+        <ui:ProgressBar name="LoadingBar" title="Loading..." high-value="1" style="width: 300px; height: 20px; -unity-font-style: bold;">
+            <Bindings>
+                <ui:DataBinding property="value" data-source-path="Progress" binding-mode="ToTarget" />
+            </Bindings>
+        </ui:ProgressBar>
     </ui:VisualElement>
 </ui:UXML>

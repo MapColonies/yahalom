@@ -1,6 +1,9 @@
 {
     "name": "com.mapcolonies.core",
-    "references": [],
+    "rootNamespace": "",
+    "references": [
+        "VContainer"
+    ],
     "includePlatforms": [
         "Editor",
         "WSA",
