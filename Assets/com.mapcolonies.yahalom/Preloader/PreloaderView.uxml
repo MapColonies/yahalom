@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/com.mapcolonies.yahalom/Preloader/PreloaderView.uss?fileID=7433441132597879392&amp;guid=09cd177f0e84ae54b8cd29a0e7bc9679&amp;type=3#PreloaderView" />
+    <ui:VisualElement name="PreloaderRoot" style="flex-grow: 1; justify-content: center; align-items: center;">
+        <ui:ProgressBar name="LoadingBar" title="Loading..." style="width: 300px; height: 20px;" />
+    </ui:VisualElement>
+</ui:UXML>
