@@ -3,9 +3,6 @@ name: Format
 on:
   workflow_call:
 
-permissions:
-  contents: read
-
 jobs:
   format_check:
     name: Verify Rider formatting (no changes kept)
@@ -13,18 +10,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        
+        -name: Setup .NET
+         uses: actions/setup-dotnet@v4
+         with:
+           dotnet-version: '8.0.x'
 
       - name: Download JetBrains ReSharper Command-Line Tools (jb)
-        env:
-          JB_VERSION: 2024.1.0
         run: |
-          curl -sSL "https://download.jetbrains.com/resharper/JetBrains.ReSharper.CommandLineTools.Unix.${JB_VERSION}.tar.gz" -o jbcli.tar.gz
-          mkdir -p jbcli
-          tar -xzf jbcli.tar.gz -C jbcli
-          echo "$PWD/jbcli" >> "$GITHUB_PATH"
+          dotnet tool install --global JetBrains.ReSharper.GlobalTools
+          echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
 
       - name: Run Rider cleanup (dry-check via diff)
-        shell: bash
         run: |
           jb cleanupcode \
             --profile="Built-in: Reformat & Apply Syntax Style" \
@@ -36,7 +33,6 @@ jobs:
 
       - name: Detect formatting changes
         id: diff
-        shell: bash
         run: |
           if [[ -n "$(git status --porcelain)" ]]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
