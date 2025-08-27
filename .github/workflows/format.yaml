@@ -34,25 +34,31 @@ jobs:
       - name: Detect formatting changes
         id: diff
         run: |
+          LIST_FILE="$RUNNER_TEMP/files_needing_format.txt"
           if [[ -n "$(git status --porcelain)" ]]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
-            git status --porcelain | awk '{print $2}' > files_needing_format.txt
+            git status --porcelain | awk '{print $2}' | sort -u | tee "$LIST_FILE"
+            echo "list_file=$LIST_FILE" >> "$GITHUB_OUTPUT"
           else
             echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "list_file=" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Revert any changes (keep workspace clean)
+      - name: Report formatting issues
         if: steps.diff.outputs.changed == 'true'
+        run: |
+          echo "❌ Formatting check failed. The following files are not formatted properly:"
+          cat "${{ steps.diff.outputs.list_file }}"
+          echo
+          echo "➡️ Run Rider 'Code Cleanup' (Reformat & Apply Syntax Style) locally and commit the changes."
+
+      - name: Revert any changes (always clean workspace)
+        if: always()
         run: |
           git restore --staged .
           git checkout -- .
           git clean -fd
 
-      - name: Fail if formatting needed
+      - name: Fail job if formatting needed
         if: steps.diff.outputs.changed == 'true'
-        run: |
-          echo "❌ Formatting check failed. The following files are not formatted properly:"
-          cat files_needing_format.txt
-          echo
-          echo "➡️ Run Rider 'Code Cleanup' (Reformat & Apply Syntax Style) locally and commit the changes."
-          exit 1
+        run: exit 1
