@@ -8,6 +8,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
     public class AppStartUpController : IAsyncStartable
     {
         private readonly InitializationPipeline _pipeline;
+        private readonly LifetimeScope _parentLifetimeScope;
 
         public AppStartUpController(InitializationPipeline initializationPipeline)
         {

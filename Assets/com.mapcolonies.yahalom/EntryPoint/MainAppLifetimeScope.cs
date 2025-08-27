@@ -11,7 +11,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
         {
             builder.Register<PreloaderViewModel>(Lifetime.Scoped);
             builder.Register<InitializationPipeline>(Lifetime.Scoped);
-
+            
             builder.Register<AppStartUpController>(Lifetime.Scoped).As<IAsyncStartable>();
         }
     }
