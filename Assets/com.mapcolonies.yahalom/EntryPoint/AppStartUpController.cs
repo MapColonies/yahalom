@@ -14,9 +14,9 @@ namespace com.mapcolonies.yahalom.EntryPoint
             _pipeline = initializationPipeline;
         }
 
-        UniTask IAsyncStartable.StartAsync(CancellationToken cancellation = new CancellationToken())
+        async UniTask IAsyncStartable.StartAsync(CancellationToken cancellation = new CancellationToken())
         {
-            return _pipeline.RunAsync(cancellation);
+            await _pipeline.RunAsync(cancellation);
         }
     }
 }

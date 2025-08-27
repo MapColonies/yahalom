@@ -1,4 +1,5 @@
 using System.Threading;
+using System.Threading.Tasks;
 using com.mapcolonies.yahalom.Preloader;
 using Cysharp.Threading.Tasks;
 
@@ -13,8 +14,11 @@ namespace com.mapcolonies.yahalom.InitPipeline
             _preloader = preloader;
         }
 
-        public UniTask RunAsync(CancellationToken cancellationToken)
+        public async Task<UniTask> RunAsync(CancellationToken cancellationToken)
         {
+            await UniTask.Delay(1000);
+            _preloader.Progress = 0.3f;
+
             return UniTask.CompletedTask;
         }
     }
