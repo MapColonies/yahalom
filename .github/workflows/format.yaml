@@ -28,8 +28,6 @@ jobs:
             --no-build \
             --verbosity=WARN \
             --include="**/*.cs" \
-            --include="**/*.csproj" \
-            --include="**/*.sln" \
             --exclude="**/bin/**" \
             --exclude="**/obj/**" \
             --exclude="**/.idea/**" \
