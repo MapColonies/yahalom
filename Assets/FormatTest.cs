@@ -8,7 +8,8 @@ public class FormatTest : MonoBehaviour
     {
         if (test == false)
         {
-            Debug.Log("test"); }
+            Debug.Log("test");
+        }
     }
 
     private void Update()
