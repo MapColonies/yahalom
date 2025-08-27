@@ -24,7 +24,7 @@ jobs:
       - name: Run Rider cleanup (dry-check via diff)
         run: |
           jb cleanupcode \
-            --profile="Built-in: Reformat & Apply Syntax Style" \
+            --profile="Built-in: Reformat" \
             --no-build \
             --verbosity=WARN \
             --exclude="**/bin/**" \
