@@ -5,7 +5,7 @@ on:
 
 jobs:
   format_check:
-    name: Verify Rider formatting (no changes kept)
+    name: Verify Rider formatting
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -27,17 +27,22 @@ jobs:
             --profile="Built-in: Reformat Code" \
             --no-build \
             --verbosity=WARN \
+            --include="**/*.cs" \
+            --include="**/*.csproj" \
+            --include="**/*.sln" \
             --exclude="**/bin/**" \
             --exclude="**/obj/**" \
+            --exclude="**/.idea/**" \
             .
 
-      - name: Detect formatting changes
+      - name: Detect formatting changes (code files only)
         id: diff
         run: |
           LIST_FILE="$RUNNER_TEMP/files_needing_format.txt"
-          if [[ -n "$(git status --porcelain)" ]]; then
+          CHANGED="$(git status --porcelain --untracked-files=no -- '*.cs' '*.csproj' '*.sln' | awk '{print $2}' | sort -u)"
+          if [[ -n "$CHANGED" ]]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
-            git status --porcelain | awk '{print $2}' | sort -u | tee "$LIST_FILE"
+            echo "$CHANGED" | tee "$LIST_FILE"
             echo "list_file=$LIST_FILE" >> "$GITHUB_OUTPUT"
           else
             echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -50,20 +55,20 @@ jobs:
           {
             echo "### ❌ Formatting check failed"
             echo
-            echo "The following files are not formatted properly:"
+            echo "The following code files are not formatted properly:"
             echo
             echo '```'
             cat "${{ steps.diff.outputs.list_file }}"
             echo '```'
             echo
-            echo "➡️ Run Rider **Code Cleanup** (Built-in: *Reformat & Apply Syntax Style*) locally and commit."
+            echo "➡️ Run Rider **Code Cleanup** (Built-in: *Reformat Code*) locally and commit."
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Annotate files in Checks UI
         if: steps.diff.outputs.changed == 'true'
         run: |
           while IFS= read -r f; do
-            echo "::error file=$f,title=Not formatted::Run Rider Code Cleanup (Reformat & Apply Syntax Style) and commit."
+            echo "::error file=$f,title=Not formatted::Run Rider Code Cleanup (Built-in: Reformat Code) and commit."
           done < "${{ steps.diff.outputs.list_file }}"
 
       - name: Revert any changes (always clean workspace)
