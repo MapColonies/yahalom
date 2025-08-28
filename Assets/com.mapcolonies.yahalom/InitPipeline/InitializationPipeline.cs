@@ -25,8 +25,8 @@ namespace com.mapcolonies.yahalom.InitPipeline
             {
                 new InitStep("PreInit", StepMode.Sequential, new IInitUnit[]
                 {
-                    new ActionUnit("Logging Init",0.05f, () => { return UniTask.Delay(100); }),
-                    new ActionUnit("Local Settings",0.05f, () => { return UniTask.Delay(100); })
+                    new ActionUnit("Logging Init",0.05f, () => { return UniTask.Delay(1000); }),
+                    new ActionUnit("Local Settings",0.05f, () => { return UniTask.Delay(1000); })
                 }),
                 new InitStep("ServicesInit", StepMode.Sequential, new IInitUnit[]
                 {
@@ -41,11 +41,10 @@ namespace com.mapcolonies.yahalom.InitPipeline
                 }),
                 new InitStep("FeaturesInit", StepMode.Sequential, new IInitUnit[]
                 {
-                    new ActionUnit("Maps Feature",0.25f, () => { return UniTask.Delay(100); })
+                    new ActionUnit("Maps Feature",0.25f, () => { return UniTask.Delay(1000); })
                 })
             };
         }
-
         
         public async Task<UniTask> RunAsync(CancellationToken cancellationToken)
         {

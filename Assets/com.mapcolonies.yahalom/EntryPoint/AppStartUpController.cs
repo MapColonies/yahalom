@@ -18,6 +18,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
         async UniTask IAsyncStartable.StartAsync(CancellationToken cancellation = new CancellationToken())
         {
             await _pipeline.RunAsync(cancellation);
+            
         }
     }
 }
