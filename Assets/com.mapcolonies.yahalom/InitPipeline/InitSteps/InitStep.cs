@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using com.mapcolonies.yahalom.InitPipeline.InitUnits;
 
-namespace com.mapcolonies.yahalom.InitPipeline
+namespace com.mapcolonies.yahalom.InitPipeline.InitSteps
 {
     public class InitStep
     {

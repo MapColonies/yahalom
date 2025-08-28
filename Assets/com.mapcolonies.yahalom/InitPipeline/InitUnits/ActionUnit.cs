@@ -1,24 +1,20 @@
 using System;
 using Cysharp.Threading.Tasks;
 
-namespace com.mapcolonies.yahalom.InitPipeline
+namespace com.mapcolonies.yahalom.InitPipeline.InitUnits
 {
-    public class ActionUnit : IInitUnit
+    public class ActionUnit : InitUnitBase
     {
         private readonly Func<UniTask> _action;
-        public string Name { get; }
-        public float Weight { get; }
-
-        public ActionUnit(string name, float weight, Func<UniTask> action)
+        
+        public ActionUnit(string name, float weight, InitPolicy policy, Func<UniTask> action) : base(name, weight, policy)
         {
-            Name = name; 
-            Weight = weight; 
             _action = action;
         }
-        
-        public UniTask RunAsync()
+
+        public override async UniTask RunAsync()
         {
-            return _action.Invoke();
+            await HandlePolicy(() => _action());
         }
     }
 }

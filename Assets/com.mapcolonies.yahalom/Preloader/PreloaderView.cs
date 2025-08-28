@@ -1,4 +1,3 @@
-using System;
 using com.mapcolonies.core;
 
 namespace com.mapcolonies.yahalom.Preloader

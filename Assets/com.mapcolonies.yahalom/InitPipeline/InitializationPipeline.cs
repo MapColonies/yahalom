@@ -3,6 +3,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using com.mapcolonies.core.Services;
+using com.mapcolonies.yahalom.InitPipeline.InitSteps;
+using com.mapcolonies.yahalom.InitPipeline.InitUnits;
 using com.mapcolonies.yahalom.Preloader;
 using Cysharp.Threading.Tasks;
 using VContainer;
@@ -25,12 +27,12 @@ namespace com.mapcolonies.yahalom.InitPipeline
             {
                 new InitStep("PreInit", StepMode.Sequential, new IInitUnit[]
                 {
-                    new ActionUnit("Logging Init",0.05f, () => { return UniTask.Delay(1000); }),
-                    new ActionUnit("Local Settings",0.05f, () => { return UniTask.Delay(1000); })
+                    new ActionUnit("Logging Init",0.05f, InitPolicy.Fail, () => { return UniTask.Delay(1000); }),
+                    new ActionUnit("Local Settings",0.05f, InitPolicy.Fail, () => { return UniTask.Delay(1000); })
                 }),
                 new InitStep("ServicesInit", StepMode.Sequential, new IInitUnit[]
                 {
-                    new RegisterScopeUnit("WMTS", 0.1f, _parent, builder =>
+                    new RegisterScopeUnit("WMTS", 0.1f, _parent, InitPolicy.Retry, builder =>
                     {
                         builder.Register<WmtsService>(Lifetime.Singleton);
                     }, resolver =>
@@ -41,7 +43,7 @@ namespace com.mapcolonies.yahalom.InitPipeline
                 }),
                 new InitStep("FeaturesInit", StepMode.Sequential, new IInitUnit[]
                 {
-                    new ActionUnit("Maps Feature",0.25f, () => { return UniTask.Delay(1000); })
+                    new ActionUnit("Maps Feature",0.25f, InitPolicy.Fail, () => { return UniTask.Delay(1000); })
                 })
             };
         }

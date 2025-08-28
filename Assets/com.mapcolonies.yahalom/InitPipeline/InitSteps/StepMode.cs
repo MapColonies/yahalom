@@ -1,4 +1,4 @@
-namespace com.mapcolonies.yahalom.InitPipeline
+namespace com.mapcolonies.yahalom.InitPipeline.InitSteps
 {
     public enum StepMode
     {
