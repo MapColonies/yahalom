@@ -1,0 +1,46 @@
+#LoadingBar {
+    background-color: black;
+    color: white;
+    width: 300px;
+    height: 40px;
+    -unity-font-style: bold;
+    font-size: 16px;
+    background-size: 100% 100%;
+    min-height: 40px;
+}
+
+#LoadingBar .unity-progress-bar__progress {
+    background-color: rgb(74, 158, 245);
+    -unity-font-style: normal;
+    height: 30px;
+    min-height: 30px;
+}
+
+#LoadingBar .unity-progress-bar__container {
+    background-color: rgb(0, 126, 255);
+    border-left-color: rgb(155, 206, 255);
+    border-right-color: rgb(155, 206, 255);
+    border-top-color: rgb(155, 206, 255);
+    border-bottom-color: rgb(155, 206, 255);
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+    border-bottom-left-radius: 2px;
+    height: 40px;
+    -unity-text-align: upper-left;
+    min-height: 40px;
+}
+
+#LoadingBar .unity-progress-bar__background {
+    background-color: rgb(0, 45, 91);
+    height: 30px;
+}
+
+.PreloaderStatus {
+    color: rgb(255, 255, 255);
+    -unity-text-align: upper-center;
+}
