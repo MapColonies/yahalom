@@ -38,6 +38,9 @@ namespace com.mapcolonies.yahalom.InitPipeline.InitUnits
                         Debug.LogWarning($"Init unit {Name} failed. {e.Message} retry!");
                         await action();
                         break;
+                    default:
+                        Debug.LogError($"No policy {Policy} exists. {e.Message}");
+                        break;
                 }
             }
         }

@@ -7,6 +7,7 @@ using com.mapcolonies.yahalom.InitPipeline.InitSteps;
 using com.mapcolonies.yahalom.InitPipeline.InitUnits;
 using com.mapcolonies.yahalom.Preloader;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
@@ -23,6 +24,7 @@ namespace com.mapcolonies.yahalom.InitPipeline
             _preloader = preloader;
             _parent = scope;
             
+            //TODO: update initialization steps
             _initSteps = new List<InitStep>
             {
                 new InitStep("PreInit", StepMode.Sequential, new IInitUnit[]
@@ -55,6 +57,8 @@ namespace com.mapcolonies.yahalom.InitPipeline
             
             foreach (InitStep step in _initSteps)
             {
+                Debug.Log($"Enter Init Step {step.Name}");
+                
                 switch (step.Mode)
                 {
                     case StepMode.Sequential:
@@ -74,8 +78,11 @@ namespace com.mapcolonies.yahalom.InitPipeline
                         _preloader.ReportProgress(step.Name, accumulated);
                         break;
                     default:
+                        Debug.LogError($"Unknown step mode {step.Mode}");
                         break;
                 }
+                
+                Debug.Log($"Exit Init Step {step.Name}");
             }
             
             _preloader.ReportProgress("Complete", 1f);

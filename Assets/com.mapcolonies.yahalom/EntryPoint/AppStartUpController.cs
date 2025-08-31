@@ -1,6 +1,7 @@
 using System.Threading;
 using com.mapcolonies.yahalom.InitPipeline;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 using VContainer.Unity;
 
 namespace com.mapcolonies.yahalom.EntryPoint
@@ -17,7 +18,9 @@ namespace com.mapcolonies.yahalom.EntryPoint
 
         async UniTask IAsyncStartable.StartAsync(CancellationToken cancellation = new CancellationToken())
         {
+            Debug.Log("Start initializing");
             await _pipeline.RunAsync(cancellation);
+            Debug.Log("Initialized");
         }
     }
 }

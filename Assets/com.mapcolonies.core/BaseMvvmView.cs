@@ -15,6 +15,8 @@ namespace com.mapcolonies.core
         [Inject]
         public void Construct(T viewModel)
         {
+            Debug.Log($"Construct view for {typeof(T)}");
+            
             _viewModel = viewModel;
             RootVisualElement = _uiDocument.rootVisualElement;
             RootVisualElement.dataSource = _viewModel;

@@ -1,5 +1,6 @@
 using System;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace com.mapcolonies.yahalom.InitPipeline.InitUnits
 {
@@ -14,6 +15,7 @@ namespace com.mapcolonies.yahalom.InitPipeline.InitUnits
 
         public override async UniTask RunAsync()
         {
+            Debug.Log($"Running {Name} action unit");
             await HandlePolicy(() => _action());
         }
     }

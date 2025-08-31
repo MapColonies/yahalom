@@ -1,5 +1,6 @@
 using System;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
@@ -23,6 +24,8 @@ namespace com.mapcolonies.yahalom.InitPipeline.InitUnits
 
         public override async UniTask RunAsync()
         {
+            Debug.Log($"Running {Name} action unit");
+            
             await HandlePolicy(async () =>
             {
                 _child = _parent.CreateChild(_installers, Name);
