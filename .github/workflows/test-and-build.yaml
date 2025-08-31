@@ -52,7 +52,7 @@ jobs:
 
   buildForAllSupportedPlatforms:
     name: Build for ${{ matrix.targetPlatform }}
-    needs: [checklicense, test, format_check]
+    needs: [test]
     if: needs.checklicense.outputs.is_unity_license_set == 'true'
     runs-on: windows-latest
     strategy:
