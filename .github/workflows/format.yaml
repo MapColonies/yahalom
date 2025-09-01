@@ -23,8 +23,7 @@ jobs:
 
       - name: Run Rider cleanup (dry-check via diff)
         run: |
-          jb cleanupcode \
-            --profile="Built-in: Reformat Code" \
+          jb cleanupcode yahalom.sln \
             --no-build \
             --verbosity=WARN \
             --include="**/*.cs" \
