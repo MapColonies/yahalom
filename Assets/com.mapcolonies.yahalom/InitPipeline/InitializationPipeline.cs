@@ -39,7 +39,7 @@ namespace com.mapcolonies.yahalom.InitPipeline
                         {
                             Task.Run(resolver.Resolve<WmtsService>().Init);
                             return default;
-                        }),
+                        })
                 }),
                 new InitStep("FeaturesInit", StepMode.Sequential, new IInitUnit[]
                 {
