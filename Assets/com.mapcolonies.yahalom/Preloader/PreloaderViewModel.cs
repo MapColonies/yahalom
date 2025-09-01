@@ -17,10 +17,12 @@ namespace com.mapcolonies.yahalom.Preloader
         {
             Name = name;
             Progress = progress;
-            
+
             Debug.Log($"Name: {name} Progress: {progress}");
         }
 
-        public void Dispose() { }
+        public void Dispose()
+        {
+        }
     }
 }
