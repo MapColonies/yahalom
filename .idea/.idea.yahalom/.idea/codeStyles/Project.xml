@@ -1,0 +1,141 @@
+<component name="ProjectCodeStyleConfiguration">
+  <code_scheme name="Project" version="173">
+
+    <codeStyleSettings language="C#">
+      <option name="KEEP_LINE_BREAKS" value="true" />
+      <option name="KEEP_SIMPLE_BLOCKS_IN_ONE_LINE" value="false" />
+      <option name="KEEP_SIMPLE_METHODS_IN_ONE_LINE" value="false" />
+      <option name="KEEP_SIMPLE_PROPERTIES_IN_ONE_LINE" value="false" />
+      <option name="METHOD_BRACE_STYLE" value="NEXT_LINE" />
+      <option name="CLASS_BRACE_STYLE" value="NEXT_LINE" />
+      <option name="BRACE_STYLE" value="NEXT_LINE" />
+      <option name="SPACE_AROUND_ASSIGNMENT_OPERATORS" value="true" />
+      <option name="SPACE_AROUND_LOGICAL_OPERATORS" value="true" />
+      <option name="SPACE_AROUND_EQUALITY_OPERATORS" value="true" />
+      <option name="SPACE_WITHIN_METHOD_CALL_PARENTHESES" value="false" />
+      <option name="SPACE_WITHIN_METHOD_PARENTHESES" value="false" />
+      <option name="SPACE_BEFORE_METHOD_CALL_PARENTHESES" value="false" />
+      <option name="SPACE_BEFORE_METHOD_PARENTHESES" value="false" />
+      <option name="ALIGN_MULTILINE_PARAMETER" value="true" />
+      <option name="ALIGN_MULTILINE_ARGUMENT" value="true" />
+      <option name="ALIGN_MULTILINE_BINARY_OPERATION" value="true" />
+      <option name="ALIGN_MULTILINE_EXTENDS_LIST" value="true" />
+      <option name="ALIGN_MULTILINE_ARRAY_INITIALIZER_EXPRESSION" value="true" />
+      <indentOptions>
+        <option name="USE_TAB_CHARACTER" value="false" />
+        <option name="SMART_TABS" value="false" />
+        <option name="INDENT_SIZE" value="4" />
+        <option name="CONTINUATION_INDENT_SIZE" value="8" />
+        <option name="TAB_SIZE" value="4" />
+      </indentOptions>
+    </codeStyleSettings>
+
+    <CSharpCodeStyleSettings>
+      <option name="VAR_FOR_LOCALS" value="true" />
+      <option name="VAR_FOR_BUILTIN_TYPES" value="true" />
+      <option name="VAR_FOR_SIMPLE_TYPES" value="true" />
+
+      <option name="QUALIFY_FIELD_ACCESS" value="false" />
+      <option name="QUALIFY_PROPERTY_ACCESS" value="false" />
+      <option name="QUALIFY_METHOD_ACCESS" value="false" />
+      <option name="PREFER_THIS_QUALIFIER" value="false" />
+
+      <option name="PLACE_USINGS_INSIDE_NAMESPACE" value="false" />
+      <option name="SORT_USINGS" value="true" />
+      <option name="SEPARATE_USINGS_GROUPS" value="true" />
+
+      <option name="PREFER_EXPRESSION_BODIES_FOR_PROPERTIES" value="true" />
+      <option name="PREFER_EXPRESSION_BODIES_FOR_METHODS" value="false" />
+      <option name="PREFER_EXPRESSION_BODIES_FOR_CONSTRUCTORS" value="false" />
+
+      <option name="PREFER_NULL_COALESCING_OPERATOR" value="true" />
+      <option name="PREFER_TERNARY_OPERATOR" value="true" />
+
+      <option name="FILE_LAYOUT_STYLE" value="DEFAULT" />
+
+      <option name="BRACES_LAYOUT" value="NEXT_LINE" />
+    </CSharpCodeStyleSettings>
+
+    <CSharpNaming>
+      <policy name="Type names" language="C#" inspector="true">
+        <definition>
+          <element kind="Type" />
+        </definition>
+        <style>
+          <required_prefix />
+          <required_suffix />
+          <capitalization>PascalCase</capitalization>
+        </style>
+      </policy>
+
+      <policy name="Public members" language="C#" inspector="true">
+        <definition>
+          <element kind="Method" access="Public,Protected,ProtectedInternal" />
+          <element kind="Property" access="Public,Protected,ProtectedInternal" />
+          <element kind="Field" access="Public,Protected,ProtectedInternal" static="false" readonly="false" />
+          <element kind="Event" access="Public,Protected,ProtectedInternal" />
+        </definition>
+        <style>
+          <capitalization>PascalCase</capitalization>
+        </style>
+      </policy>
+
+      <policy name="Private fields" language="C#" inspector="true">
+        <definition>
+          <element kind="Field" access="Private,ProtectedInternal,Internal" static="false" readonly="false" />
+        </definition>
+        <style>
+          <required_prefix>_</required_prefix>
+          <capitalization>camelCase</capitalization>
+        </style>
+      </policy>
+
+      <policy name="Constants" language="C#" inspector="true">
+        <definition>
+          <element kind="Field" const="true" />
+        </definition>
+        <style>
+          <capitalization>PascalCase</capitalization>
+        </style>
+      </policy>
+
+      <policy name="Readonly fields" language="C#" inspector="true">
+        <definition>
+          <element kind="Field" readonly="true" />
+        </definition>
+        <style>
+          <required_prefix>_</required_prefix>
+          <capitalization>camelCase</capitalization>
+        </style>
+      </policy>
+
+      <policy name="Parameters" language="C#" inspector="true">
+        <definition>
+          <element kind="Parameter" />
+        </definition>
+        <style>
+          <capitalization>camelCase</capitalization>
+        </style>
+      </policy>
+      <policy name="Locals" language="C#" inspector="false">
+        <definition>
+          <element kind="LocalVariable" />
+        </definition>
+        <style>
+          <capitalization>camelCase</capitalization>
+        </style>
+      </policy>
+
+      <policy name="Interfaces" language="C#" inspector="true">
+        <definition>
+          <element kind="Interface" />
+        </definition>
+        <style>
+          <required_prefix>I</required_prefix>
+          <capitalization>PascalCase</capitalization>
+        </style>
+      </policy>
+    </CSharpNaming>
+
+  </code_scheme>
+</component>
