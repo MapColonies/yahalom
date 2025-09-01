@@ -4,24 +4,97 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="862088ed-a215-42ea-a97b-5f7ce8994678" name="Changes" comment="" />
+    <list default="true" id="862088ed-a215-42ea-a97b-5f7ce8994678" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Assets/PlayModeTests/InitPipelineTests/InitializationPipelineTests.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/PlayModeTests/InitPipelineTests/InitializationPipelineTests.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.yahalom/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.yahalom/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/PlayModeTests/InitPipelineTests/InitUnitsTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/PlayModeTests/InitPipelineTests/InitUnitsTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/PlayModeTests/PlayModeTests.asmdef" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/PlayModeTests/PlayModeTests.asmdef" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/com.mapcolonies.yahalom/EntryPoint/AppStartUpController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/com.mapcolonies.yahalom/EntryPoint/AppStartUpController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/com.mapcolonies.yahalom/InitPipeline/InitializationPipeline.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/com.mapcolonies.yahalom/InitPipeline/InitializationPipeline.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/com.mapcolonies.yahalom/Preloader/PreloaderViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/com.mapcolonies.yahalom/Preloader/PreloaderViewModel.cs" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 1
+}]]></component>
+  <component name="ProjectId" id="3269V7YG0mRzuKVYpktIjvEvNId" />
   <component name="ProjectViewState">
     <option name="autoscrollFromSource" value="true" />
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;rider.code.cleanup.on.save&quot;: &quot;true&quot;,
-    &quot;rider.code.cleanup.on.save.profile&quot;: &quot;Built-in: Reformat Code&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;actions.on.save&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Attach to Unity Editor.Attach to Unity Editor.executor": "Debug",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "Evgeny/Features/InitSequenceTests",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "rider.code.cleanup.on.save": "true",
+    "rider.code.cleanup.on.save.profile": "Built-in: Reformat Code",
+    "settings.editor.selected.configurable": "actions.on.save",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
+  <component name="RunManager" selected="Attach to Unity Editor.Attach to Unity Editor">
+    <configuration name="Start Unity" type="RunUnityExe" factoryName="Unity Executable">
+      <option name="EXE_PATH" value="C:\Program Files\Unity\Hub\Editor\6000.1.16f1\Editor\Unity.exe" />
+      <option name="PROGRAM_PARAMETERS" value="-projectPath C:\Dev\yahalom -debugCodeOptimization" />
+      <option name="WORKING_DIRECTORY" value="C:\Dev\yahalom" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Unit Tests (batch mode)" type="RunUnityExe" factoryName="Unity Executable">
+      <option name="EXE_PATH" value="C:\Program Files\Unity\Hub\Editor\6000.1.16f1\Editor\Unity.exe" />
+      <option name="PROGRAM_PARAMETERS" value="-runTests -batchmode -projectPath C:\Dev\yahalom -testResults Logs/results.xml -logFile Logs/Editor.log -testPlatform EditMode -debugCodeOptimization" />
+      <option name="WORKING_DIRECTORY" value="C:\Dev\yahalom" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Attach to Unity Editor &amp; Play" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="UNITY_ATTACH_AND_PLAY" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
+      <option name="allowRunningInParallel" value="false" />
+      <option name="listenPortForConnections" value="false" />
+      <option name="pid" />
+      <option name="projectPathOnTarget" />
+      <option name="runtimes">
+        <list />
+      </option>
+      <option name="selectedOptions">
+        <list />
+      </option>
+      <method v="2" />
+    </configuration>
+    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost" ignored-value-for-modified-check="54292">
+      <option name="allowRunningInParallel" value="false" />
+      <option name="listenPortForConnections" value="false" />
+      <option name="pid" value="54292" />
+      <option name="projectPathOnTarget" />
+      <option name="runtimes">
+        <list>
+          <MonoRuntime />
+        </list>
+      </option>
+      <option name="selectedOptions">
+        <list />
+      </option>
+      <method v="2" />
+    </configuration>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -34,12 +107,79 @@
       <workItem from="1756392172690" duration="1975000" />
       <workItem from="1756627518057" duration="18443000" />
       <workItem from="1756713821606" duration="11390000" />
+      <workItem from="1756730177909" duration="5855000" />
     </task>
     <servers />
   </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
   <component name="UnityProjectConfiguration" hasMinimizedUI="true" />
+  <component name="UnityProjectDiscoverer">
+    <option name="hasUnityReference" value="true" />
+    <option name="unityProject" value="true" />
+    <option name="unityProjectFolder" value="true" />
+  </component>
   <component name="UnityUnitTestConfiguration" currentTestLauncher="Both" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/com.mapcolonies.yahalom/InitPipeline/InitializationPipeline.cs</url>
+          <line>30</line>
+          <properties documentPath="C:\Dev\yahalom\Assets\com.mapcolonies.yahalom\InitPipeline\InitializationPipeline.cs" containingFunctionPresentation="Method 'RunAsync'">
+            <startOffsets>
+              <option value="914" />
+            </startOffsets>
+            <endOffsets>
+              <option value="956" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/PlayModeTests/InitPipelineTests/InitializationPipelineTests.cs</url>
+          <line>23</line>
+          <properties documentPath="C:\Dev\yahalom\Assets\PlayModeTests\InitPipelineTests\InitializationPipelineTests.cs" containingFunctionPresentation="Method 'ReportProgress'">
+            <startOffsets>
+              <option value="742" />
+            </startOffsets>
+            <endOffsets>
+              <option value="773" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/com.mapcolonies.yahalom/InitPipeline/InitializationPipeline.cs</url>
+          <line>39</line>
+          <properties documentPath="C:\Dev\yahalom\Assets\com.mapcolonies.yahalom\InitPipeline\InitializationPipeline.cs" containingFunctionPresentation="Method 'RunAsync'">
+            <startOffsets>
+              <option value="1305" />
+            </startOffsets>
+            <endOffsets>
+              <option value="1379" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/com.mapcolonies.yahalom/InitPipeline/InitializationPipeline.cs</url>
+          <line>49</line>
+          <properties documentPath="C:\Dev\yahalom\Assets\com.mapcolonies.yahalom\InitPipeline\InitializationPipeline.cs" containingFunctionPresentation="Method 'RunAsync'">
+            <startOffsets>
+              <option value="1793" />
+            </startOffsets>
+            <endOffsets>
+              <option value="1843" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

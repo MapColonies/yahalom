@@ -1,14 +1,22 @@
 using System;
+using System.Reflection;
 using System.Threading.Tasks;
 using com.mapcolonies.yahalom.InitPipeline.InitUnits;
 using Cysharp.Threading.Tasks;
 using NUnit.Framework;
+using UnityEngine;
+using VContainer;
+using VContainer.Unity;
 
 namespace PlayModeTests.InitPipelineTests
 {
     public class InitUnitsTests
     {
-        [Test]
+        private LifetimeScope _parentScope;
+
+        #region ActionUnitTests
+
+        [Test(Description = "Ensures that the provided action is executed when RunAsync is called.")]
         public async Task RunAsync_ShouldExecuteProvidedAction()
         {
             bool executed = false;
@@ -24,7 +32,7 @@ namespace PlayModeTests.InitPipelineTests
             Assert.IsTrue(executed);
         }
 
-        [Test]
+        [Test(Description = "Verifies that RunAsync throws ArgumentNullException if the action is null.")]
         public void RunAsync_NullAction_ShouldThrow()
         {
             ActionUnit unit = new ActionUnit("Test", 1f, InitPolicy.Fail, () => throw new ArgumentNullException());
@@ -32,7 +40,7 @@ namespace PlayModeTests.InitPipelineTests
             Assert.ThrowsAsync<ArgumentNullException>(async () => { await unit.RunAsync(); });
         }
 
-        [Test]
+        [Test(Description = "Checks that exceptions are propagated when InitPolicy is set to Fail.")]
         public void RunAsync_WithFailPolicy_ShouldPropagateException()
         {
             ActionUnit unit = new ActionUnit("Test", 1f, InitPolicy.Fail,
@@ -41,7 +49,7 @@ namespace PlayModeTests.InitPipelineTests
             Assert.ThrowsAsync<InvalidOperationException>(async () => await unit.RunAsync());
         }
 
-        [Test]
+        [Test(Description = "Verifies that exceptions are swallowed when InitPolicy is set to Ignore.")]
         public async Task RunAsync_WithContinuePolicy_ShouldSwallowException()
         {
             ActionUnit unit = new ActionUnit("Test", 1f, InitPolicy.Ignore,
@@ -51,7 +59,7 @@ namespace PlayModeTests.InitPipelineTests
             await unit.RunAsync();
         }
 
-        [Test]
+        [Test(Description = "Ensures that actions are retried once when InitPolicy is Retry and first attempt fails.")]
         public async Task Test_RunAsync_RetryPolicy_ShouldRetryAndSucceed()
         {
             // Arrange
@@ -75,5 +83,96 @@ namespace PlayModeTests.InitPipelineTests
             // Assert
             Assert.AreEqual(2, callCount, "Action should be executed twice (fail then retry)");
         }
+
+        #endregion
+
+        #region RegisterScopeUnitTests
+
+        [SetUp]
+        public void SetUp()
+        {
+            // Create a GameObject with a LifetimeScope to act as the parent
+            GameObject go = new GameObject("ParentScope");
+            _parentScope = go.AddComponent<LifetimeScope>();
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            if (_parentScope != null)
+            {
+                GameObject.DestroyImmediate(_parentScope.gameObject);
+                _parentScope = null;
+            }
+        }
+
+        [Test(Description =
+            "Verifies that RunAsync creates a child scope, executes afterBuild callback, and registers dependencies.")]
+        public async Task RunAsync_ShouldCreateChildScope_AndRunAfterBuild()
+        {
+            // Arrange
+            bool afterBuildExecuted = false;
+
+            Func<IObjectResolver, UniTask> afterBuild = resolver =>
+            {
+                afterBuildExecuted = true;
+                return UniTask.CompletedTask;
+            };
+
+            RegisterScopeUnit unit = new RegisterScopeUnit(
+                "TestScope",
+                1.0f,
+                _parentScope,
+                InitPolicy.Fail,
+                installers: builder => { builder.RegisterInstance("HelloWorld"); },
+                afterBuild: afterBuild
+            );
+
+            // Act
+            await unit.RunAsync();
+
+            // Assert
+            Assert.IsTrue(afterBuildExecuted, "AfterBuild should be executed");
+
+            // Ensure child scope contains the registered dependency
+            LifetimeScope str = unit.GetType().GetField("_child",
+                    System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                ?.GetValue(unit) as LifetimeScope;
+
+            Assert.NotNull(str, "Child scope should have been created");
+            Assert.AreEqual("HelloWorld", str.Container.Resolve<string>());
+
+            // Cleanup
+            unit.Dispose();
+        }
+
+        [Test(Description = "Checks that Dispose properly disposes and nulls the child scope.")]
+        public async Task Dispose_ShouldCleanChildScope()
+        {
+            // Arrange
+            var unit = new RegisterScopeUnit(
+                "DisposableScope",
+                1.0f,
+                _parentScope,
+                InitPolicy.Fail,
+                installers: builder => { builder.RegisterInstance(123); });
+
+            await unit.RunAsync();
+
+            FieldInfo childField = unit.GetType().GetField("_child",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            LifetimeScope child = childField?.GetValue(unit) as LifetimeScope;
+
+            Assert.NotNull(child);
+
+            // Act
+            unit.Dispose();
+
+            // Assert
+            object disposedChild = childField?.GetValue(unit);
+            Assert.IsNull(disposedChild, "Child scope should be nulled after dispose");
+        }
+
+        #endregion
     }
 }
