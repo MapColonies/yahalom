@@ -8,7 +8,7 @@ namespace com.mapcolonies.core
     public abstract class BaseMvvmView<T> : MonoBehaviour where T : class
     {
         private T _viewModel;
-        
+
         [SerializeField] private UIDocument _uiDocument;
         protected VisualElement RootVisualElement { get; private set; }
 
@@ -16,7 +16,7 @@ namespace com.mapcolonies.core
         public void Construct(T viewModel)
         {
             Debug.Log($"Construct view for {typeof(T)}");
-            
+
             _viewModel = viewModel;
             RootVisualElement = _uiDocument.rootVisualElement;
             RootVisualElement.dataSource = _viewModel;

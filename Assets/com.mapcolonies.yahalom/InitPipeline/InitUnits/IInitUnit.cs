@@ -6,7 +6,7 @@ namespace com.mapcolonies.yahalom.InitPipeline.InitUnits
     {
         string Name { get; }
         float Weight { get; }
-        InitPolicy  Policy { get; }
+        InitPolicy Policy { get; }
         UniTask RunAsync();
     }
 }
