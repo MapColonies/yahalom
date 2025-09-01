@@ -13,14 +13,16 @@ namespace com.mapcolonies.yahalom.Preloader
         {
         }
 
-        public void ReportProgress(string name, float progress)
+        public virtual void ReportProgress(string name, float progress)
         {
             Name = name;
             Progress = progress;
-            
+
             Debug.Log($"Name: {name} Progress: {progress}");
         }
 
-        public void Dispose() { }
+        public void Dispose()
+        {
+        }
     }
 }
