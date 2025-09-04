@@ -23,7 +23,7 @@ jobs:
 
       - name: Run Rider cleanup
         run: |
-          "$HOME/.dotnet/tools/jb" cleanupcode \
+          jb cleanupcode yahalom.sln \
             --profile="Built-in: Reformat Code" \
             --no-build \
             --verbosity=WARN \
