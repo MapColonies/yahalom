@@ -30,7 +30,6 @@ jobs:
             --exclude="**/bin/**" \
             --exclude="**/obj/**" \
             --exclude="**/.idea/**" \
-            yahalom.sln
 
       - name: Detect formatting changes (code files only)
         id: diff
