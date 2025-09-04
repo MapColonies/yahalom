@@ -21,16 +21,20 @@ jobs:
           dotnet tool install --global JetBrains.ReSharper.GlobalTools
           echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
 
-      - name: Run Rider cleanup (dry-check via diff)
+      - name: Find and format all project files
         run: |
-          jb cleanupcode yahalom.sln \
-            --profile="Built-in: Reformat Code" \
-            --no-build \
-            --verbosity=WARN \
-            --include="**/*.cs" \
-            --exclude="**/bin/**" \
-            --exclude="**/obj/**" \
-            --exclude="**/.idea/**"
+          # Find all .csproj files and format them individually
+          find . -name "*.csproj" -not -path "*/bin/*" -not -path "*/obj/*" | while read -r proj; do
+            echo "Formatting project: $proj"
+            jb cleanupcode "$proj" \
+              --profile="Built-in: Reformat Code" \
+              --no-build \
+              --verbosity=WARN \
+              --include="**/*.cs" \
+              --exclude="**/bin/**" \
+              --exclude="**/obj/**" \
+              --exclude="**/.idea/**"
+          done
 
       - name: Detect formatting changes (code files only)
         id: diff
@@ -50,7 +54,7 @@ jobs:
         if: steps.diff.outputs.changed == 'true'
         run: |
           {
-            echo "### ❌ Formatting check failed"
+            echo "### ⚠️ Formatting check failed"
             echo
             echo "The following code files are not formatted properly:"
             echo
