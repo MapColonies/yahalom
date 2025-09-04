@@ -30,8 +30,7 @@ jobs:
             --include="**/*.cs" \
             --exclude="**/bin/**" \
             --exclude="**/obj/**" \
-            --exclude="**/.idea/**" \
-            .
+            --exclude="**/.idea/**"
 
       - name: Detect formatting changes (code files only)
         id: diff
