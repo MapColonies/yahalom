@@ -22,14 +22,17 @@ jobs:
           echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
 
       - name: Run Rider cleanup (dry-check via diff)
+        working-directory: ${{ github.workspace }}
         run: |
-          jb cleanupcode yahalom.sln \
+          ls -la  # debug: check that yahalom.sln is really there  
+          jb cleanupcode \
             --no-build \
             --verbosity=WARN \
             --include="**/*.cs" \
             --exclude="**/bin/**" \
             --exclude="**/obj/**" \
             --exclude="**/.idea/**" \
+            yahalom.sln
 
       - name: Detect formatting changes (code files only)
         id: diff
