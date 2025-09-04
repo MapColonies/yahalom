@@ -21,13 +21,14 @@ jobs:
           dotnet tool install --global JetBrains.ReSharper.GlobalTools
           echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
 
-      - name: Run Rider cleanup (dry-check via diff)
+      - name: Run Rider cleanup
         run: |
           "$HOME/.dotnet/tools/jb" cleanupcode \
             --profile="Built-in: Reformat Code" \
             --no-build \
             --verbosity=WARN \
             --include="**/*.cs" \
+            --include="**/*yahalom.csproj" \
             --exclude="**/bin/**" \
             --exclude="**/obj/**" \
             --exclude="**/.idea/**" \
