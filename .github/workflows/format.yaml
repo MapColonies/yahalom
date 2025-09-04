@@ -18,8 +18,8 @@ jobs:
 
       - name: Run dotnet format (dry-run)
         run: |
-          # Use dotnet format instead of JetBrains tools
-          dotnet format --verify-no-changes --verbosity diagnostic
+          # Use dotnet format on the solution file
+          dotnet format yahalom.sln --verify-no-changes --verbosity diagnostic
 
       - name: Detect formatting changes (fallback check)
         id: diff
