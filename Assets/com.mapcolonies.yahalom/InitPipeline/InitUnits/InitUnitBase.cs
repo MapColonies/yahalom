@@ -18,7 +18,7 @@ namespace com.mapcolonies.yahalom.InitPipeline.InitUnits
         }
 
         public abstract UniTask RunAsync();
-        
+
         protected async UniTask HandlePolicy(Func<UniTask> action)
         {
             try
