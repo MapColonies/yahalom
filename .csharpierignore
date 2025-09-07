@@ -1,31 +1,39 @@
-# --- Build artifacts (.NET)
+*.csproj
+*.fsproj
+*.vbproj
+*.sln
+*.props
+*.targets
+
+/Library/
+/Logs/
+/Temp/
+/UserSettings/
+/ProjectSettings/
+/UIElementsSchema/
+/MemoryCaptures/
+/Build/
+/Builds/
+
 **/bin/
 **/obj/
 **/TestResults/
-**/packages/           # old packages.config layout
 
-# --- IDE / tooling caches
 **/.vs/
 **/.idea/
 **/.vscode/
 **/.fleet/
+**/.Rider/
 
-# --- Unity (big, generated, or transient)
-**/Library/
-**/Temp/
-**/Logs/
-**/UserSettings/
-**/MemoryCaptures/
-**/Build/
-**/Builds/
+/.git/
+/.github/
+/.config/
 
-# --- Mobile platform outputs sometimes present in Unity projects
-**/android/.gradle/
-**/android/build/
-**/ios/Pods/
+/*.unitypackage
 
-# --- Optional: ignore vendor or auto-generated code
-# (Uncomment if you don’t want CSharpier touching these)
-# **/Generated/**
-# **/Migrations/**
-# **/Assets/Plugins/**
+.DS_Store
+Thumbs.db
+
+# (Uncomment to skip formatting vendor plugins)
+# /Assets/Plugins/
+# /Assets/External/
