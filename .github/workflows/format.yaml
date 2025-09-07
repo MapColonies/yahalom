@@ -45,7 +45,7 @@ jobs:
           while IFS= read -r sln; do
             [ -z "$sln" ] && continue
             echo "==> Restoring $sln"
-            dotnet restore "$sln"            # IMPORTANT: always pass the .sln
+            dotnet restore "$sln"           
             echo "==> Running jb cleanupcode (in-workspace only) on $sln"
             jb cleanupcode "$sln" \
               --profile="Built-in: Reformat Code" \
