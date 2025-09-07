@@ -7,6 +7,7 @@ jobs:
   format_check:
     name: Verify Rider formatting
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -18,16 +19,31 @@ jobs:
 
       - name: Install JetBrains ReSharper Global Tools (jb)
         run: |
-          cd ~
+          set -euo pipefail
           dotnet tool install --global JetBrains.ReSharper.GlobalTools
           echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
+          "$HOME/.dotnet/tools/jb" --version
 
-      - name: Find and format all project files
+      - name: Restore solution
+        run: dotnet restore "./yahalom.sln"
+
+      - name: Format selected projects with ReSharper
         run: |
-          # Find all .csproj files and format them individually
-          find . -name "*.csproj" -not -path "*/bin/*" -not -path "*/obj/*" | while read -r proj; do
-            echo "Formatting project: $proj"
-            jb cleanupcode "$proj" \
+          set -euo pipefail
+          JB="$HOME/.dotnet/tools/jb"
+          cd "$GITHUB_WORKSPACE"
+
+          projects=(
+            "yahalom.csproj"
+            "PlayModeTests.csproj"
+            "EditorTests.csproj"
+            "com.mapcolonies.core.csproj"
+          )
+
+          for proj in "${projects[@]}"; do
+            abs="$(realpath "$proj")"
+            echo "Formatting project: $abs"
+            "$JB" cleanupcode "$abs" \
               --profile="Built-in: Reformat Code" \
               --no-build \
               --verbosity=WARN \
@@ -40,39 +56,57 @@ jobs:
       - name: Detect formatting changes (code files only)
         id: diff
         run: |
-          LIST_FILE="$RUNNER_TEMP/files_needing_format.txt"
-          CHANGED="$(git status --porcelain --untracked-files=no -- '*.cs' '*.csproj' '*.sln' | awk '{print $2}' | sort -u)"
-          if [[ -n "$CHANGED" ]]; then
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-            echo "$CHANGED" | tee "$LIST_FILE"
-            echo "list_file=$LIST_FILE" >> "$GITHUB_OUTPUT"
+          set -euo pipefail
+          DIFF_FILE="$(pwd)/__format_diff__.txt"
+          echo "diff_file=$DIFF_FILE" >> "$GITHUB_OUTPUT"
+
+          # -U0 -> hunk headers only; restrict to likely code files
+          git --no-pager diff --unified=0 -- '*.cs' '*.csproj' '*.sln' > "$DIFF_FILE" || true
+
+          if [ -s "$DIFF_FILE" ]; then
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
           else
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "list_file=" >> "$GITHUB_OUTPUT"
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Summarize unformatted files
-        if: steps.diff.outputs.changed == 'true'
+      - name: Annotate changed lines + write summary
+        if: steps.diff.outputs.has_changes == 'true'
         run: |
+          DIFF_FILE="${{ steps.diff.outputs.diff_file }}"
+
+          # 1) Inline annotations (file + line range)
+          awk '
+            BEGIN{f=""}
+            /^\+\+\+ b\//{sub(/^\+\+\+ b\//,""); f=$0; next}
+            /^@@ /{
+              # Parse +c,d from "@@ -a,b +c,d @@"
+              match($0, /\+([0-9]+)(,([0-9]+))?/, m)
+              start=m[1]; count=m[3]; if(count=="") count=1
+              end=start+count-1
+              printf("::error file=%s,line=%d,endLine=%d,title=Formatting differs::Run Rider Code Cleanup (Built-in: Reformat Code) and commit.\n", f, start, end)
+            }
+          ' "$DIFF_FILE"
+
+          # 2) Nice summary table
           {
-            echo "### ⚠️ Formatting check failed"
-            echo
-            echo "The following code files are not formatted properly:"
-            echo
-            echo '```'
-            cat "${{ steps.diff.outputs.list_file }}"
-            echo '```'
-            echo
-            echo "➡️ Run Rider **Code Cleanup** (Built-in: *Reformat Code*) locally and commit."
+            echo "### Files/lines needing formatting"
+            echo ""
+            echo "| File | Lines |"
+            echo "|---|---|"
+            awk '
+              BEGIN{f=""}
+              /^\+\+\+ b\//{sub(/^\+\+\+ b\//,""); f=$0; next}
+              /^@@ /{
+                match($0, /\+([0-9]+)(,([0-9]+))?/, m)
+                start=m[1]; count=m[3]; if(count=="") count=1
+                end=start+count-1
+                printf("| %s | %d-%d |\n", f, start, end)
+              }
+            ' "$DIFF_FILE"
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Annotate files in Checks UI
-        if: steps.diff.outputs.changed == 'true'
+      - name: Fail if formatting changes detected
+        if: steps.diff.outputs.has_changes == 'true'
         run: |
-          while IFS= read -r f; do
-            echo "::error file=$f,title=Not formatted::Run Rider Code Cleanup (Built-in: Reformat Code) and commit."
-          done < "${{ steps.diff.outputs.list_file }}"
-
-      - name: Fail job if formatting needed
-        if: steps.diff.outputs.changed == 'true'
-        run: exit 1
+          echo "Formatting changes detected. Please run 'jb cleanupcode' locally and commit."
+          exit 1
