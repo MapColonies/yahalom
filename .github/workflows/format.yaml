@@ -20,24 +20,24 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
+      # ⚠️ IMPORTANT: run the jb sanity call from a neutral directory
       - name: Install JetBrains ReSharper Global Tools (jb)
+        working-directory: ${{ runner.temp }}
         run: |
           set -euo pipefail
           dotnet tool install --global JetBrains.ReSharper.GlobalTools
           echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
-          "$HOME/.dotnet/tools/jb" --version
+          # sanity check without touching your repo dir
+          "$HOME/.dotnet/tools/jb" --help > /dev/null
 
-      # ✅ Robust restore: target the solution explicitly if present,
-      # otherwise restore each of the four projects by absolute path.
+      # Explicit restore: target solution if present, else each project
       - name: Restore
         run: |
           set -euo pipefail
           cd "$GITHUB_WORKSPACE"
 
-          # Helper to locate a project by basename anywhere in the repo (excluding bin/obj)
           locate() {
             local name="$1"
-            # Find the first match; warn if multiple
             mapfile -t matches < <(find "$GITHUB_WORKSPACE" -type f -name "$name" \
               -not -path "*/bin/*" -not -path "*/obj/*" | sort)
             if [ "${#matches[@]}" -eq 0 ]; then
@@ -61,7 +61,6 @@ jobs:
               "EditorTests.csproj"
               "com.mapcolonies.core.csproj"
             )
-
             for name in "${proj_names[@]}"; do
               p="$(locate "$name")"
               if [ -z "$p" ]; then
@@ -125,10 +124,7 @@ jobs:
           set -euo pipefail
           DIFF_FILE="$(pwd)/__format_diff__.txt"
           echo "diff_file=$DIFF_FILE" >> "$GITHUB_OUTPUT"
-
-          # -U0 -> hunk headers only; restrict to likely code files
           git --no-pager diff --unified=0 -- '*.cs' '*.csproj' '*.sln' > "$DIFF_FILE" || true
-
           if [ -s "$DIFF_FILE" ]; then
             echo "has_changes=true" >> "$GITHUB_OUTPUT"
           else
@@ -139,13 +135,10 @@ jobs:
         if: steps.diff.outputs.has_changes == 'true'
         run: |
           DIFF_FILE="${{ steps.diff.outputs.diff_file }}"
-
-          # 1) Inline annotations (file + line range)
           awk '
             BEGIN{f=""}
             /^\+\+\+ b\//{sub(/^\+\+\+ b\//,""); f=$0; next}
             /^@@ /{
-              # Parse +c,d from "@@ -a,b +c,d @@"
               match($0, /\+([0-9]+)(,([0-9]+))?/, m)
               start=m[1]; count=m[3]; if(count=="") count=1
               end=start+count-1
@@ -153,7 +146,6 @@ jobs:
             }
           ' "$DIFF_FILE"
 
-          # 2) Nice summary table
           {
             echo "### Files/lines needing formatting"
             echo ""
