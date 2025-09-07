@@ -1,4 +1,5 @@
-name: Rider Format Check (All Solutions, Check-Only)
+# .github/workflows/format.yaml
+name: format_check
 
 on:
   workflow_call:
@@ -19,7 +20,9 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Install JetBrains ReSharper Global Tools (jb)
+        shell: bash
         run: |
+          set -euo pipefail
           dotnet tool install --global JetBrains.ReSharper.GlobalTools
           echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
 
@@ -27,25 +30,23 @@ jobs:
         id: discover
         shell: bash
         run: |
-          set -e
+          set -euo pipefail
           git ls-files '*.sln' > solutions.txt || true
           echo "Found solution files:"
           cat solutions.txt || true
           count=$(wc -l < solutions.txt | tr -d ' ')
           echo "solution_count=$count" >> "$GITHUB_OUTPUT"
 
-      - name: Run cleanup (check-only) per solution
+      - name: Check formatting per solution (no changes committed)
         if: steps.discover.outputs.solution_count != '0'
         shell: bash
         run: |
-          set -e
+          set -euo pipefail
           while IFS= read -r sln; do
             [ -z "$sln" ] && continue
             echo "==> Restoring $sln"
-            dotnet restore "$sln"
-            echo "==> Running jb cleanupcode on $sln (check-only)"
-            # This formats files in the CI workspace only.
-            # We DON'T commit/push changes; we diff afterward and fail if changes exist.
+            dotnet restore "$sln"            # IMPORTANT: always pass the .sln
+            echo "==> Running jb cleanupcode (in-workspace only) on $sln"
             jb cleanupcode "$sln" \
               --profile="Built-in: Reformat Code" \
               --no-build \
@@ -59,12 +60,13 @@ jobs:
               --exclude="**/Temp/**"
           done < solutions.txt
 
-      - name: Diff & annotate unformatted files
+      - name: Diff & annotate unformatted files (fail if any)
         if: steps.discover.outputs.solution_count != '0'
         shell: bash
         run: |
+          set -euo pipefail
           DIFF_FILE=cleanup.diff
-          # Only look at C# sources; we never touch .csproj/.sln/etc.
+          # Only look at C# source files
           git --no-pager diff --unified=0 -- '*.cs' > "$DIFF_FILE" || true
 
           if [ -s "$DIFF_FILE" ]; then
