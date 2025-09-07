@@ -18,6 +18,7 @@ jobs:
 
       - name: Install JetBrains ReSharper Global Tools (jb)
         run: |
+          cd ~
           dotnet tool install --global JetBrains.ReSharper.GlobalTools
           echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
 
