@@ -1,16 +1,11 @@
-name: Format
+name: Format Check
 
 on:
   workflow_call:
-  push:
-    branches: [ main, develop ]
-  pull_request:
 
 jobs:
   format_check:
-    name: Verify Rider formatting
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -18,153 +13,51 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: 8.0.x
 
-      # ⚠️ IMPORTANT: run the jb sanity call from a neutral directory
       - name: Install JetBrains ReSharper Global Tools (jb)
-        working-directory: ${{ runner.temp }}
         run: |
-          set -euo pipefail
           dotnet tool install --global JetBrains.ReSharper.GlobalTools
           echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
-          # sanity check without touching your repo dir
-          "$HOME/.dotnet/tools/jb" --help > /dev/null
 
-      # Explicit restore: target solution if present, else each project
-      - name: Restore
+      - name: Restore solution (ensures everything loads)
+        run: dotnet restore ./yahalom.sln
+
+      - name: Run Rider Code Cleanup (check only)
         run: |
-          set -euo pipefail
-          cd "$GITHUB_WORKSPACE"
+          jb cleanupcode ./yahalom.sln \
+            --profile="Built-in: Reformat Code" \
+            --no-build \
+            --verbosity=WARN \
+            --include="**/*.cs" \
+            --exclude="**/bin/**" \
+            --exclude="**/obj/**" \
+            --exclude="**/.idea/**" \
+            --exclude="**/Library/**" \
+            --exclude="**/Temp/**" \
+            --exclude="**/Logs/**"
 
-          locate() {
-            local name="$1"
-            mapfile -t matches < <(find "$GITHUB_WORKSPACE" -type f -name "$name" \
-              -not -path "*/bin/*" -not -path "*/obj/*" | sort)
-            if [ "${#matches[@]}" -eq 0 ]; then
-              echo ""
-              return 0
-            fi
-            if [ "${#matches[@]}" -gt 1 ]; then
-              echo "WARNING: Multiple matches for $name, using: ${matches[0]}" >&2
-            fi
-            echo "${matches[0]}"
-          }
-
-          if [ -f "yahalom.sln" ]; then
-            echo "Restoring solution: $GITHUB_WORKSPACE/yahalom.sln"
-            dotnet restore "$(realpath "yahalom.sln")"
-          else
-            echo "Solution not found; restoring specific projects…"
-            declare -a proj_names=(
-              "yahalom.csproj"
-              "PlayModeTests.csproj"
-              "EditorTests.csproj"
-              "com.mapcolonies.core.csproj"
-            )
-            for name in "${proj_names[@]}"; do
-              p="$(locate "$name")"
-              if [ -z "$p" ]; then
-                echo "WARNING: $name not found; skipping restore for it."
-                continue
-              fi
-              abs="$(realpath "$p")"
-              echo "dotnet restore: $abs"
-              dotnet restore "$abs"
-            done
-          fi
-
-      - name: Format selected projects with ReSharper
-        run: |
-          set -euo pipefail
-          JB="$HOME/.dotnet/tools/jb"
-          cd "$GITHUB_WORKSPACE"
-
-          locate() {
-            local name="$1"
-            mapfile -t matches < <(find "$GITHUB_WORKSPACE" -type f -name "$name" \
-              -not -path "*/bin/*" -not -path "*/obj/*" | sort)
-            if [ "${#matches[@]}" -eq 0 ]; then
-              echo ""
-              return 0
-            fi
-            if [ "${#matches[@]}" -gt 1 ]; then
-              echo "WARNING: Multiple matches for $name, using: ${matches[0]}" >&2
-            fi
-            echo "${matches[0]}"
-          }
-
-          declare -a proj_names=(
-            "yahalom.csproj"
-            "PlayModeTests.csproj"
-            "EditorTests.csproj"
-            "com.mapcolonies.core.csproj"
-          )
-
-          for name in "${proj_names[@]}"; do
-            p="$(locate "$name")"
-            if [ -z "$p" ]; then
-              echo "WARNING: $name not found; skipping formatting."
-              continue
-            fi
-            abs="$(realpath "$p")"
-            echo "Formatting project: $abs"
-            "$JB" cleanupcode "$abs" \
-              --profile="Built-in: Reformat Code" \
-              --no-build \
-              --verbosity=WARN \
-              --include="**/*.cs" \
-              --exclude="**/bin/**" \
-              --exclude="**/obj/**" \
-              --exclude="**/.idea/**"
-          done
-
-      - name: Detect formatting changes (code files only)
+      - name: Diff and annotate changes
         id: diff
+        shell: bash
         run: |
-          set -euo pipefail
-          DIFF_FILE="$(pwd)/__format_diff__.txt"
+          DIFF_FILE=cleanup.diff
+          git --no-pager diff --unified=0 -- '*.cs' > "$DIFF_FILE" || true
           echo "diff_file=$DIFF_FILE" >> "$GITHUB_OUTPUT"
-          git --no-pager diff --unified=0 -- '*.cs' '*.csproj' '*.sln' > "$DIFF_FILE" || true
-          if [ -s "$DIFF_FILE" ]; then
-            echo "has_changes=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "has_changes=false" >> "$GITHUB_OUTPUT"
-          fi
+          if [ -s "$DIFF_FILE" ]; then echo "has_changes=true" >> "$GITHUB_OUTPUT"; else echo "has_changes=false" >> "$GITHUB_OUTPUT"; fi
 
-      - name: Annotate changed lines + write summary
+      - name: Report files/lines that need formatting
         if: steps.diff.outputs.has_changes == 'true'
+        shell: bash
         run: |
-          DIFF_FILE="${{ steps.diff.outputs.diff_file }}"
           awk '
-            BEGIN{f=""}
-            /^\+\+\+ b\//{sub(/^\+\+\+ b\//,""); f=$0; next}
-            /^@@ /{
+            BEGIN { file="" }
+            /^\+\+\+ b\// { sub(/^\+\+\+ b\//, "", $0); file=$0; next }
+            /^@@ / {
               match($0, /\+([0-9]+)(,([0-9]+))?/, m)
-              start=m[1]; count=m[3]; if(count=="") count=1
-              end=start+count-1
-              printf("::error file=%s,line=%d,endLine=%d,title=Formatting differs::Run Rider Code Cleanup (Built-in: Reformat Code) and commit.\n", f, start, end)
+              start = m[1]
+              printf("::error file=%s,line=%d,title=Formatting differs::Run Rider Code Cleanup (Built-in: Reformat Code) and commit.\n", file, start)
             }
-          ' "$DIFF_FILE"
-
-          {
-            echo "### Files/lines needing formatting"
-            echo ""
-            echo "| File | Lines |"
-            echo "|---|---|"
-            awk '
-              BEGIN{f=""}
-              /^\+\+\+ b\//{sub(/^\+\+\+ b\//,""); f=$0; next}
-              /^@@ /{
-                match($0, /\+([0-9]+)(,([0-9]+))?/, m)
-                start=m[1]; count=m[3]; if(count=="") count=1
-                end=start+count-1
-                printf("| %s | %d-%d |\n", f, start, end)
-              }
-            ' "$DIFF_FILE"
-          } >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Fail if formatting changes detected
-        if: steps.diff.outputs.has_changes == 'true'
-        run: |
-          echo "Formatting changes detected. Please run 'jb cleanupcode' locally and commit."
+          ' "${{ steps.diff.outputs.diff_file }}"
+          echo "::error title=Formatting check failed::Some files differ from the Rider/Resharper style. Run 'Code Cleanup' in Rider or 'jb cleanupcode yahalom.sln' locally."
           exit 1
