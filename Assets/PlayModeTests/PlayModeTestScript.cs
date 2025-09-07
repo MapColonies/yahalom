@@ -17,8 +17,7 @@ namespace PlayModeTests
                 Assert.AreEqual(expectedName, go.name);
                 Debug.Log("GameObject_IsCreatedWithCorrectName passed.");
             }
-            catch (AssertionException e
-                    )
+            catch (AssertionException e)
             {
                 Debug.LogError($"GameObject_IsCreatedWithCorrectName failed: {e.Message}");
                 throw;
