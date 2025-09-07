@@ -1,0 +1,31 @@
+# --- Build artifacts (.NET)
+**/bin/
+**/obj/
+**/TestResults/
+**/packages/           # old packages.config layout
+
+# --- IDE / tooling caches
+**/.vs/
+**/.idea/
+**/.vscode/
+**/.fleet/
+
+# --- Unity (big, generated, or transient)
+**/Library/
+**/Temp/
+**/Logs/
+**/UserSettings/
+**/MemoryCaptures/
+**/Build/
+**/Builds/
+
+# --- Mobile platform outputs sometimes present in Unity projects
+**/android/.gradle/
+**/android/build/
+**/ios/Pods/
+
+# --- Optional: ignore vendor or auto-generated code
+# (Uncomment if you don’t want CSharpier touching these)
+# **/Generated/**
+# **/Migrations/**
+# **/Assets/Plugins/**
