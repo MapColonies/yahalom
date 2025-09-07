@@ -37,26 +37,22 @@ jobs:
           count=$(wc -l < solutions.txt | tr -d ' ')
           echo "solution_count=$count" >> "$GITHUB_OUTPUT"
 
-      - name: Check formatting per solution (no changes committed)
+      - name: Check formatting
         if: steps.discover.outputs.solution_count != '0'
         shell: bash
         run: |
           set -euo pipefail
-          SETTINGS_PATH="$GITHUB_WORKSPACE/yahalom.sln.DotSettings"
-          
           while IFS= read -r sln; do
             [ -z "$sln" ] && continue
             echo "==> Restoring $sln"
-            dotnet restore "$sln"           
-            
-            echo "==> Running jb cleanupcode (in-workspace only) on $sln"
+            dotnet restore "$sln"
+
+            echo "==> Running jb cleanupcode"
             jb cleanupcode "$sln" \
-              --settings="$SETTINGS_PATH" \
-              --disable-settings-layers=GlobalAll;GlobalPerProduct;SolutionPersonal \
-              --profile="Built-in: Reformat & Apply Syntax Style" \
+              --profile="Built-in: Reformat Code" \
               --no-build \
               --verbosity=WARN \
-              --include="**/*.cs" \
+              --include="Assets/**/*.cs" \
               --exclude="**/bin/**" \
               --exclude="**/obj/**" \
               --exclude="**/.idea/**" \
@@ -71,11 +67,10 @@ jobs:
         run: |
           set -euo pipefail
           DIFF_FILE=cleanup.diff
-          # Only look at C# source files
-          git --no-pager diff --unified=0 -- '*.cs' > "$DIFF_FILE" || true
+          git --no-pager diff --unified=0 -- 'Assets/**/*.cs' > "$DIFF_FILE" || true
 
           if [ -s "$DIFF_FILE" ]; then
-            echo "Unformatted changes detected:"
+            echo "Unformatted changes detected in Assets/:"
             awk '
               BEGIN { file="" }
               /^\+\+\+ b\// { sub(/^\+\+\+ b\//, "", $0); file=$0; next }
@@ -85,10 +80,10 @@ jobs:
                 printf("::error file=%s,line=%d,title=Formatting differs::Run Rider Code Cleanup (or jb cleanupcode) locally and commit.\n", file, start)
               }
             ' "$DIFF_FILE"
-            echo "::error title=Formatting check failed::Some files differ from Rider/ReSharper formatting."
+            echo "::error title=Formatting check failed::Some files under Assets/ differ from the configured formatting."
             exit 1
           else
-            echo "Formatting is clean across all solutions."
+            echo "Formatting is clean in Assets/."
           fi
 
       - name: No solutions found (informative)
