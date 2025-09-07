@@ -6,16 +6,16 @@ namespace com.mapcolonies.yahalom.InitPipeline.InitUnits
 {
     public abstract class InitUnitBase : IInitUnit
     {
-        public string Name { get; }
-        public float Weight { get; }
-        public InitPolicy Policy { get; }
-
         protected InitUnitBase(string name, float weight, InitPolicy policy)
         {
             Name = name;
             Weight = weight;
             Policy = policy;
         }
+
+        public string Name { get; }
+        public float Weight { get; }
+        public InitPolicy Policy { get; }
 
         public abstract UniTask RunAsync();
 

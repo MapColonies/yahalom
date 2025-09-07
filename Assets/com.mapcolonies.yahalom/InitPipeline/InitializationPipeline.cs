@@ -15,9 +15,9 @@ namespace com.mapcolonies.yahalom.InitPipeline
 {
     public class InitializationPipeline
     {
-        private readonly PreloaderViewModel _preloader;
-        private List<InitStep> _initSteps;
         private readonly LifetimeScope _parent;
+        private readonly PreloaderViewModel _preloader;
+        private readonly List<InitStep> _initSteps;
 
         public InitializationPipeline(PreloaderViewModel preloader, LifetimeScope scope)
         {
@@ -27,12 +27,12 @@ namespace com.mapcolonies.yahalom.InitPipeline
             //TODO: update initialization steps
             _initSteps = new List<InitStep>
             {
-                new InitStep("PreInit", StepMode.Sequential, new IInitUnit[]
+                new("PreInit", StepMode.Sequential, new IInitUnit[]
                 {
                     new ActionUnit("Logging Init", 0.05f, InitPolicy.Fail, () => { return UniTask.Delay(1000); }),
                     new ActionUnit("Local Settings", 0.05f, InitPolicy.Fail, () => { return UniTask.Delay(1000); })
                 }),
-                new InitStep("ServicesInit", StepMode.Sequential, new IInitUnit[]
+                new("ServicesInit", StepMode.Sequential, new IInitUnit[]
                 {
                     new RegisterScopeUnit("WMTS", 0.1f, _parent, InitPolicy.Retry,
                         builder => { builder.Register<WmtsService>(Lifetime.Singleton); }, resolver =>
@@ -41,7 +41,7 @@ namespace com.mapcolonies.yahalom.InitPipeline
                             return default;
                         })
                 }),
-                new InitStep("FeaturesInit", StepMode.Sequential, new IInitUnit[]
+                new("FeaturesInit", StepMode.Sequential, new IInitUnit[]
                 {
                     new ActionUnit("Maps Feature", 0.25f, InitPolicy.Fail, () => { return UniTask.Delay(1000); })
                 })
@@ -50,17 +50,17 @@ namespace com.mapcolonies.yahalom.InitPipeline
 
         public async Task<UniTask> RunAsync(CancellationToken cancellationToken)
         {
-            float total = _initSteps.SelectMany(s => s.InitUnits).Sum(u => u.Weight);
-            float accumulated = 0f;
+            var total = _initSteps.SelectMany(s => s.InitUnits).Sum(u => u.Weight);
+            var accumulated = 0f;
 
-            foreach (InitStep step in _initSteps)
+            foreach (var step in _initSteps)
             {
                 Debug.Log($"Enter Init Step {step.Name}");
 
                 switch (step.Mode)
                 {
                     case StepMode.Sequential:
-                        foreach (IInitUnit initUnit in step.InitUnits)
+                        foreach (var initUnit in step.InitUnits)
                         {
                             await initUnit.RunAsync();
                             accumulated += initUnit.Weight / total;
@@ -69,10 +69,10 @@ namespace com.mapcolonies.yahalom.InitPipeline
 
                         break;
                     case StepMode.Parallel:
-                        float[] weights = step.InitUnits.Select(s => s.Weight / total).ToArray();
+                        var weights = step.InitUnits.Select(s => s.Weight / total).ToArray();
                         await UniTask.WhenAll(step.InitUnits.Select(u => u.RunAsync()));
 
-                        float block = weights.Sum();
+                        var block = weights.Sum();
                         accumulated += block;
                         _preloader.ReportProgress(step.Name, accumulated);
                         break;

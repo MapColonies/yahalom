@@ -12,7 +12,7 @@ namespace EditorTests
         {
             try
             {
-                GameObject go = new GameObject("TestObject");
+                var go = new GameObject("TestObject");
                 go.SetActive(false);
                 Assert.IsFalse(go.activeSelf, "GameObject should be inactive.");
                 Debug.Log("EditorTestScriptSimplePasses passed.");
@@ -27,9 +27,9 @@ namespace EditorTests
         [UnityTest]
         public IEnumerator EditorTestScriptWithEnumeratorPasses()
         {
-            GameObject go = new GameObject("MovableObject");
+            var go = new GameObject("MovableObject");
             go.transform.position = Vector3.zero;
-            Vector3 targetPosition = new Vector3(5, 0, 0);
+            var targetPosition = new Vector3(5, 0, 0);
             go.transform.position = targetPosition;
             yield return null;
 
