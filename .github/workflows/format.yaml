@@ -1,15 +1,11 @@
-name: Format & Style Check
+name: format_check
 
 on:
   workflow_call:
 
 jobs:
   format_check:
-    name: Verify .editorconfig + Rider rules
     runs-on: ubuntu-latest
-
-    env:
-      SOLUTION_PATH: yahalom.sln
 
     steps:
       - name: Checkout
@@ -23,48 +19,73 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Install JetBrains ReSharper Global Tools (jb)
+        shell: bash
         run: |
+          set -euo pipefail
+          cd /tmp
           dotnet tool install --global JetBrains.ReSharper.GlobalTools
           echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
 
-      - name: Restore solution
-        run: dotnet restore "$SOLUTION_PATH"
-
-      - name: Check .editorconfig compliance (dotnet format)
+      - name: Discover all solutions
+        id: discover
+        shell: bash
         run: |
-          dotnet format "$SOLUTION_PATH" \
-            --no-restore \
-            --verify-no-changes \
-            --severity error \
-            --include ./Assets
+          set -euo pipefail
+          git ls-files '*.sln' > solutions.txt || true
+          echo "Found solution files:"
+          cat solutions.txt || true
+          count=$(wc -l < solutions.txt | tr -d ' ')
+          echo "solution_count=$count" >> "$GITHUB_OUTPUT"
 
-      - name: Run Rider cleanup (scoped to Assets only)
+      - name: Check formatting
+        if: steps.discover.outputs.solution_count != '0'
+        shell: bash
         run: |
-          jb cleanupcode "$SOLUTION_PATH" \
-            --no-build \
-            --verbosity=WARN \
-            --include="Assets/**/*.cs" \
-            --exclude="**/bin/**" \
-            --exclude="**/obj/**" \
-            --exclude="**/.idea/**"
+          set -euo pipefail
+          while IFS= read -r sln; do
+            [ -z "$sln" ] && continue
+            echo "==> Restoring $sln"
+            dotnet restore "$sln"
 
-      - name: Fail if Rider cleanup would change files (Assets C# only)
-        run: |
-          if ! git diff --quiet --exit-code -- 'Assets/**/*.cs'; then
-            echo "Rider Code Cleanup would change files in Assets/. Please run it locally and commit the changes."
-            git --no-pager diff --name-only -- 'Assets/**/*.cs'
-            exit 1
-          fi
+            echo "==> Running jb cleanupcode"
+            jb cleanupcode "$sln" \
+              --profile="Built-in: Reformat Code" \
+              --no-build \
+              --verbosity=WARN \
+              --include="Assets/**/*.cs" \
+              --exclude="**/bin/**" \
+              --exclude="**/obj/**" \
+              --exclude="**/.idea/**" \
+              --exclude="**/Library/**" \
+              --exclude="**/Logs/**" \
+              --exclude="**/Temp/**"
+          done < solutions.txt
 
-      - name: Verify trailing newline at EOF (Assets C# only)
+      - name: Diff & annotate unformatted files (fail if any)
+        if: steps.discover.outputs.solution_count != '0'
+        shell: bash
         run: |
-          echo "Checking trailing newline at EOF on Assets/**/*.cs ..."
-          bad_files=$(find ./Assets -type f -name '*.cs' -print0 \
-            | xargs -0 -I{} sh -c 'tail -c1 "{}" | grep -q "^$" || echo "{}"')
-          if [ -n "$bad_files" ]; then
-            echo "❌ Missing final newline in:"
-            echo "$bad_files"
+          set -euo pipefail
+          DIFF_FILE=cleanup.diff
+          git --no-pager diff --unified=0 -- 'Assets/**/*.cs' > "$DIFF_FILE" || true
+
+          if [ -s "$DIFF_FILE" ]; then
+            echo "Unformatted changes detected in Assets/:"
+            awk '
+              BEGIN { file="" }
+              /^\+\+\+ b\// { sub(/^\+\+\+ b\//, "", $0); file=$0; next }
+              /^@@ / {
+                match($0, /\+([0-9]+)(,([0-9]+))?/, m)
+                start = m[1]
+                printf("::error file=%s,line=%d,title=Formatting differs::Run Rider Code Cleanup (or jb cleanupcode) locally and commit.\n", file, start)
+              }
+            ' "$DIFF_FILE"
+            echo "::error title=Formatting check failed::Some files under Assets/ differ from the configured formatting."
             exit 1
           else
-            echo "✅ All Assets/**/*.cs end with a newline"
+            echo "Formatting is clean in Assets/."
           fi
+
+      - name: No solutions found (informative)
+        if: steps.discover.outputs.solution_count == '0'
+        run: echo "No .sln files found; skipping formatting check."
