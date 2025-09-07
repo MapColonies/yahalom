@@ -2,10 +2,13 @@ name: Format
 
 on:
   workflow_call:
+  push:
+    branches: [ main, develop ]
+  pull_request:
 
 jobs:
   format_check:
-    name: Verify .NET formatting
+    name: Verify formatting
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -16,36 +19,35 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Run dotnet format (dry-run)
+      - name: Install JetBrains ReSharper Global Tools (jb)
         run: |
-          # Use dotnet format on the solution file
-          dotnet format yahalom.sln --verify-no-changes --verbosity diagnostic
+          dotnet tool install --global JetBrains.ReSharper.GlobalTools
+          echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
 
-      - name: Detect formatting changes (fallback check)
-        id: diff
+      - name: Restore (ensure solution loads cleanly)
+        run: dotnet restore ./yahalom.sln
+
+      - name: Run Rider cleanup
         run: |
-          LIST_FILE="$RUNNER_TEMP/files_needing_format.txt"
-          CHANGED="$(git status --porcelain --untracked-files=no -- '*.cs' '*.csproj' '*.sln' | awk '{print $2}' | sort -u)"
-          if [[ -n "$CHANGED" ]]; then
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-            echo "$CHANGED" | tee "$LIST_FILE"
-            echo "list_file=$LIST_FILE" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "list_file=" >> "$GITHUB_OUTPUT"
+          jb cleanupcode ./yahalom.sln \
+            --no-build \
+            --verbosity=WARN
+
+      - name: Check for changes and summarize
+        run: |
+          if ! git diff --quiet; then
+            echo "### ⚠️ Formatting changes detected by Rider/ReSharper" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "The following files are not correctly formatted:" >> "$GITHUB_STEP_SUMMARY"
+            git diff --name-only >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "➡️ Run \`jb cleanupcode yahalom.sln\` locally and commit the changes." >> "$GITHUB_STEP_SUMMARY"
+            echo
+            echo "Files needing formatting:"
+            git diff --name-only
+            echo
+            echo "Diff preview (truncated):"
+            # Show a truncated unified diff in logs for quick inspection; full diff available via 'git diff'
+            git diff --color | head -n 500
+            exit 1
           fi
-
-      - name: Summarize unformatted files
-        if: failure()
-        run: |
-          {
-            echo "### ⚠️ Formatting check failed"
-            echo
-            echo "Code formatting issues detected."
-            echo
-            echo "➡️ Run **dotnet format** locally and commit the changes."
-          } >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Fail job if formatting needed
-        if: failure()
-        run: exit 1
