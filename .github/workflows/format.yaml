@@ -2,6 +2,9 @@ name: Format
 
 on:
   workflow_call:
+  push:
+    branches: [ main, develop ]
+  pull_request:
 
 jobs:
   format_check:
@@ -24,8 +27,52 @@ jobs:
           echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
           "$HOME/.dotnet/tools/jb" --version
 
-      - name: Restore solution
-        run: dotnet restore "./yahalom.sln"
+      # ✅ Robust restore: target the solution explicitly if present,
+      # otherwise restore each of the four projects by absolute path.
+      - name: Restore
+        run: |
+          set -euo pipefail
+          cd "$GITHUB_WORKSPACE"
+
+          # Helper to locate a project by basename anywhere in the repo (excluding bin/obj)
+          locate() {
+            local name="$1"
+            # Find the first match; warn if multiple
+            mapfile -t matches < <(find "$GITHUB_WORKSPACE" -type f -name "$name" \
+              -not -path "*/bin/*" -not -path "*/obj/*" | sort)
+            if [ "${#matches[@]}" -eq 0 ]; then
+              echo ""
+              return 0
+            fi
+            if [ "${#matches[@]}" -gt 1 ]; then
+              echo "WARNING: Multiple matches for $name, using: ${matches[0]}" >&2
+            fi
+            echo "${matches[0]}"
+          }
+
+          if [ -f "yahalom.sln" ]; then
+            echo "Restoring solution: $GITHUB_WORKSPACE/yahalom.sln"
+            dotnet restore "$(realpath "yahalom.sln")"
+          else
+            echo "Solution not found; restoring specific projects…"
+            declare -a proj_names=(
+              "yahalom.csproj"
+              "PlayModeTests.csproj"
+              "EditorTests.csproj"
+              "com.mapcolonies.core.csproj"
+            )
+
+            for name in "${proj_names[@]}"; do
+              p="$(locate "$name")"
+              if [ -z "$p" ]; then
+                echo "WARNING: $name not found; skipping restore for it."
+                continue
+              fi
+              abs="$(realpath "$p")"
+              echo "dotnet restore: $abs"
+              dotnet restore "$abs"
+            done
+          fi
 
       - name: Format selected projects with ReSharper
         run: |
@@ -33,15 +80,34 @@ jobs:
           JB="$HOME/.dotnet/tools/jb"
           cd "$GITHUB_WORKSPACE"
 
-          projects=(
+          locate() {
+            local name="$1"
+            mapfile -t matches < <(find "$GITHUB_WORKSPACE" -type f -name "$name" \
+              -not -path "*/bin/*" -not -path "*/obj/*" | sort)
+            if [ "${#matches[@]}" -eq 0 ]; then
+              echo ""
+              return 0
+            fi
+            if [ "${#matches[@]}" -gt 1 ]; then
+              echo "WARNING: Multiple matches for $name, using: ${matches[0]}" >&2
+            fi
+            echo "${matches[0]}"
+          }
+
+          declare -a proj_names=(
             "yahalom.csproj"
             "PlayModeTests.csproj"
             "EditorTests.csproj"
             "com.mapcolonies.core.csproj"
           )
 
-          for proj in "${projects[@]}"; do
-            abs="$(realpath "$proj")"
+          for name in "${proj_names[@]}"; do
+            p="$(locate "$name")"
+            if [ -z "$p" ]; then
+              echo "WARNING: $name not found; skipping formatting."
+              continue
+            fi
+            abs="$(realpath "$p")"
             echo "Formatting project: $abs"
             "$JB" cleanupcode "$abs" \
               --profile="Built-in: Reformat Code" \
