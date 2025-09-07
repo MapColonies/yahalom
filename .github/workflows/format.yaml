@@ -42,7 +42,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          SETTINGS_PATH="$GITHUB_WORKSPACE/yahalom.sln.DotSettings"
           while IFS= read -r sln; do
             [ -z "$sln" ] && continue
             echo "==> Restoring $sln"
@@ -50,9 +49,7 @@ jobs:
 
             echo "==> Running jb cleanupcode"
             jb cleanupcode "$sln" \
-              --settings="$SETTINGS_PATH" \
-              --disable-settings-layers=GlobalAll;GlobalPerProduct;SolutionPersonal \
-              --profile="Built-in: Reformat & Apply Syntax Style" \
+              --profile="Built-in: Reformat Code" \
               --no-build \
               --verbosity=WARN \
               --include="Assets/**/*.cs" \
