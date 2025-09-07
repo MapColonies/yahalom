@@ -42,13 +42,18 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          SETTINGS_PATH="$GITHUB_WORKSPACE/yahalom.sln.DotSettings"
+          
           while IFS= read -r sln; do
             [ -z "$sln" ] && continue
             echo "==> Restoring $sln"
             dotnet restore "$sln"           
+            
             echo "==> Running jb cleanupcode (in-workspace only) on $sln"
             jb cleanupcode "$sln" \
-              --profile="Built-in: Reformat Code" \
+              --settings="$SETTINGS_PATH" \
+              --disable-settings-layers=GlobalAll;GlobalPerProduct;SolutionPersonal \
+              --profile="Built-in: Reformat & Apply Syntax Style" \
               --no-build \
               --verbosity=WARN \
               --include="**/*.cs" \
