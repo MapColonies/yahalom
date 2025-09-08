@@ -14,6 +14,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
 {
     public class AppStartUpController : IAsyncStartable
     {
+        private readonly LifetimeScope _parentLifetimeScope;
         private readonly InitializationPipeline _pipeline;
         private readonly LifetimeScope _parentLifetimeScope;
         private readonly List<InitStep> _initSteps;
@@ -47,7 +48,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
             };
         }
 
-        async UniTask IAsyncStartable.StartAsync(CancellationToken cancellation = new CancellationToken())
+        async UniTask IAsyncStartable.StartAsync(CancellationToken cancellation = new())
         {
             Debug.Log("Start initializing");
             await _pipeline.RunAsync(_initSteps);
