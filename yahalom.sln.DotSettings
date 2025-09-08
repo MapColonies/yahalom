@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<wpf:ResourceDictionary
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:s="clr-namespace:JetBrains.ReSharper.Psi.CodeStyle;assembly=JetBrains.ReSharper.Psi"
+  xmlns:sc="clr-namespace:JetBrains.ReSharper.Psi.CSharp.CodeStyle;assembly=JetBrains.ReSharper.Psi.CSharp"
+  xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:cs="urn:schemas-jetbrains-com:settings-storage-xaml">
+
+  <!-- ===== C# Formatting: keep line breaks; braces on next line; spaces; alignment; wrapping; indents ===== -->
+  <s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/KEEP_LINE_BREAKS/@EntryValue">True</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/KEEP_SIMPLE_BLOCKS_IN_ONE_LINE/@EntryValue">False</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/KEEP_SIMPLE_METHODS_IN_ONE_LINE/@EntryValue">False</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/KEEP_SIMPLE_PROPERTIES_IN_ONE_LINE/@EntryValue">False</s:Boolean>
+
+  <!-- Braces placement -->
+  <sc:BraceFormatStyle x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/BRACES_FOR_TYPES/@EntryValue">NEXT_LINE</sc:BraceFormatStyle>
+  <sc:BraceFormatStyle x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/BRACES_FOR_METHODS/@EntryValue">NEXT_LINE</sc:BraceFormatStyle>
+  <sc:BraceFormatStyle x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/BRACES_FOR_ANONYMOUS_METHOD/@EntryValue">NEXT_LINE</sc:BraceFormatStyle>
+  <sc:BraceFormatStyle x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/BRACES_FOR_CONTROL_STATEMENT/@EntryValue">NEXT_LINE</sc:BraceFormatStyle>
+
+  <!-- Spaces -->
+  <s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/SPACE_AROUND_ASSIGNMENT_OP/@EntryValue">True</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/SPACE_AROUND_LOGICAL_OP/@EntryValue">True</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/SPACE_AROUND_EQUALITY_OP/@EntryValue">True</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/SPACE_WITHIN_METHOD_CALL_PARENTHESES/@EntryValue">False</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/SPACE_WITHIN_METHOD_DECLARATION_PARENTHESES/@EntryValue">False</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/SPACE_BEFORE_METHOD_CALL_PARENTHESES/@EntryValue">False</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/SPACE_BEFORE_METHOD_PARENTHESES/@EntryValue">False</s:Boolean>
+
+  <!-- Alignment -->
+  <s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/ALIGN_MULTILINE_PARAMETER/@EntryValue">True</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/ALIGN_MULTILINE_ARGUMENT/@EntryValue">True</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/ALIGN_MULTILINE_BINARY_EXPRESSIONS_CHAIN/@EntryValue">True</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/ALIGN_MULTILINE_EXTENDS_LIST/@EntryValue">True</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/ALIGN_MULTILINE_ARRAY_AND_OBJECT_INITIALIZER/@EntryValue">True</s:Boolean>
+
+  <!-- Wrapping -->
+  <s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/WRAP_LONG_LINES/@EntryValue">False</s:Boolean>
+
+  <!-- Indentation -->
+  <s:Int64   x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/INDENT_SIZE/@EntryValue">4</s:Int64>
+  <s:Int64   x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/TAB_WIDTH/@EntryValue">4</s:Int64>
+  <s:Int64   x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/CONTINUATION_INDENT_MULTIPLIER/@EntryValue">2</s:Int64>
+  <s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/USE_TABS/@EntryValue">False</s:Boolean>
+
+  <!-- ===== C# Code Style: var usage; qualification; usings; expression bodies; preferences ===== -->
+  <!-- var preferences -->
+  <s:Boolean x:Key="/Default/CodeStyle/CSharp/UseVarForBuiltInTypes/@EntryValue">True</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeStyle/CSharp/UseVarForSimpleTypes/@EntryValue">True</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeStyle/CSharp/UseVarWhereApparent/@EntryValue">True</s:Boolean>
+
+  <!-- qualification -->
+  <s:Boolean x:Key="/Default/CodeStyle/CSharpQualifyMembers/QUALIFY_FIELD_ACCESS/@EntryValue">False</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeStyle/CSharpQualifyMembers/QUALIFY_PROPERTY_ACCESS/@EntryValue">False</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeStyle/CSharpQualifyMembers/QUALIFY_METHOD_ACCESS/@EntryValue">False</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeStyle/CSharp/PREFER_THIS_QUALIFIER/@EntryValue">False</s:Boolean>
+
+  <!-- usings -->
+  <s:Boolean x:Key="/Default/CodeStyle/CSharp/PLACE_USINGS_INSIDE_NAMESPACE/@EntryValue">False</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeStyle/CSharp/SortUsings/@EntryValue">True</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeStyle/CSharp/SeparateUsingGroups/@EntryValue">True</s:Boolean>
+
+  <!-- expression bodies -->
+  <s:String  x:Key="/Default/CodeStyle/CSharp/ExpressionBody/Property/@EntryValue">WhenPossible</s:String>
+  <s:String  x:Key="/Default/CodeStyle/CSharp/ExpressionBody/Method/@EntryValue">Never</s:String>
+  <s:String  x:Key="/Default/CodeStyle/CSharp/ExpressionBody/Constructor/@EntryValue">Never</s:String>
+
+  <!-- operator preferences -->
+  <s:Boolean x:Key="/Default/CodeStyle/CSharp/PreferNullCoalescingOperator/@EntryValue">True</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeStyle/CSharp/PreferTernaryOperator/@EntryValue">True</s:Boolean>
+
+  <!-- ===== Naming: PascalCase for types/public; _camelCase for private/readonly; I* for interfaces ===== -->
+  <!-- Predefined rules keys vary across Rider versions; these cover modern ReSharper -->
+  <s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/PredefinedNamingRules/=Types/@EntryIndexedValue">PascalCase</s:String>
+  <s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/PredefinedNamingRules/=PublicFields/@EntryIndexedValue">PascalCase</s:String>
+  <s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/PredefinedNamingRules/=PublicStaticReadonly/@EntryIndexedValue">PascalCase</s:String>
+  <s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/PredefinedNamingRules/=PrivateInstanceFields/@EntryIndexedValue">_camelCase</s:String>
+  <s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/PredefinedNamingRules/=PrivateStaticReadonly/@EntryIndexedValue">_camelCase</s:String>
+  <s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/PredefinedNamingRules/=Parameters/@EntryIndexedValue">camelCase</s:String>
+  <s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/PredefinedNamingRules/=Locals/@EntryIndexedValue">camelCase</s:String>
+  <s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/PredefinedNamingRules/=Interfaces/@EntryIndexedValue">IPascalCase</s:String>
+
+  <!-- Make this the team-shared (solution) layer -->
+  <s:Boolean x:Key="/Default/Environment/SettingsMigration/IsMigrated/@EntryValue">True</s:Boolean>
+
+</wpf:ResourceDictionary>
