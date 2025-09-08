@@ -7,11 +7,8 @@ namespace com.mapcolonies.core
     [RequireComponent(typeof(UIDocument))]
     public abstract class BaseMvvmView<T> : MonoBehaviour where T : class
     {
-        [SerializeField] private UIDocument _uiDocument;
         private T _viewModel;
-
         [SerializeField] private UIDocument _uiDocument;
-        protected VisualElement RootVisualElement { get; private set; }
 
         protected VisualElement RootVisualElement
         {

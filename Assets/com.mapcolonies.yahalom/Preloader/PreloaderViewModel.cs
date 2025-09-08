@@ -6,12 +6,14 @@ namespace com.mapcolonies.yahalom.Preloader
     [Serializable]
     public class PreloaderViewModel : IDisposable
     {
+        [SerializeField]
         public string Name
         {
             get;
             private set;
         }
 
+        [SerializeField]
         public float Progress
         {
             get;

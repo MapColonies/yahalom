@@ -13,8 +13,6 @@ namespace com.mapcolonies.yahalom.InitPipeline.InitUnits
         private readonly Action<IContainerBuilder> _installers;
         private readonly Func<IObjectResolver, UniTask> _afterBuild;
 
-        private readonly Action<IContainerBuilder> _installers;
-        private readonly LifetimeScope _parent;
         private LifetimeScope _child;
 
         public RegisterScopeUnit(string name, float weight, LifetimeScope parentScope, InitPolicy policy,

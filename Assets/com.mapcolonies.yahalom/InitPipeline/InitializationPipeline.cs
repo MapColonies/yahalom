@@ -1,14 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using com.mapcolonies.core.Services;
 using com.mapcolonies.yahalom.InitPipeline.InitSteps;
 using com.mapcolonies.yahalom.InitPipeline.InitUnits;
 using com.mapcolonies.yahalom.Preloader;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using VContainer;
+using VContainer.Unity;
 
 namespace com.mapcolonies.yahalom.InitPipeline
 {
