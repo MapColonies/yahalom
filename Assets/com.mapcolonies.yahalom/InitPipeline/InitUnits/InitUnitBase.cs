@@ -13,9 +13,20 @@ namespace com.mapcolonies.yahalom.InitPipeline.InitUnits
             Policy = policy;
         }
 
-        public string Name { get; }
-        public float Weight { get; }
-        public InitPolicy Policy { get; }
+        public string Name
+        {
+            get;
+        }
+
+        public float Weight
+        {
+            get;
+        }
+
+        public InitPolicy Policy
+        {
+            get;
+        }
 
         public abstract UniTask RunAsync();
 

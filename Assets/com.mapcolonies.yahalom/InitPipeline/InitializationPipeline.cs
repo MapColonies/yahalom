@@ -29,13 +29,22 @@ namespace com.mapcolonies.yahalom.InitPipeline
             {
                 new("PreInit", StepMode.Sequential, new IInitUnit[]
                 {
-                    new ActionUnit("Logging Init", 0.05f, InitPolicy.Fail, () => { return UniTask.Delay(1000); }),
-                    new ActionUnit("Local Settings", 0.05f, InitPolicy.Fail, () => { return UniTask.Delay(1000); })
+                    new ActionUnit("Logging Init", 0.05f, InitPolicy.Fail, () =>
+                    {
+                        return UniTask.Delay(1000);
+                    }),
+                    new ActionUnit("Local Settings", 0.05f, InitPolicy.Fail, () =>
+                    {
+                        return UniTask.Delay(1000);
+                    })
                 }),
                 new("ServicesInit", StepMode.Sequential, new IInitUnit[]
                 {
                     new RegisterScopeUnit("WMTS", 0.1f, _parent, InitPolicy.Retry,
-                        builder => { builder.Register<WmtsService>(Lifetime.Singleton); }, resolver =>
+                        builder =>
+                        {
+                            builder.Register<WmtsService>(Lifetime.Singleton);
+                        }, resolver =>
                         {
                             Task.Run(resolver.Resolve<WmtsService>().Init);
                             return default;
@@ -43,7 +52,10 @@ namespace com.mapcolonies.yahalom.InitPipeline
                 }),
                 new("FeaturesInit", StepMode.Sequential, new IInitUnit[]
                 {
-                    new ActionUnit("Maps Feature", 0.25f, InitPolicy.Fail, () => { return UniTask.Delay(1000); })
+                    new ActionUnit("Maps Feature", 0.25f, InitPolicy.Fail, () =>
+                    {
+                        return UniTask.Delay(1000);
+                    })
                 })
             };
         }

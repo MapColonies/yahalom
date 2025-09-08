@@ -9,7 +9,12 @@ namespace com.mapcolonies.core
     {
         [SerializeField] private UIDocument _uiDocument;
         private T _viewModel;
-        protected VisualElement RootVisualElement { get; private set; }
+
+        protected VisualElement RootVisualElement
+        {
+            get;
+            private set;
+        }
 
         [Inject]
         public void Construct(T viewModel)
