@@ -50,17 +50,17 @@ namespace com.mapcolonies.yahalom.InitPipeline
 
         public async Task<UniTask> RunAsync(CancellationToken cancellationToken)
         {
-            var total = _initSteps.SelectMany(s => s.InitUnits).Sum(u => u.Weight);
-            var accumulated = 0f;
+            float total = _initSteps.SelectMany(s => s.InitUnits).Sum(u => u.Weight);
+            float accumulated = 0f;
 
-            foreach (var step in _initSteps)
+            foreach (InitStep step in _initSteps)
             {
                 Debug.Log($"Enter Init Step {step.Name}");
 
                 switch (step.Mode)
                 {
                     case StepMode.Sequential:
-                        foreach (var initUnit in step.InitUnits)
+                        foreach (IInitUnit initUnit in step.InitUnits)
                         {
                             await initUnit.RunAsync();
                             accumulated += initUnit.Weight / total;
@@ -69,10 +69,10 @@ namespace com.mapcolonies.yahalom.InitPipeline
 
                         break;
                     case StepMode.Parallel:
-                        var weights = step.InitUnits.Select(s => s.Weight / total).ToArray();
+                        float[] weights = step.InitUnits.Select(s => s.Weight / total).ToArray();
                         await UniTask.WhenAll(step.InitUnits.Select(u => u.RunAsync()));
 
-                        var block = weights.Sum();
+                        float block = weights.Sum();
                         accumulated += block;
                         _preloader.ReportProgress(step.Name, accumulated);
                         break;

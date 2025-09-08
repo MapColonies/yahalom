@@ -12,8 +12,8 @@ namespace PlayModeTests
         {
             try
             {
-                var expectedName = "TestObject";
-                var go = new GameObject(expectedName);
+                string expectedName = "TestObject";
+                GameObject go = new GameObject(expectedName);
                 Assert.AreEqual(expectedName, go.name);
                 Debug.Log("GameObject_IsCreatedWithCorrectName passed.");
             }
@@ -27,9 +27,9 @@ namespace PlayModeTests
         [UnityTest]
         public IEnumerator GameObject_MovesAfterOneFrame()
         {
-            var go = new GameObject("MovingObject");
+            GameObject go = new GameObject("MovingObject");
             go.transform.position = Vector3.zero;
-            var targetPosition = new Vector3(0, 5, 0);
+            Vector3 targetPosition = new Vector3(0, 5, 0);
             go.transform.position = targetPosition;
             yield return null;
 
@@ -48,8 +48,8 @@ namespace PlayModeTests
         [UnityTest]
         public IEnumerator GameObject_WithRigidbody_FallsWithGravity()
         {
-            var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            var rb = go.AddComponent<Rigidbody>();
+            GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            Rigidbody rb = go.AddComponent<Rigidbody>();
             go.transform.position = new Vector3(0, 10, 0);
 
             yield return new WaitForSeconds(0.5f);
