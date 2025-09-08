@@ -1,81 +1,91 @@
-name: Format
+name: format_check
 
 on:
   workflow_call:
 
 jobs:
   format_check:
-    name: Verify Rider formatting
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: 8.0.x
 
       - name: Install JetBrains ReSharper Global Tools (jb)
+        shell: bash
         run: |
+          set -euo pipefail
+          cd /tmp
           dotnet tool install --global JetBrains.ReSharper.GlobalTools
           echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
 
-      - name: Run Rider cleanup (dry-check via diff)
+      - name: Discover all solutions
+        id: discover
+        shell: bash
         run: |
-          jb cleanupcode \
-            --profile="Built-in: Reformat Code" \
-            --no-build \
-            --verbosity=WARN \
-            --include="**/*.cs" \
-            --exclude="**/bin/**" \
-            --exclude="**/obj/**" \
-            --exclude="**/.idea/**" \
-            .
+          set -euo pipefail
+          git ls-files '*.sln' > solutions.txt || true
+          echo "Found solution files:"
+          cat solutions.txt || true
+          count=$(wc -l < solutions.txt | tr -d ' ')
+          echo "solution_count=$count" >> "$GITHUB_OUTPUT"
 
-      - name: Detect formatting changes (code files only)
-        id: diff
+      - name: Check formatting
+        if: steps.discover.outputs.solution_count != '0'
+        shell: bash
         run: |
-          LIST_FILE="$RUNNER_TEMP/files_needing_format.txt"
-          CHANGED="$(git status --porcelain --untracked-files=no -- '*.cs' '*.csproj' '*.sln' | awk '{print $2}' | sort -u)"
-          if [[ -n "$CHANGED" ]]; then
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-            echo "$CHANGED" | tee "$LIST_FILE"
-            echo "list_file=$LIST_FILE" >> "$GITHUB_OUTPUT"
+          set -euo pipefail
+          while IFS= read -r sln; do
+            [ -z "$sln" ] && continue
+            echo "==> Restoring $sln"
+            dotnet restore "$sln"
+
+            echo "==> Running jb cleanupcode"
+            jb cleanupcode "$sln" \
+              --profile="Built-in: Reformat Code" \
+              --no-build \
+              --verbosity=WARN \
+              --include="Assets/**/*.cs" \
+              --exclude="**/bin/**" \
+              --exclude="**/obj/**" \
+              --exclude="**/.idea/**" \
+              --exclude="**/Library/**" \
+              --exclude="**/Logs/**" \
+              --exclude="**/Temp/**"
+          done < solutions.txt
+
+      - name: Diff & annotate unformatted files (fail if any)
+        if: steps.discover.outputs.solution_count != '0'
+        shell: bash
+        run: |
+          set -euo pipefail
+          DIFF_FILE=cleanup.diff
+          git --no-pager diff --unified=0 -- 'Assets/**/*.cs' > "$DIFF_FILE" || true
+
+          if [ -s "$DIFF_FILE" ]; then
+            echo "Unformatted changes detected in Assets/:"
+            awk '
+              BEGIN { file="" }
+              /^\+\+\+ b\// { sub(/^\+\+\+ b\//, "", $0); file=$0; next }
+              /^@@ / {
+                match($0, /\+([0-9]+)(,([0-9]+))?/, m)
+                start = m[1]
+                printf("::error file=%s,line=%d,title=Formatting differs::Run Rider Code Cleanup (or jb cleanupcode) locally and commit.\n", file, start)
+              }
+            ' "$DIFF_FILE"
+            echo "::error title=Formatting check failed::Some files under Assets/ differ from the configured formatting."
+            exit 1
           else
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "list_file=" >> "$GITHUB_OUTPUT"
+            echo "Formatting is clean in Assets/."
           fi
 
-      - name: Summarize unformatted files
-        if: steps.diff.outputs.changed == 'true'
-        run: |
-          {
-            echo "### ❌ Formatting check failed"
-            echo
-            echo "The following code files are not formatted properly:"
-            echo
-            echo '```'
-            cat "${{ steps.diff.outputs.list_file }}"
-            echo '```'
-            echo
-            echo "➡️ Run Rider **Code Cleanup** (Built-in: *Reformat Code*) locally and commit."
-          } >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Annotate files in Checks UI
-        if: steps.diff.outputs.changed == 'true'
-        run: |
-          while IFS= read -r f; do
-            echo "::error file=$f,title=Not formatted::Run Rider Code Cleanup (Built-in: Reformat Code) and commit."
-          done < "${{ steps.diff.outputs.list_file }}"
-
-      - name: Revert any changes (always clean workspace)
-        if: always()
-        run: |
-          git restore --staged .
-          git checkout -- .
-          git clean -fd
-
-      - name: Fail job if formatting needed
-        if: steps.diff.outputs.changed == 'true'
-        run: exit 1
+      - name: No solutions found (informative)
+        if: steps.discover.outputs.solution_count == '0'
+        run: echo "No .sln files found; skipping formatting check."

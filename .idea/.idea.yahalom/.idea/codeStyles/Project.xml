@@ -21,6 +21,9 @@
       <option name="ALIGN_MULTILINE_BINARY_OPERATION" value="true" />
       <option name="ALIGN_MULTILINE_EXTENDS_LIST" value="true" />
       <option name="ALIGN_MULTILINE_ARRAY_INITIALIZER_EXPRESSION" value="true" />
+	  <option name="WRAP_LONG_LINES" value="true" />
+	  <option name="RIGHT_MARGIN" value="999" />
+
       <indentOptions>
         <option name="USE_TAB_CHARACTER" value="false" />
         <option name="SMART_TABS" value="false" />
@@ -31,9 +34,9 @@
     </codeStyleSettings>
 
     <CSharpCodeStyleSettings>
-      <option name="VAR_FOR_LOCALS" value="true" />
-      <option name="VAR_FOR_BUILTIN_TYPES" value="true" />
-      <option name="VAR_FOR_SIMPLE_TYPES" value="true" />
+      <option name="VAR_FOR_LOCALS" value="false" />
+      <option name="VAR_FOR_BUILTIN_TYPES" value="false" />
+      <option name="VAR_FOR_SIMPLE_TYPES" value="false" />
 
       <option name="QUALIFY_FIELD_ACCESS" value="false" />
       <option name="QUALIFY_PROPERTY_ACCESS" value="false" />
