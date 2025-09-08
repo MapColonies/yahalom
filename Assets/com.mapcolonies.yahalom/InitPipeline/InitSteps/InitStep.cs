@@ -12,7 +12,11 @@ namespace com.mapcolonies.yahalom.InitPipeline.InitSteps
             InitUnits = units;
         }
 
-        public string Name { get; set; }
+        public string Name
+        {
+            get;
+            set;
+        }
 
         public StepMode Mode
         {
