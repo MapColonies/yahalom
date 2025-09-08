@@ -21,7 +21,8 @@
       <option name="ALIGN_MULTILINE_BINARY_OPERATION" value="true" />
       <option name="ALIGN_MULTILINE_EXTENDS_LIST" value="true" />
       <option name="ALIGN_MULTILINE_ARRAY_INITIALIZER_EXPRESSION" value="true" />
-	  <option name="WRAP_LONG_LINES" value="false" />
+	  <option name="WRAP_LONG_LINES" value="true" />
+	  <option name="RIGHT_MARGIN" value="999" />
 
       <indentOptions>
         <option name="USE_TAB_CHARACTER" value="false" />
