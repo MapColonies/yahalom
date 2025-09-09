@@ -14,6 +14,28 @@ namespace PlayModeTests.InitPipelineTests
     {
         private LifetimeScope _parentScope;
 
+        #region Test Controll Flow
+
+        [SetUp]
+        public void SetUp()
+        {
+            // Create a GameObject with a LifetimeScope to act as the parent
+            GameObject go = new GameObject("ParentScope");
+            _parentScope = go.AddComponent<LifetimeScope>();
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            if (_parentScope != null)
+            {
+                GameObject.DestroyImmediate(_parentScope.gameObject);
+                _parentScope = null;
+            }
+        }
+
+        #endregion
+        
         #region ActionUnitTests
 
         [Test(Description = "Ensures that the provided action is executed when RunAsync is called.")]
@@ -84,27 +106,25 @@ namespace PlayModeTests.InitPipelineTests
             Assert.AreEqual(2, callCount, "Action should be executed twice (fail then retry)");
         }
 
+        [Test(Description = "Ensures that actions are retried once when InitPolicy is Retry and two attempts fails.")]
+        public async Task Test_RunAsync_RetryPolicy_ShouldRetryAndFail()
+        {
+            // Arrange
+            int callCount = 0;
+            Func<UniTask> action = () =>
+            {
+                throw new InvalidOperationException("First call fails");
+            };
+
+            ActionUnit unit = new ActionUnit("RetryUnit", 1.0f, InitPolicy.Retry, action);
+
+            // Assert
+            Assert.ThrowsAsync<InvalidOperationException>(async () => await unit.RunAsync());
+        }
+        
         #endregion
 
         #region RegisterScopeUnitTests
-
-        [SetUp]
-        public void SetUp()
-        {
-            // Create a GameObject with a LifetimeScope to act as the parent
-            GameObject go = new GameObject("ParentScope");
-            _parentScope = go.AddComponent<LifetimeScope>();
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            if (_parentScope != null)
-            {
-                GameObject.DestroyImmediate(_parentScope.gameObject);
-                _parentScope = null;
-            }
-        }
 
         [Test(Description =
             "Verifies that RunAsync creates a child scope, executes afterBuild callback, and registers dependencies.")]
@@ -150,7 +170,7 @@ namespace PlayModeTests.InitPipelineTests
         public async Task Dispose_ShouldCleanChildScope()
         {
             // Arrange
-            var unit = new RegisterScopeUnit(
+            RegisterScopeUnit unit = new RegisterScopeUnit(
                 "DisposableScope",
                 1.0f,
                 _parentScope,
