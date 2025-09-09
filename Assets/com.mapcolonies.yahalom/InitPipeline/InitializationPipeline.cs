@@ -5,6 +5,7 @@ using com.mapcolonies.yahalom.InitPipeline.InitUnits;
 using com.mapcolonies.yahalom.Preloader;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using VContainer.Unity;
 
 namespace com.mapcolonies.yahalom.InitPipeline
 {
