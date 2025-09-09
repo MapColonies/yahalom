@@ -59,14 +59,20 @@ namespace PlayModeTests.InitPipelineTests
         {
             ActionUnit unit = new ActionUnit("Test", 1f, InitPolicy.Fail, () => throw new ArgumentNullException());
 
-            Assert.ThrowsAsync<ArgumentNullException>(async () => { await unit.RunAsync(); });
+            Assert.ThrowsAsync<ArgumentNullException>(async () =>
+            {
+                await unit.RunAsync();
+            });
         }
 
         [Test(Description = "Checks that exceptions are propagated when InitPolicy is set to Fail.")]
         public void RunAsync_WithFailPolicy_ShouldPropagateException()
         {
             ActionUnit unit = new ActionUnit("Test", 1f, InitPolicy.Fail,
-                () => { throw new InvalidOperationException("boom"); });
+                () =>
+                {
+                    throw new InvalidOperationException("boom");
+                });
 
             Assert.ThrowsAsync<InvalidOperationException>(async () => await unit.RunAsync());
         }
@@ -75,7 +81,10 @@ namespace PlayModeTests.InitPipelineTests
         public async Task RunAsync_WithContinuePolicy_ShouldSwallowException()
         {
             ActionUnit unit = new ActionUnit("Test", 1f, InitPolicy.Ignore,
-                () => { throw new InvalidOperationException("boom"); });
+                () =>
+                {
+                    throw new InvalidOperationException("boom");
+                });
 
             // Should not throw
             await unit.RunAsync();
@@ -144,7 +153,10 @@ namespace PlayModeTests.InitPipelineTests
                 1.0f,
                 _parentScope,
                 InitPolicy.Fail,
-                installers: builder => { builder.RegisterInstance("HelloWorld"); },
+                installers: builder =>
+                {
+                    builder.RegisterInstance("HelloWorld");
+                },
                 afterBuild: afterBuild
             );
 
@@ -175,7 +187,10 @@ namespace PlayModeTests.InitPipelineTests
                 1.0f,
                 _parentScope,
                 InitPolicy.Fail,
-                installers: builder => { builder.RegisterInstance(123); });
+                installers: builder =>
+                {
+                    builder.RegisterInstance(123);
+                });
 
             await unit.RunAsync();
 

@@ -14,8 +14,8 @@ namespace com.mapcolonies.yahalom.EntryPoint
 {
     public class AppStartUpController : IAsyncStartable
     {
-        private readonly InitializationPipeline _pipeline;
         private readonly LifetimeScope _parentLifetimeScope;
+        private readonly InitializationPipeline _pipeline;
         private readonly List<InitStep> _initSteps;
 
         public AppStartUpController(InitializationPipeline initializationPipeline, LifetimeScope scope)
@@ -26,14 +26,23 @@ namespace com.mapcolonies.yahalom.EntryPoint
                 new InitStep("PreInit", StepMode.Sequential, new IInitUnit[]
                 {
                     new ActionUnit("Logging Init", 0.05f, InitPolicy.Fail,
-                        () => { return Cysharp.Threading.Tasks.UniTask.Delay(1000); }),
+                        () =>
+                        {
+                            return Cysharp.Threading.Tasks.UniTask.Delay(1000);
+                        }),
                     new ActionUnit("Local Settings", 0.05f, InitPolicy.Fail,
-                        () => { return Cysharp.Threading.Tasks.UniTask.Delay(1000); })
+                        () =>
+                        {
+                            return Cysharp.Threading.Tasks.UniTask.Delay(1000);
+                        })
                 }),
                 new InitStep("ServicesInit", StepMode.Sequential, new IInitUnit[]
                 {
                     new RegisterScopeUnit("WMTS", 0.1f, scope, InitPolicy.Retry,
-                        builder => { builder.Register<WmtsService>(Lifetime.Singleton); }, resolver =>
+                        builder =>
+                        {
+                            builder.Register<WmtsService>(Lifetime.Singleton);
+                        }, resolver =>
                         {
                             Task.Run(resolver.Resolve<WmtsService>().Init);
                             return default;
@@ -42,12 +51,15 @@ namespace com.mapcolonies.yahalom.EntryPoint
                 new InitStep("FeaturesInit", StepMode.Sequential, new IInitUnit[]
                 {
                     new ActionUnit("Maps Feature", 0.25f, InitPolicy.Fail,
-                        () => { return Cysharp.Threading.Tasks.UniTask.Delay(1000); })
+                        () =>
+                        {
+                            return Cysharp.Threading.Tasks.UniTask.Delay(1000);
+                        })
                 })
             };
         }
 
-        async UniTask IAsyncStartable.StartAsync(CancellationToken cancellation = new CancellationToken())
+        async UniTask IAsyncStartable.StartAsync(CancellationToken cancellation = new())
         {
             Debug.Log("Start initializing");
             await _pipeline.RunAsync(_initSteps);

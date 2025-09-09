@@ -10,6 +10,8 @@ namespace com.mapcolonies.yahalom.InitPipeline
 {
     public class InitializationPipeline
     {
+        private readonly List<InitStep> _initSteps;
+        private readonly LifetimeScope _parent;
         private readonly PreloaderViewModel _preloader;
 
         public InitializationPipeline(PreloaderViewModel preloader)
@@ -57,3 +59,4 @@ namespace com.mapcolonies.yahalom.InitPipeline
         }
     }
 }
+
