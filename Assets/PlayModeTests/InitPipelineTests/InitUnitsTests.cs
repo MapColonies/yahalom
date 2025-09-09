@@ -35,7 +35,7 @@ namespace PlayModeTests.InitPipelineTests
         }
 
         #endregion
-        
+
         #region ActionUnitTests
 
         [Test(Description = "Ensures that the provided action is executed when RunAsync is called.")]
@@ -130,7 +130,7 @@ namespace PlayModeTests.InitPipelineTests
             // Assert
             Assert.ThrowsAsync<InvalidOperationException>(async () => await unit.RunAsync());
         }
-        
+
         #endregion
 
         #region RegisterScopeUnitTests
@@ -141,9 +141,11 @@ namespace PlayModeTests.InitPipelineTests
         {
             // Arrange
             bool afterBuildExecuted = false;
+            string str = string.Empty;
 
             Func<IObjectResolver, UniTask> afterBuild = resolver =>
             {
+                str = resolver.Resolve<string>();
                 afterBuildExecuted = true;
                 return UniTask.CompletedTask;
             };
@@ -166,13 +168,8 @@ namespace PlayModeTests.InitPipelineTests
             // Assert
             Assert.IsTrue(afterBuildExecuted, "AfterBuild should be executed");
 
-            // Ensure child scope contains the registered dependency
-            LifetimeScope str = unit.GetType().GetField("_child",
-                    System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                ?.GetValue(unit) as LifetimeScope;
-
             Assert.NotNull(str, "Child scope should have been created");
-            Assert.AreEqual("HelloWorld", str.Container.Resolve<string>());
+            Assert.AreEqual("HelloWorld", str);
 
             // Cleanup
             unit.Dispose();
@@ -194,18 +191,13 @@ namespace PlayModeTests.InitPipelineTests
 
             await unit.RunAsync();
 
-            FieldInfo childField = unit.GetType().GetField("_child",
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            LifetimeScope child = childField?.GetValue(unit) as LifetimeScope;
-
-            Assert.NotNull(child);
+            Assert.NotNull(unit.Child);
 
             // Act
             unit.Dispose();
 
-            // Assert
-            object disposedChild = childField?.GetValue(unit);
-            Assert.IsNull(disposedChild, "Child scope should be nulled after dispose");
+            //Assert
+            Assert.IsNull(unit.Child);
         }
 
         #endregion

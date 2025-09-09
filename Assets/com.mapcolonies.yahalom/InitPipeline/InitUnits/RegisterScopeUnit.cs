@@ -13,7 +13,11 @@ namespace com.mapcolonies.yahalom.InitPipeline.InitUnits
         private readonly Action<IContainerBuilder> _installers;
         private readonly Func<IObjectResolver, UniTask> _afterBuild;
 
-        private LifetimeScope _child;
+        public LifetimeScope Child
+        {
+            get;
+            private set;
+        }
 
         public RegisterScopeUnit(string name, float weight, LifetimeScope parentScope, InitPolicy policy,
             Action<IContainerBuilder> installers = null, Func<IObjectResolver, UniTask> afterBuild = null) : base(name,
@@ -30,19 +34,18 @@ namespace com.mapcolonies.yahalom.InitPipeline.InitUnits
 
             await HandlePolicy(async () =>
             {
-                _child = _parent.CreateChild(_installers, Name);
+                Child = _parent.CreateChild(_installers, Name);
 
-                if (_afterBuild != null) await _afterBuild(_child.Container);
+                if (_afterBuild != null) await _afterBuild(Child.Container);
             });
         }
 
         public void Dispose()
         {
-            if (_child != null)
-            {
-                _child.Dispose();
-                _child = null;
-            }
+            if (!Child) return;
+
+            Child.Dispose();
+            Child = null;
         }
     }
 }
