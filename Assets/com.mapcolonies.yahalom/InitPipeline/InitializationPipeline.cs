@@ -1,14 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using com.mapcolonies.core.Services;
 using com.mapcolonies.yahalom.InitPipeline.InitSteps;
 using com.mapcolonies.yahalom.InitPipeline.InitUnits;
 using com.mapcolonies.yahalom.Preloader;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using VContainer;
 
 namespace com.mapcolonies.yahalom.InitPipeline
 {
@@ -21,7 +17,7 @@ namespace com.mapcolonies.yahalom.InitPipeline
             _preloader = preloader;
         }
 
-        public async UniTask RunAsync(List<InitStep> initSteps)
+        public async UniTask RunAsync(IEnumerable<InitStep> initSteps)
         {
             float total = initSteps.SelectMany(s => s.InitUnits).Sum(u => u.Weight);
             float accumulated = 0f;
