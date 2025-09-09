@@ -791,6 +791,10 @@
       <Project>{a5a77f46-2d94-d4aa-566c-1751f36b32f2}</Project>
       <Name>com.mapcolonies.yahalom</Name>
     </ProjectReference>
+    <ProjectReference Include="preloader.csproj">
+      <Project>{638f4ce4-22ad-f676-acc4-11b48df95ccd}</Project>
+      <Name>preloader</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

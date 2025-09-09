@@ -6,7 +6,8 @@
     "UnityEditor.TestRunner",
     "com.mapcolonies.yahalom",
     "UniTask",
-    "VContainer"
+    "VContainer",
+    "preloader"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],
