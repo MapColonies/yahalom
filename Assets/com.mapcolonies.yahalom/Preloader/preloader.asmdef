@@ -1,4 +1,16 @@
 {
-  "name": "preloader",
-  "references":[ "GUID:def32eb86cfc4b07a6aa2ac71470d4af" ]
+    "name": "preloader",
+    "rootNamespace": "",
+    "references": [
+        "com.mapcolonies.core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
