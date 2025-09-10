@@ -5,10 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="27b34f24-e50f-410e-9074-60bac778e378" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.github/workflows/format.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/format.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.yahalom/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.yahalom/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/PlayModeTests/InitPipelineTests.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/PlayModeTests/PlayModeTestScript.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/PlayModeTests/PlayModeTestScript.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/PlayModeTests/InitPipelineTests/InitializationPipelineTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/PlayModeTests/InitPipelineTests/InitializationPipelineTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/com.mapcolonies.yahalom/InitPipeline/InitializationPipeline.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/com.mapcolonies.yahalom/InitPipeline/InitializationPipeline.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,21 +17,22 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "baruchInsert-tech"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;baruchInsert-tech&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/MapColonies/yahalom.git",
-    "accountId": "371434c5-5d6f-4775-8a5b-deced612cec0"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/MapColonies/yahalom.git&quot;,
+    &quot;accountId&quot;: &quot;371434c5-5d6f-4775-8a5b-deced612cec0&quot;
   }
-}]]></component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 5
-}]]></component>
+}</component>
+  <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="false" />
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
   <component name="ProjectId" id="32Mdoj6fXNThOi0hEgaeKGdzdio" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -42,7 +42,7 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "#13 on fix/Format-files",
+    "git-widget-placeholder": "#15 on Evgeny/Features/InitSequenceTests",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "rider.code.cleanup.on.save": "true",
@@ -81,9 +81,6 @@
       <option name="listenPortForConnections" value="false" />
       <option name="pid" />
       <option name="projectPathOnTarget" />
-      <option name="runtimes">
-        <list />
-      </option>
       <option name="selectedOptions">
         <list />
       </option>
@@ -94,9 +91,6 @@
       <option name="listenPortForConnections" value="false" />
       <option name="pid" />
       <option name="projectPathOnTarget" />
-      <option name="runtimes">
-        <list />
-      </option>
       <option name="selectedOptions">
         <list />
       </option>
@@ -118,6 +112,7 @@
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="UnityCheckinConfiguration" checkUnsavedScenes="false" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="true" />
   <component name="UnityProjectDiscoverer">
     <option name="hasUnityReference" value="true" />
