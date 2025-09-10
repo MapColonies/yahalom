@@ -25,7 +25,10 @@ namespace PlayModeTests.InitPipelineTests
         private class TestActionUnit : ActionUnit
         {
             public TestActionUnit(string name, float weight)
-                : base(name, weight, InitPolicy.Ignore, () => { return UniTask.CompletedTask; })
+                : base(name, weight, InitPolicy.Ignore, () =>
+                {
+                    return UniTask.CompletedTask;
+                })
             {
             }
         }
@@ -35,16 +38,16 @@ namespace PlayModeTests.InitPipelineTests
         {
             // Arrange
             FakePreloader preloader = new FakePreloader();
-            
+
             InitializationPipeline pipeline = new InitializationPipeline(preloader);
-            
+
             // Create test units
             TestActionUnit unit1 = new TestActionUnit("Unit1", 0.3f);
             TestActionUnit unit2 = new TestActionUnit("Unit2", 0.7f);
 
             InitStep step1 = new InitStep("Step1", StepMode.Sequential, new IInitUnit[] { unit1 });
             InitStep step2 = new InitStep("Step2", StepMode.Parallel, new IInitUnit[] { unit2 });
-            
+
             // Act
             await pipeline.RunAsync(new List<InitStep> { step1, step2 });
 

@@ -60,4 +60,3 @@ namespace com.mapcolonies.yahalom.InitPipeline
         }
     }
 }
-
