@@ -1,0 +1,19 @@
+{
+    "name": "com.mapcolonies.yahalom",
+    "rootNamespace": "",
+    "references": [
+        "com.mapcolonies.core",
+        "VContainer",
+        "UniTask",
+        "preloader"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
