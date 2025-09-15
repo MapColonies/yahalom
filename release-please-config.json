@@ -5,6 +5,11 @@
   "packages": {
     ".": {
       "extra-files": [
+        {
+          "type": "yaml",
+          "path": "ProjectSettings/ProjectSettings.asset",
+          "jsonpath": "$.PlayerSettings.bundleVersion"
+        }
       ]
     }
   },
