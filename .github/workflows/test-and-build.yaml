@@ -3,6 +3,9 @@ name: Build project
 on:
   pull_request: {}
   workflow_dispatch: {}
+  push:
+    tags:
+      - 'v*'
 
 jobs:
   # Checks Unity license.
