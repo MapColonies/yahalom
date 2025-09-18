@@ -3,8 +3,6 @@ name: Build project
 on:
   pull_request: {}
   workflow_dispatch: {}
-  release:
-    types: [published]
 
 jobs:
   # Checks Unity license.
@@ -83,14 +81,3 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
-
-      # Upload artifacts.
-      - uses: actions/upload-release-asset@v1
-        if: github.event_name == 'release'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./build/${{ matrix.targetPlatform }}/Build-StandaloneWindows64.zip
-          asset_name: Build-${{ matrix.targetPlatform }}.zip
-          asset_content_type: application/zip
