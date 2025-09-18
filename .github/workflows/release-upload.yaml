@@ -1,0 +1,65 @@
+name: Build and Upload 
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  # Checks Unity license.
+  checklicense:
+    name: Check for UNITY_LICENSE in GitHub Secrets
+    runs-on: ubuntu-latest
+    outputs:
+      is_unity_license_set: ${{ steps.checklicense_job.outputs.is_unity_license_set }}
+    steps:
+      - name: Check whether Unity activation should be done
+        id: checklicense_job
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        run: |
+          if [[ -n "${UNITY_LICENSE}" ]]; then
+            echo "is_unity_license_set=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_unity_license_set=false" >> $GITHUB_OUTPUT
+          fi
+
+  build_and_upload:
+    name: Build and Upload for ${{ matrix.targetPlatform }}
+    needs: [checklicense]
+    if: needs.checklicense.outputs.is_unity_license_set == 'true'
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform:
+          - StandaloneWindows64
+    steps:
+      # Checkout the repository.
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      # Cache the Unity Library folder to speed up subsequent builds.
+      - uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-${{ matrix.targetPlatform }}
+          restore-keys: Library-
+
+      # Build the Unity project.
+      - uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: ${{ matrix.targetPlatform }}
+
+      # Upload the build folder as a workflow artifact.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Build-${{ matrix.targetPlatform }}
+          path: build/${{ matrix.targetPlatform }}
