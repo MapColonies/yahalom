@@ -8,7 +8,7 @@
         {
           "type": "yaml",
           "path": "ProjectSettings/ProjectSettings.asset",
-          "yamlpath": "$.PlayerSettings.bundleVersion"
+          "jsonpath": "$.PlayerSettings.bundleVersion"
         }
       ]
     }
