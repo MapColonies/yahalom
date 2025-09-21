@@ -5,6 +5,7 @@
   "packages": {
     ".": {
       "extra-files": [
+        "ProjectSettings/ProjectSettings.asset"
       ]
     }
   },
