@@ -36,6 +36,7 @@
 
 # Rider or InteliJ
 .idea/
+.idea/.idea.yahalom/.idea/[Ww]orkspace.xml
 !.idea/codeStyles/
 !.idea/inspectionProfiles/
 
