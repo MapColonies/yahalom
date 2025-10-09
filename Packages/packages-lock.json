@@ -19,6 +19,13 @@
       "dependencies": {},
       "hash": "64285ae060c9fe2aeb2a73b076b160939ce3be1a"
     },
+    "com.mapcolonies.yahalom-ui": {
+      "version": "https://github.com/MapColonies/yahalom-ui-components.git?path=/Assets/YahalomUIPackage",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "f936ac83dad04a4d8cd5eda178dc36339030ae82"
+    },
     "com.unity.burst": {
       "version": "1.8.24",
       "depth": 3,
