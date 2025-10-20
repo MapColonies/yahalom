@@ -2,6 +2,7 @@
   "dependencies": {
     "com.cesium.unity": "1.17.0",
     "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
+    "com.mapcolonies.yahalom-ui": "https://github.com/MapColonies/yahalom-ui-components.git?path=/Assets/YahalomUIPackage",
     "com.unity.ide.rider": "3.0.36",
     "com.unity.multiplayer.center": "1.0.0",
     "jp.hadashikick.vcontainer": "https://github.com/hadashiA/VContainer.git?path=VContainer/Assets/VContainer#1.17.0",
