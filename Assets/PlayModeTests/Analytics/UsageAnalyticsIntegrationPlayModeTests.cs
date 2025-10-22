@@ -12,6 +12,7 @@ namespace PlayModeTests.Analytics
     {
         private string _logDir;
         private string _logPath;
+        private UsageAnalyticsShim _mgr;
 
         private class UsageAnalyticsShim : UsageAnalyticsManager
         {
@@ -33,12 +34,21 @@ namespace PlayModeTests.Analytics
             yield return null;
         }
 
+        [UnityTearDown]
+        public IEnumerator TearDown()
+        {
+            _mgr?.Dispose();
+            _mgr = null;
+            yield return null;
+        }
+
         [UnityTest]
         public IEnumerator TimerController_To_FileWrite_EndToEnd_Works()
         {
-            UsageAnalyticsShim mgr = new UsageAnalyticsShim();
-            mgr.Initialize();
-            mgr.ForceOnePublish();
+            _mgr = new UsageAnalyticsShim();
+            _mgr.Initialize();
+            _mgr.Initialize();
+            _mgr.ForceOnePublish();
 
             yield return new WaitForSeconds(0.2f);
 
@@ -48,7 +58,7 @@ namespace PlayModeTests.Analytics
             StringAssert.Contains("\"AllocatedMemoryInMB\": 200", content);
             StringAssert.Contains("\"CpuUsagePercentage\": 15", content);
 
-            mgr.ForceOnePublish();
+            _mgr.ForceOnePublish();
             yield return new WaitForSeconds(0.1f);
 
             string secondContent = File.ReadAllText(_logPath);

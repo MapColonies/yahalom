@@ -43,7 +43,10 @@ namespace com.mapcolonies.core.Utilities
 
         private void HandleTimerElapsed(object sender, ElapsedEventArgs e)
         {
-            _syncContext.Post(_ => OnTimerElapsed?.Invoke(), null);
+            if (_syncContext != null)
+                _syncContext.Post(_ => OnTimerElapsed?.Invoke(), null);
+            else
+                OnTimerElapsed?.Invoke();
         }
 
         public void Dispose()
