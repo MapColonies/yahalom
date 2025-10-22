@@ -17,7 +17,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
         public void Initialize()
         {
             var (performanceSamplingIntervalInSeconds, enabled) = GetConfig();
-            if (!enabled && AnalyticsManager.EnablePublishingAnalytics) return;
+            if (!enabled) return;
 
             _platformUsageManager = new PlatformUsageManager();
             _platformUsageManager.Init();

@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using com.mapcolonies.core.Services.Analytics.Model;
 using Newtonsoft.Json;
@@ -11,39 +12,55 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
     /// <summary>
     /// Analytics Manager responsible for creating and publishing logs to a local file.
     /// </summary>
-    public class AnalyticsManager : IInitializable
+    public class AnalyticsManager : IInitializable, IDisposable
     {
         public static long SessionId;
-        public static bool EnablePublishingAnalytics;
 
         private delegate Task PublishDelegate(LogObject logObject);
 
         private static PublishDelegate _publish;
         private static string _logFilePath;
-        private static readonly object _fileLock = new object();
+        private static readonly SemaphoreSlim _fileSemaphore = new SemaphoreSlim(1, 1);
+        private static bool _isInitialized;
 
         public void Initialize()
         {
-            SessionId = UnityEngine.Analytics.AnalyticsSessionInfo.sessionId;
-
-            SetupLogFile();
-
-            bool enablePublishing = true;
-            //TODO: Remove after adding and supporting SharedConfigProvider
-            /*if (SharedConfigProvider.TryGetSharedConfig(out var sharedConfig))
+            try
             {
-                var systemLogConfiguration = sharedConfig.SystemLogConfiguration;
-                if (systemLogConfiguration != null)
-                {
-                    enablePublishing = systemLogConfiguration.EnablePublishingAnalytics;
-                }
-                else
-                {
-                    Debug.LogWarning("No System Log configuration found, using default configuration.");
-                }
-            }*/
+                SessionId = UnityEngine.Analytics.AnalyticsSessionInfo.sessionId;
 
-            _publish = enablePublishing ? PublishAnalytics : (_) => Task.CompletedTask;
+                if (SessionId == 0)
+                {
+                    SessionId = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                }
+
+                SetupLogFile();
+
+                bool enablePublishing = true;
+                //TODO: Remove after adding and supporting SharedConfigProvider
+                /*if (SharedConfigProvider.TryGetSharedConfig(out var sharedConfig))
+                {
+                    var systemLogConfiguration = sharedConfig.SystemLogConfiguration;
+                    if (systemLogConfiguration != null)
+                    {
+                        enablePublishing = systemLogConfiguration.EnablePublishingAnalytics;
+                    }
+                    else
+                    {
+                        Debug.LogWarning("No System Log configuration found, using default configuration.");
+                    }
+                }*/
+
+                _publish = enablePublishing ? PublishAnalytics : (_) => Task.CompletedTask;
+                _isInitialized = true;
+
+                Debug.Log($"AnalyticsManager initialized successfully (Session: {SessionId})");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"Failed to initialize AnalyticsManager: {ex.Message}");
+                _isInitialized = false;
+            }
         }
 
         /// <summary>
@@ -54,13 +71,20 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
             try
             {
                 string logDirectory = Path.Combine(Application.persistentDataPath, "AnalyticsLogs");
-                Directory.CreateDirectory(logDirectory);
+
+                if (!Directory.Exists(logDirectory))
+                {
+                    Directory.CreateDirectory(logDirectory);
+                    Debug.Log($"Created analytics log directory: {logDirectory}");
+                }
+
                 _logFilePath = Path.Combine(logDirectory, $"session-{SessionId}.log");
                 Debug.Log($"Analytics log file for this session: {_logFilePath}");
             }
             catch (Exception ex)
             {
                 Debug.LogError($"Failed to create analytics log file: {ex.Message}");
+                _logFilePath = null;
             }
         }
 
@@ -80,26 +104,47 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
 
         private static async Task WriteLogToFileAsync(string logContent)
         {
-            if (string.IsNullOrEmpty(_logFilePath)) return;
+            if (string.IsNullOrEmpty(_logFilePath))
+            {
+                Debug.LogWarning("Log file path is not set, skipping file write");
+                return;
+            }
 
+            await _fileSemaphore.WaitAsync();
             try
             {
-                lock (_fileLock)
-                {
-                }
-
                 await File.AppendAllTextAsync(_logFilePath, logContent + Environment.NewLine);
             }
             catch (Exception ex)
             {
                 Debug.LogError($"Failed to write analytics to file {_logFilePath}: {ex.Message}");
             }
+            finally
+            {
+                _fileSemaphore.Release();
+            }
         }
-
 
         public static async Task Publish(LogObject logObject)
         {
+            if (!_isInitialized)
+            {
+                Debug.LogWarning("AnalyticsManager not initialized, cannot publish log");
+                return;
+            }
+
+            if (_publish == null)
+            {
+                Debug.LogWarning("Publish delegate is null, cannot publish log");
+                return;
+            }
+
             await _publish(logObject);
+        }
+
+        public void Dispose()
+        {
+            _fileSemaphore?.Dispose();
         }
     }
 }
