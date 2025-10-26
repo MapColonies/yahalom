@@ -9,7 +9,6 @@ namespace com.mapcolonies.core.Services.Analytics.Model
 
         public string ViewMode { get; private set; }
 
-
         private GameModeData(string mode, string playerViewMode)
         {
             Mode = mode;

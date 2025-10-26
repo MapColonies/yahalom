@@ -25,4 +25,22 @@ namespace com.mapcolonies.core.Services.Analytics.Enums
         ConsumptionStatus,
         ApplicationData
     }
+
+    public enum LogComponent
+    {
+        General,
+        Map,
+        FTUE,
+        Simulator
+    }
+
+    [System.Serializable]
+    public enum UserInputDevice
+    {
+        None,
+        Joystick,
+        VR,
+        Keyboard,
+        Mouse
+    }
 }

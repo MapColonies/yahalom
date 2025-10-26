@@ -3,22 +3,22 @@ using com.mapcolonies.core.Services.Analytics.Interfaces;
 
 namespace com.mapcolonies.core.Services.Analytics.Model
 {
-    public class UserDetails : IAnalyticLogParameter
+    public class UserDetailsData : IAnalyticLogParameter
     {
         public string UserName { get; private set; }
         public string UserDomainName { get; private set; }
         public string MachineName { get; private set; }
 
-        private UserDetails(string userName, string userDomainName, string machineName)
+        private UserDetailsData(string userName, string userDomainName, string machineName)
         {
             UserName = userName;
             UserDomainName = userDomainName;
             MachineName = machineName;
         }
 
-        public static UserDetails Create(string userName, string userDomainName, string machineName)
+        public static UserDetailsData Create(string userName, string userDomainName, string machineName)
         {
-            return new UserDetails(userName, userDomainName, machineName);
+            return new UserDetailsData(userName, userDomainName, machineName);
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)

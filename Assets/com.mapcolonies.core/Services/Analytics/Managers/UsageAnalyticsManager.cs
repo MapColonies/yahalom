@@ -22,7 +22,9 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
             _platformUsageManager = new PlatformUsageManager();
             _platformUsageManager.Init();
 
-            _timerController = new TimerController(TimeUtilities.SecondsToMilliseconds(performanceSamplingIntervalInSeconds));
+            TimeSpan interval = TimeSpan.FromSeconds(performanceSamplingIntervalInSeconds);
+
+            _timerController = new TimerController(interval.TotalMilliseconds);
             _timerController.OnTimerElapsed += HandleTimerElapsed;
             _timerController.StartTimer();
         }

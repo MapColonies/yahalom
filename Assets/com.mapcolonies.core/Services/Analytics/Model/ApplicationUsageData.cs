@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.Serialization;
 using com.mapcolonies.core.Services.Analytics.Interfaces;
 
@@ -5,14 +6,14 @@ namespace com.mapcolonies.core.Services.Analytics.Model
 {
     public class ApplicationUsageData : IAnalyticLogParameter
     {
-        public double Time { get; private set; }
+        public TimeSpan Time { get; private set; }
 
-        private ApplicationUsageData(double time)
+        private ApplicationUsageData(TimeSpan time)
         {
             Time = time;
         }
 
-        public static ApplicationUsageData Create(double totalAppTime)
+        public static ApplicationUsageData Create(TimeSpan totalAppTime)
         {
             return new ApplicationUsageData(totalAppTime);
         }

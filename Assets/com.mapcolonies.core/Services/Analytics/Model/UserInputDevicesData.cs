@@ -4,18 +4,18 @@ using com.mapcolonies.core.Services.Analytics.Interfaces;
 namespace com.mapcolonies.core.Services.Analytics.Model
 {
     [System.Serializable]
-    public class UserInputDevices : IAnalyticLogParameter
+    public class UserInputDevicesData : IAnalyticLogParameter
     {
         public string[] InputDevices { get; private set; }
 
-        private UserInputDevices(string[] inputDevices)
+        private UserInputDevicesData(string[] inputDevices)
         {
             InputDevices = inputDevices;
         }
 
-        public static UserInputDevices Create(string[] inputDevices)
+        public static UserInputDevicesData Create(string[] inputDevices)
         {
-            return new UserInputDevices(inputDevices);
+            return new UserInputDevicesData(inputDevices);
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)

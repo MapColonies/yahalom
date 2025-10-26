@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.Serialization;
 using com.mapcolonies.core.Services.Analytics.Model;
 using NUnit.Framework;
@@ -66,24 +67,24 @@ namespace EditorTests.Analytics
         [Test]
         public void UserInputDevices_Serializes_Expected_Fields()
         {
-            UserInputDevices devs = UserInputDevices.Create(new[] {"Keyboard", "Mouse"});
-            SerializationInfo info = new SerializationInfo(typeof(UserInputDevices), new FormatterConverter());
+            UserInputDevicesData devs = UserInputDevicesData.Create(new[] {"Keyboard", "Mouse"});
+            SerializationInfo info = new SerializationInfo(typeof(UserInputDevicesData), new FormatterConverter());
             devs.GetObjectData(info, new StreamingContext());
 
-            string[] stored = (string[])info.GetValue(nameof(UserInputDevices.InputDevices), typeof(string[]));
+            string[] stored = (string[])info.GetValue(nameof(UserInputDevicesData.InputDevices), typeof(string[]));
             CollectionAssert.AreEqual(new[] {"Keyboard", "Mouse"}, stored);
         }
 
         [Test]
         public void UserDetails_Serializes_Expected_Fields()
         {
-            UserDetails details = UserDetails.Create("username", "MAPCO", "DEVPC01");
-            SerializationInfo info = new SerializationInfo(typeof(UserDetails), new FormatterConverter());
-            details.GetObjectData(info, new StreamingContext());
+            UserDetailsData detailsData = UserDetailsData.Create("username", "MAPCO", "DEVPC01");
+            SerializationInfo info = new SerializationInfo(typeof(UserDetailsData), new FormatterConverter());
+            detailsData.GetObjectData(info, new StreamingContext());
 
-            Assert.AreEqual("username", info.GetString(nameof(UserDetails.UserName)));
-            Assert.AreEqual("MAPCO", info.GetString(nameof(UserDetails.UserDomainName)));
-            Assert.AreEqual("DEVPC01", info.GetString(nameof(UserDetails.MachineName)));
+            Assert.AreEqual("username", info.GetString(nameof(UserDetailsData.UserName)));
+            Assert.AreEqual("MAPCO", info.GetString(nameof(UserDetailsData.UserDomainName)));
+            Assert.AreEqual("DEVPC01", info.GetString(nameof(UserDetailsData.MachineName)));
         }
 
         [Test]
@@ -109,7 +110,8 @@ namespace EditorTests.Analytics
         [Test]
         public void ApplicationUsageData_Serializes_Expected_Fields()
         {
-            ApplicationUsageData data = ApplicationUsageData.Create(123.45);
+            TimeSpan timeSpan = TimeSpan.FromSeconds(123.45);
+            ApplicationUsageData data = ApplicationUsageData.Create(timeSpan);
             SerializationInfo info = new SerializationInfo(typeof(ApplicationUsageData), new FormatterConverter());
             data.GetObjectData(info, new StreamingContext());
 

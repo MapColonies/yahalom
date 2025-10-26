@@ -9,7 +9,6 @@ namespace com.mapcolonies.core.Services.Analytics.Model
 
         public string UniqueLayerId { get; private set; }
 
-
         private LayerData(string layerDomain, string uniqueLayerId)
         {
             LayerDomain = layerDomain;
