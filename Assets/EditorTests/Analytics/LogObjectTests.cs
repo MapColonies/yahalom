@@ -17,7 +17,7 @@ namespace EditorTests.Analytics
             LogType severity = LogType.Warning;
             string message = "LayerUseStarted";
             LayerData parameters = LayerData.Create("imagery", "layer-001");
-            LogComponent component = LogComponent.General;
+            string component = "General";
             AnalyticsMessageTypes type = AnalyticsMessageTypes.LayerUseStarted;
             LogObject log = LogObject.Create(severity, message, parameters, component, type);
 

@@ -26,14 +26,6 @@ namespace com.mapcolonies.core.Services.Analytics.Enums
         ApplicationData
     }
 
-    public enum LogComponent
-    {
-        General,
-        Map,
-        FTUE,
-        Simulator
-    }
-
     [System.Serializable]
     public enum UserInputDevice
     {

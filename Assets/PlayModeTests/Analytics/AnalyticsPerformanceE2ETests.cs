@@ -35,7 +35,7 @@ namespace PlayModeTests.Analytics
                 LogType.Log,
                 AnalyticsMessageTypes.ConsumptionStatus.ToString(),
                 perf,
-                LogComponent.General,
+                "General",
                 AnalyticsMessageTypes.ConsumptionStatus);
 
             Task task = AnalyticsManager.Publish(log);

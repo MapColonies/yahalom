@@ -13,7 +13,7 @@ namespace com.mapcolonies.core.Services.Analytics.Model
         public DateTime TimeStamp { get; private set; }
         public string Message { get; private set; }
         public IAnalyticLogParameter MessageParameters { get; private set; }
-        public LogComponent Component { get; private set; }
+        public string Component { get; private set; }
         public AnalyticsMessageTypes MessageType { get; private set; }
 
         private LogObject(
@@ -22,7 +22,7 @@ namespace com.mapcolonies.core.Services.Analytics.Model
             DateTime timeStamp,
             string message,
             IAnalyticLogParameter messageParameters,
-            LogComponent component,
+            string component,
             AnalyticsMessageTypes messageType)
         {
             SessionID = sessionId;
@@ -47,7 +47,7 @@ namespace com.mapcolonies.core.Services.Analytics.Model
             LogType severity,
             string message,
             IAnalyticLogParameter messageParameters,
-            LogComponent component,
+            string component,
             AnalyticsMessageTypes messageType)
         {
             return new LogObject(

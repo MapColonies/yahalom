@@ -13,6 +13,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
         private TimerController _timerController;
 
         private const double DefaultPerformanceSampleIntervalSeconds = 60;
+        private const string UsageLogComponent = "General";
 
         public UsageAnalyticsManager(PlatformUsageHelper sampler)
         {
@@ -74,7 +75,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
                 LogType.Log,
                 AnalyticsMessageTypes.ConsumptionStatus.ToString(),
                 performanceData,
-                LogComponent.General,
+                UsageLogComponent,
                 AnalyticsMessageTypes.ConsumptionStatus);
 
             _ = AnalyticsManager.Publish(logObject);

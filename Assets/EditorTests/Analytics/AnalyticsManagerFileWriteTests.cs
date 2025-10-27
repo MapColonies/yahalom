@@ -43,7 +43,7 @@ namespace EditorTests.Analytics
             LogObject log = LogObject.Create(LogType.Log,
                 AnalyticsMessageTypes.LayerUseStarted.ToString(),
                 msgParams,
-                LogComponent.General,
+                "General",
                 AnalyticsMessageTypes.LayerUseStarted);
 
             await AnalyticsManager.Publish(log);
