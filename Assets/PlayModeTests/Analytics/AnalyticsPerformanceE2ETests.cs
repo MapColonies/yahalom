@@ -44,10 +44,10 @@ namespace PlayModeTests.Analytics
             Assert.IsTrue(File.Exists(_logPath), "Log file should exist after publish");
             string content = File.ReadAllText(_logPath);
 
-            StringAssert.Contains("\"Fps\": 60", content);
-            StringAssert.Contains("\"AllocatedMemoryInMB\": 256", content);
-            StringAssert.Contains("\"CpuUsagePercentage\": 12.34", content);
-            StringAssert.Contains("\"MessageType\": " + (int)AnalyticsMessageTypes.ConsumptionStatus, content);
+            StringAssert.Contains("\"Fps\":60", content);
+            StringAssert.Contains("\"AllocatedMemoryInMB\":256", content);
+            StringAssert.Contains("\"CpuUsagePercentage\":12.34", content);
+            StringAssert.Contains("\"MessageType\":" + (int)AnalyticsMessageTypes.ConsumptionStatus, content);
         }
     }
 }

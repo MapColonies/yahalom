@@ -51,10 +51,10 @@ namespace EditorTests.Analytics
             Assert.IsTrue(File.Exists(_logFilePath), $"Log file was not created at {_logFilePath}");
 
             string content = await File.ReadAllTextAsync(_logFilePath);
-            StringAssert.Contains("\"LayerDomain\": \"imagery\"", content);
-            StringAssert.Contains("\"UniqueLayerId\": \"layer-abc\"", content);
-            StringAssert.Contains("\"MessageType\": " + (int)AnalyticsMessageTypes.LayerUseStarted, content);
-            StringAssert.Contains("\"Severity\": \"Log\"", content);
+            StringAssert.Contains("\"LayerDomain\":\"imagery\"", content);
+            StringAssert.Contains("\"UniqueLayerId\":\"layer-abc\"", content);
+            StringAssert.Contains("\"MessageType\":" + (int)AnalyticsMessageTypes.LayerUseStarted, content);
+            StringAssert.Contains("\"Severity\":\"Log\"", content);
         }
     }
 }

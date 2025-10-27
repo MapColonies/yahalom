@@ -58,9 +58,9 @@ namespace PlayModeTests.Analytics
 
             Assert.IsTrue(File.Exists(_logPath), "Expected analytics log file to exist.");
             string content = File.ReadAllText(_logPath);
-            StringAssert.Contains("\"Fps\": 25", content);
-            StringAssert.Contains("\"AllocatedMemoryInMB\": 200", content);
-            StringAssert.Contains("\"CpuUsagePercentage\": 15", content);
+            StringAssert.Contains("\"Fps\":25", content);
+            StringAssert.Contains("\"AllocatedMemoryInMB\":200", content);
+            StringAssert.Contains("\"CpuUsagePercentage\":15", content);
 
             _mgr.ForceOnePublish();
             yield return new WaitForSeconds(0.1f);

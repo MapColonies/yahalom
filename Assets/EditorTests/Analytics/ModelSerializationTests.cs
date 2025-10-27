@@ -114,8 +114,8 @@ namespace EditorTests.Analytics
             ApplicationUsageData data = ApplicationUsageData.Create(timeSpan);
             SerializationInfo info = new SerializationInfo(typeof(ApplicationUsageData), new FormatterConverter());
             data.GetObjectData(info, new StreamingContext());
-
-            Assert.AreEqual(123.45, info.GetDouble(nameof(ApplicationUsageData.Time)));
+            TimeSpan storedTimeSpan = (TimeSpan)info.GetValue(nameof(ApplicationUsageData.Time), typeof(TimeSpan));
+            Assert.AreEqual(123.45, storedTimeSpan.TotalSeconds, 0.0001);
         }
     }
 }
