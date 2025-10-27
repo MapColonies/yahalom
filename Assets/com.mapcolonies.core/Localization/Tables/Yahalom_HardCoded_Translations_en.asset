@@ -22,6 +22,42 @@ MonoBehaviour:
     m_Localized: example
     m_Metadata:
       m_Items: []
+  - m_Id: 350817125453824
+    m_Localized: home
+    m_Metadata:
+      m_Items: []
+  - m_Id: 350862994362368
+    m_Localized: hello
+    m_Metadata:
+      m_Items: []
+  - m_Id: 350862994362369
+    m_Localized: welcome
+    m_Metadata:
+      m_Items: []
+  - m_Id: 350862994362370
+    m_Localized: exit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 350862994362371
+    m_Localized: settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 350862994362372
+    m_Localized: language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 350862994362373
+    m_Localized: confirm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 350862994362374
+    m_Localized: cancel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 350862994362375
+    m_Localized: error
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

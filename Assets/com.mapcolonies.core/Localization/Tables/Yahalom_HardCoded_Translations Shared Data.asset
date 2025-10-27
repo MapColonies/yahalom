@@ -19,6 +19,42 @@ MonoBehaviour:
     m_Key: example
     m_Metadata:
       m_Items: []
+  - m_Id: 350817125453824
+    m_Key: home
+    m_Metadata:
+      m_Items: []
+  - m_Id: 350862994362368
+    m_Key: hello
+    m_Metadata:
+      m_Items: []
+  - m_Id: 350862994362369
+    m_Key: welcome
+    m_Metadata:
+      m_Items: []
+  - m_Id: 350862994362370
+    m_Key: exit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 350862994362371
+    m_Key: settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 350862994362372
+    m_Key: language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 350862994362373
+    m_Key: confirm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 350862994362374
+    m_Key: cancel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 350862994362375
+    m_Key: error
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
