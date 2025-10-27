@@ -1,7 +1,13 @@
+using Unity.AppUI.Redux;
+
 namespace com.mapcolonies.yahalom.Redux
 {
-    public class ActionsDefinition
+    public record InitConfigurationAction() : IAction
     {
-        
+        public string type
+        {
+            get;
+        }
+
     }
 }

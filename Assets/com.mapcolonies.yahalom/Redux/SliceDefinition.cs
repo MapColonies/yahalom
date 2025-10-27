@@ -1,7 +1,4 @@
 namespace com.mapcolonies.yahalom.Redux
 {
-    public class SliceDefinition
-    {
-        
-    }
+    public record ConfigurationState();
 }

@@ -5,7 +5,9 @@ using com.mapcolonies.core.Services;
 using com.mapcolonies.yahalom.InitPipeline;
 using com.mapcolonies.yahalom.InitPipeline.InitSteps;
 using com.mapcolonies.yahalom.InitPipeline.InitUnits;
+using com.mapcolonies.yahalom.Redux;
 using Cysharp.Threading.Tasks;
+using Unity.AppUI.Redux;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -38,6 +40,13 @@ namespace com.mapcolonies.yahalom.EntryPoint
                 }),
                 new InitStep("ServicesInit", StepMode.Sequential, new IInitUnit[]
                 {
+                    new ActionUnit("Configuration Service", 0.05f, InitPolicy.Fail,
+                        () =>
+                        {
+                            Store<AppState> store = scope.Container.Resolve<Store<AppState>>();
+                            store.Dispatch(new ActionCreator());
+                            return default;
+                        }),
                     new RegisterScopeUnit("WMTS", 0.1f, scope, InitPolicy.Retry,
                         builder =>
                         {

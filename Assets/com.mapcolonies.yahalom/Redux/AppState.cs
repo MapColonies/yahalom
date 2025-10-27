@@ -1,7 +1,7 @@
-namespace com.mapcolonies.yahalom
+namespace com.mapcolonies.yahalom.Redux
 {
-    public class AppState
+    public record AppState
     {
-        
+
     }
 }

@@ -5,7 +5,8 @@
         "com.mapcolonies.core",
         "VContainer",
         "UniTask",
-        "preloader"
+        "preloader",
+        "Unity.AppUI.Redux"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
