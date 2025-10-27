@@ -92,7 +92,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
         {
             try
             {
-                string json = JsonConvert.SerializeObject(logObject, Formatting.Indented);
+                string json = JsonConvert.SerializeObject(logObject, Formatting.None);
                 Debug.Log($"{logObject.MessageType}: {json}");
                 await WriteLogToFileAsync(json);
             }
