@@ -1,6 +1,5 @@
 using System;
 using System.Runtime.Serialization;
-using com.mapcolonies.core.Services.Analytics.Interfaces;
 
 namespace com.mapcolonies.core.Services.Analytics.Model
 {

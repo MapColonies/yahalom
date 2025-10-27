@@ -1,5 +1,4 @@
 using System.Runtime.Serialization;
-using com.mapcolonies.core.Services.Analytics.Interfaces;
 using UnityEngine;
 
 namespace com.mapcolonies.core.Services.Analytics.Model
