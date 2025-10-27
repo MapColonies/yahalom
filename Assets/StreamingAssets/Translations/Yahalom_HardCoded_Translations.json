@@ -1,0 +1,55 @@
+{
+    "showTranslationWarnings": true,
+    "words": [
+        {
+            "key": "yahalom.example",
+            "english": "example",
+            "hebrew": "דוגמה"
+        },
+        {
+            "key": "yahalom.home",
+            "english": "home",
+            "hebrew": "בית"
+        },
+        {
+            "key": "yahalom.hello",
+            "english": "hello",
+            "hebrew": "שלום"
+        },
+        {
+            "key": "yahalom.welcome",
+            "english": "welcome",
+            "hebrew": "ברוך הבא"
+        },
+        {
+            "key": "yahalom.exit",
+            "english": "exit",
+            "hebrew": "יציאה"
+        },
+        {
+            "key": "yahalom.settings",
+            "english": "settings",
+            "hebrew": "הגדרות"
+        },
+        {
+            "key": "yahalom.language",
+            "english": "language",
+            "hebrew": "שפה"
+        },
+        {
+            "key": "yahalom.confirm",
+            "english": "confirm",
+            "hebrew": "אישור"
+        },
+        {
+            "key": "yahalom.cancel",
+            "english": "cancel",
+            "hebrew": "ביטול"
+        },
+        {
+            "key": "yahalom.error",
+            "english": "error",
+            "hebrew": "שגיאה"
+        }
+    ]
+}

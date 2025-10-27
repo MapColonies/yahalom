@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
 
 [System.Serializable]
 public class TranslationConfig
@@ -41,16 +42,16 @@ public class TranslationService
 
     private string _targetStringTableName;
     private string _hebrewLocaleIdentifier;
+    private string _englishLocaleIdentifier;
     private string _remoteConfigUrl;
     private string _localFilePath;
 
     private bool showTranslationWarnings;
 
-    private Dictionary<string, string> _hardCodedTranslations = new Dictionary<string, string>();
-    private Dictionary<string, string> _fileTranslations = new Dictionary<string, string>();
-    private Dictionary<string, string> _remoteTranslations = new Dictionary<string, string>();
-
-    private Dictionary<string, string> _mergedTranslations = new Dictionary<string, string>();
+    private Dictionary<string, TranslationEntry> _hardCodedTranslations = new Dictionary<string, TranslationEntry>();
+    private Dictionary<string, TranslationEntry> _fileTranslations = new Dictionary<string, TranslationEntry>();
+    private Dictionary<string, TranslationEntry> _remoteTranslations = new Dictionary<string, TranslationEntry>();
+    private Dictionary<string, TranslationEntry> _mergedTranslations = new Dictionary<string, TranslationEntry>();
 
     private bool _isInitialized;
 
@@ -58,12 +59,13 @@ public class TranslationService
     {
     }
 
-    public async void InitializeService(string targetStringTableName, string hebrewLocaleIdentifier, string remoteConfigUrl, string localFilePath)
+    public async void InitializeService(string targetStringTableName, string hebrewLocaleIdentifier, string englishLocaleIdentifier, string remoteConfigUrl, string localFilePath)
     {
         if (_isInitialized) return;
 
         _targetStringTableName = targetStringTableName;
         _hebrewLocaleIdentifier = hebrewLocaleIdentifier;
+        _englishLocaleIdentifier = englishLocaleIdentifier;
         _remoteConfigUrl = remoteConfigUrl;
         _localFilePath = localFilePath;
 
@@ -96,10 +98,10 @@ public class TranslationService
 
     private void LoadHardCodedTranslations()
     {
-        _hardCodedTranslations = new Dictionary<string, string>
+        _hardCodedTranslations = new Dictionary<string, TranslationEntry>
         {
-            { "welcome", "ברוך הבא" },
-            { "test", "בדיקה (קשיח)" }
+            { "welcome", new TranslationEntry { key = "welcome", english = "Welcome", hebrew = "ברוך הבא (קשיח)" } },
+            { "test", new TranslationEntry { key = "test", english = "Test", hebrew = "בדיקה (קשיח)" } }
         };
     }
 
@@ -117,7 +119,7 @@ public class TranslationService
         try
         {
             string jsonContent = await Task.Run(() => File.ReadAllText(path));
-            return JsonUtility.FromJson<TranslationConfig>(jsonContent);
+            return JsonConvert.DeserializeObject<TranslationConfig>(jsonContent);
         }
         catch (System.Exception ex)
         {
@@ -128,19 +130,30 @@ public class TranslationService
 
     private async Task<TranslationConfig> LoadFromRemoteAsync()
     {
+        if (string.IsNullOrEmpty(_remoteConfigUrl))
+        {
+            Debug.Log("TranslationService: Remote config URL is empty, skipping.");
+            return null;
+        }
+
         Debug.Log($"TranslationService: Loading from remote: {_remoteConfigUrl}");
 
         using (UnityWebRequest www = UnityWebRequest.Get(_remoteConfigUrl))
         {
             var operation = www.SendWebRequest();
-            await operation;
+
+            // Await the operation without blocking the main thread
+            while (!operation.isDone)
+            {
+                await Task.Yield();
+            }
 
             if (www.result == UnityWebRequest.Result.Success)
             {
                 try
                 {
                     string jsonContent = www.downloadHandler.text;
-                    return JsonUtility.FromJson<TranslationConfig>(jsonContent);
+                    return JsonConvert.DeserializeObject<TranslationConfig>(jsonContent);
                 }
                 catch (System.Exception ex)
                 {
@@ -181,6 +194,7 @@ public class TranslationService
         await LocalizationSettings.InitializationOperation.Task;
 
         var hebrewLocale = LocalizationSettings.AvailableLocales.GetLocale(_hebrewLocaleIdentifier);
+        var englishLocale = LocalizationSettings.AvailableLocales.GetLocale(_englishLocaleIdentifier);
 
         if (hebrewLocale == null)
         {
@@ -188,40 +202,66 @@ public class TranslationService
             return;
         }
 
-        Debug.Log($"TranslationService: Applying translations to String Table '{_targetStringTableName}' for locale '{hebrewLocale.Identifier.Code}'...");
-
-        var tableOperation = LocalizationSettings.StringDatabase.GetTableAsync(_targetStringTableName, hebrewLocale);
-        await tableOperation.Task;
-
-        if (tableOperation.Status != UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
+        if (englishLocale == null)
         {
-            Debug.LogError($"TranslationService: Could not load String Table '{_targetStringTableName}'. Error: {tableOperation.OperationException}");
+            Debug.LogError($"TranslationService: English locale '{_englishLocaleIdentifier}' not found. Make sure it's added to Localization Settings.");
             return;
         }
 
-        StringTable stringTable = tableOperation.Result;
+        Debug.Log($"TranslationService: Applying translations to String Table '{_targetStringTableName}' for locale '{hebrewLocale.Identifier.Code}'...");
 
-        // Add/Update entries in the table
+        var hebrewTableOperation = LocalizationSettings.StringDatabase.GetTableAsync(_targetStringTableName, hebrewLocale);
+        var englishTableOperation = LocalizationSettings.StringDatabase.GetTableAsync(_targetStringTableName, englishLocale);
+
+        await hebrewTableOperation.Task;
+        await englishTableOperation.Task;
+
+        if (hebrewTableOperation.Status != UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
+        {
+            Debug.LogError($"TranslationService: Could not load Hebrew String Table '{_targetStringTableName}'. Error: {hebrewTableOperation.OperationException}");
+            return;
+        }
+
+        if (englishTableOperation.Status != UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
+        {
+            Debug.LogError($"TranslationService: Could not load English String Table '{_targetStringTableName}'. Error: {englishTableOperation.OperationException}");
+            return;
+        }
+
+        StringTable hebrewStringTable = hebrewTableOperation.Result;
+        StringTable englishStringTable = englishTableOperation.Result;
+
         foreach (var entry in _mergedTranslations)
         {
-            // AddEntry will update the value if the key already exists
-            stringTable.AddEntry(entry.Key, entry.Value);
+            hebrewStringTable.AddEntry(entry.Key, entry.Value.hebrew);
+            englishStringTable.AddEntry(entry.Key, entry.Value.english);
         }
 
         Debug.Log($"TranslationService: Successfully updated String Table '{_targetStringTableName}'.");
     }
 
-    public string Translate(string key)
+    public TranslationEntry GetTranslationEntry(string key)
     {
         if (!_isInitialized)
         {
-            Debug.LogWarning($"TranslationService: Translate called before service is initialized. Returning key '{key}'.");
-            return key;
+            Debug.LogWarning($"TranslationService: GetTranslationEntry called before service is initialized.");
+            return new TranslationEntry { key = key, english = key, hebrew = key };
         }
 
-        if (_mergedTranslations.TryGetValue(key, out string value))
+        if (_mergedTranslations.TryGetValue(key, out TranslationEntry entry))
         {
-            return value;
+            return entry;
+        }
+
+        return null;
+    }
+
+    public string Translate(string key)
+    {
+        var entry = GetTranslationEntry(key);
+        if (entry != null)
+        {
+            return entry.hebrew;
         }
 
         if (showTranslationWarnings)
@@ -232,22 +272,21 @@ public class TranslationService
         return key;
     }
 
-    private static Dictionary<string, string> ConfigToDictionary(TranslationConfig config)
+    private static Dictionary<string, TranslationEntry> ConfigToDictionary(TranslationConfig config)
     {
         if (config == null || config.words == null)
         {
-            return new Dictionary<string, string>();
+            return new Dictionary<string, TranslationEntry>();
         }
 
         try
         {
-            return config.words.GroupBy(e => e.key)
-                .ToDictionary(g => g.Key, g => g.Last().hebrew);
+            return config.words.GroupBy(e => e.key).ToDictionary(g => g.Key, g => g.Last());
         }
         catch (System.Exception ex)
         {
             Debug.LogError($"TranslationService: Error converting config list to dictionary. {ex.Message}");
-            return new Dictionary<string, string>();
+            return new Dictionary<string, TranslationEntry>();
         }
     }
 }
