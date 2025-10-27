@@ -1,6 +1,7 @@
 using System.Collections;
 using com.mapcolonies.core.Utilities;
 using NUnit.Framework;
+using UnityEngine;
 using UnityEngine.TestTools;
 
 namespace PlayModeTests.Analytics
@@ -10,11 +11,9 @@ namespace PlayModeTests.Analytics
         [UnityTest]
         public IEnumerator GetApplicationPerformanceSnapshot_Returns_Sane_Values()
         {
-            PlatformUsageManager mgr = new PlatformUsageManager();
-            mgr.Init();
+            PlatformUsageHelper mgr = new PlatformUsageHelper();
 
-            yield return null;
-            yield return null;
+            yield return new WaitForSeconds(0.1f);
 
             (float fps, double memMb, double cpuPct) = mgr.GetApplicationPerformanceSnapshot();
 

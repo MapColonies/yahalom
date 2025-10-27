@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace com.mapcolonies.core.Utilities
 {
-    public class PlatformUsageManager
+    public class PlatformUsageHelper
     {
         private Process _currentProcess;
         private TimeSpan _previousTotalProcessorTime;
@@ -14,12 +14,7 @@ namespace com.mapcolonies.core.Utilities
         private const float PROCESSOR_MULTIPLIER = 100f;
         private const int BYTES_TO_MB = 1048576;
 
-        public void Init()
-        {
-            InitGpuUsageSampling();
-        }
-
-        private void InitGpuUsageSampling()
+        public PlatformUsageHelper()
         {
             _currentProcess = Process.GetCurrentProcess();
             _previousTotalProcessorTime = _currentProcess.TotalProcessorTime;
@@ -29,32 +24,31 @@ namespace com.mapcolonies.core.Utilities
 
         public (float, double, double) GetApplicationPerformanceSnapshot()
         {
-            var fps = CalculateFps();
-            var allocatedMemory = CalculateAllocatedMemory();
-            var cpuUsage = CalculateCpuUsage();
-
+            float fps = CalculateFps();
+            double allocatedMemory = CalculateAllocatedMemory();
+            double cpuUsage = CalculateCpuUsage();
             return (fps, allocatedMemory, cpuUsage);
         }
 
-        private float CalculateFps()
+        private static float CalculateFps()
         {
-            var fps = 1f / Time.deltaTime;
+            float fps = 1f / Time.deltaTime;
             return fps;
         }
 
-        private double CalculateAllocatedMemory()
+        private static double CalculateAllocatedMemory()
         {
-            var allocatedMemoryInMb = UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong() / BYTES_TO_MB;
+            long allocatedMemoryInMb = UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong() / BYTES_TO_MB;
             return allocatedMemoryInMb;
         }
 
         private double CalculateCpuUsage()
         {
-            var currentTime = DateTime.UtcNow;
-            var currentTotalProcessorTime = _currentProcess.TotalProcessorTime;
-            var elapsedSeconds = (currentTime - _previousProcessorSamplingTime).TotalSeconds;
-            var cpuTimeUsed = (currentTotalProcessorTime - _previousTotalProcessorTime).TotalSeconds;
-            var cpuUsageInPercentage = cpuTimeUsed / (elapsedSeconds * _logicalProcessorCount) * PROCESSOR_MULTIPLIER;
+            DateTime currentTime = DateTime.UtcNow;
+            TimeSpan currentTotalProcessorTime = _currentProcess.TotalProcessorTime;
+            double elapsedSeconds = (currentTime - _previousProcessorSamplingTime).TotalSeconds;
+            double cpuTimeUsed = (currentTotalProcessorTime - _previousTotalProcessorTime).TotalSeconds;
+            double cpuUsageInPercentage = cpuTimeUsed / (elapsedSeconds * _logicalProcessorCount) * PROCESSOR_MULTIPLIER;
 
             _previousProcessorSamplingTime = currentTime;
             _previousTotalProcessorTime = currentTotalProcessorTime;

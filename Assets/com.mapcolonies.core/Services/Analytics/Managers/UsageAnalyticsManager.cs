@@ -9,21 +9,22 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
 {
     public class UsageAnalyticsManager : IInitializable, IDisposable
     {
-        private PlatformUsageManager _platformUsageManager;
+        private readonly PlatformUsageHelper _platformUsageHelper;
         private TimerController _timerController;
 
         private const double DefaultPerformanceSampleIntervalSeconds = 60;
+
+        public UsageAnalyticsManager(PlatformUsageHelper sampler)
+        {
+            _platformUsageHelper = sampler;
+        }
 
         public void Initialize()
         {
             var (performanceSamplingIntervalInSeconds, enabled) = GetConfig();
             if (!enabled) return;
 
-            _platformUsageManager = new PlatformUsageManager();
-            _platformUsageManager.Init();
-
             TimeSpan interval = TimeSpan.FromSeconds(performanceSamplingIntervalInSeconds);
-
             _timerController = new TimerController(interval.TotalMilliseconds);
             _timerController.OnTimerElapsed += HandleTimerElapsed;
             _timerController.StartTimer();
@@ -31,7 +32,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
 
         private void HandleTimerElapsed()
         {
-            var (fps, allocatedMemory, cpuUsage) = _platformUsageManager.GetApplicationPerformanceSnapshot();
+            var (fps, allocatedMemory, cpuUsage) = _platformUsageHelper.GetApplicationPerformanceSnapshot();
             PublishApplicationPerformance(fps, allocatedMemory, cpuUsage);
         }
 
@@ -66,7 +67,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
             _timerController = null;
         }
 
-        private void PublishApplicationPerformance(float fps, double allocatedMemory, double cpuUsage)
+        protected void PublishApplicationPerformance(float fps, double allocatedMemory, double cpuUsage)
         {
             var performanceData = PerformanceData.Create(fps, allocatedMemory, cpuUsage);
             var logObject = LogObject.Create(
@@ -76,7 +77,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
                 LogComponent.General,
                 AnalyticsMessageTypes.ConsumptionStatus);
 
-            AnalyticsManager.Publish(logObject);
+            _ = AnalyticsManager.Publish(logObject);
         }
     }
 }

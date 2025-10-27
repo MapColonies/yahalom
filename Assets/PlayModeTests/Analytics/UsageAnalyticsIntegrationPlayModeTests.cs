@@ -2,6 +2,7 @@ using System.Collections;
 using System.IO;
 using System.Reflection;
 using com.mapcolonies.core.Services.Analytics.Managers;
+using com.mapcolonies.core.Utilities;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -16,10 +17,13 @@ namespace PlayModeTests.Analytics
 
         private class UsageAnalyticsShim : UsageAnalyticsManager
         {
+            public UsageAnalyticsShim(PlatformUsageHelper helper) : base(helper)
+            {
+            }
+
             public void ForceOnePublish()
             {
-                MethodInfo mi = typeof(UsageAnalyticsManager).GetMethod("PublishApplicationPerformance", BindingFlags.Instance | BindingFlags.NonPublic);
-                mi.Invoke(this, new object[] { 25f, 200.0d, 15.0d });
+                base.PublishApplicationPerformance(25f, 200.0d, 15.0d);
             }
         }
 
@@ -45,8 +49,8 @@ namespace PlayModeTests.Analytics
         [UnityTest]
         public IEnumerator TimerController_To_FileWrite_EndToEnd_Works()
         {
-            _mgr = new UsageAnalyticsShim();
-            _mgr.Initialize();
+            PlatformUsageHelper helper = new PlatformUsageHelper();
+            _mgr = new UsageAnalyticsShim(helper);
             _mgr.Initialize();
             _mgr.ForceOnePublish();
 
