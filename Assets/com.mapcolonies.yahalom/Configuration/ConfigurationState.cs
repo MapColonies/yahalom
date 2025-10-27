@@ -1,6 +1,6 @@
 namespace com.mapcolonies.core.Services.ConfigurationService
 {
-    public class ConfigurationService
+    public class ConfigurationState
     {
         
     }

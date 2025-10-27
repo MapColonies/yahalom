@@ -1,13 +1,10 @@
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
-using com.mapcolonies.core.Services;
+using com.mapcolonies.yahalom.Configuration;
 using com.mapcolonies.yahalom.InitPipeline;
 using com.mapcolonies.yahalom.InitPipeline.InitSteps;
 using com.mapcolonies.yahalom.InitPipeline.InitUnits;
-using com.mapcolonies.yahalom.Redux;
 using Cysharp.Threading.Tasks;
-using Unity.AppUI.Redux;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -25,44 +22,13 @@ namespace com.mapcolonies.yahalom.EntryPoint
             _pipeline = initializationPipeline;
             _initSteps = new List<InitStep>
             {
-                new InitStep("PreInit", StepMode.Sequential, new IInitUnit[]
-                {
-                    new ActionUnit("Logging Init", 0.05f, InitPolicy.Fail,
-                        () =>
-                        {
-                            return Cysharp.Threading.Tasks.UniTask.Delay(1000);
-                        }),
-                    new ActionUnit("Local Settings", 0.05f, InitPolicy.Fail,
-                        () =>
-                        {
-                            return Cysharp.Threading.Tasks.UniTask.Delay(1000);
-                        })
-                }),
                 new InitStep("ServicesInit", StepMode.Sequential, new IInitUnit[]
                 {
-                    new ActionUnit("Configuration Service", 0.05f, InitPolicy.Fail,
+                    new ActionUnit("Configuration Service", 1f, InitPolicy.Fail,
                         () =>
                         {
-                            Store<AppState> store = scope.Container.Resolve<Store<AppState>>();
-                            store.Dispatch(new ActionCreator());
-                            return default;
-                        }),
-                    new RegisterScopeUnit("WMTS", 0.1f, scope, InitPolicy.Retry,
-                        builder =>
-                        {
-                            builder.Register<WmtsService>(Lifetime.Singleton);
-                        }, resolver =>
-                        {
-                            Task.Run(resolver.Resolve<WmtsService>().Init);
-                            return default;
-                        }),
-                }),
-                new InitStep("FeaturesInit", StepMode.Sequential, new IInitUnit[]
-                {
-                    new ActionUnit("Maps Feature", 0.25f, InitPolicy.Fail,
-                        () =>
-                        {
-                            return Cysharp.Threading.Tasks.UniTask.Delay(1000);
+                            ConfigurationManager config = scope.Container.Resolve<ConfigurationManager>();
+                            return config.Load();
                         })
                 })
             };

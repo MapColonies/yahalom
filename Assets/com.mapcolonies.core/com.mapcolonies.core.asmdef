@@ -3,7 +3,8 @@
   "rootNamespace": "",
   "references": [
     "VContainer",
-    "UniTask"
+    "UniTask",
+    "Unity.AppUI.Redux"
   ],
   "includePlatforms": [
     "Editor",
