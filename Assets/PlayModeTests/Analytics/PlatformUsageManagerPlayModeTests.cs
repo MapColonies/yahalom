@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using com.mapcolonies.core.Utilities;
 using NUnit.Framework;
@@ -11,12 +12,11 @@ namespace PlayModeTests.Analytics
         [UnityTest]
         public IEnumerator GetApplicationPerformanceSnapshot_Returns_Sane_Values()
         {
-            PlatformUsageHelper mgr = new PlatformUsageHelper();
+            (DateTime startTime, TimeSpan startSpan) = PlatformUsageHelper.GetInitialProcessorTimes();
 
             yield return new WaitForSeconds(0.1f);
 
-            (float fps, double memMb, double cpuPct) = mgr.GetApplicationPerformanceSnapshot();
-
+            (float fps, double memMb, double cpuPct, _, _) = PlatformUsageHelper.GetApplicationPerformanceSnapshot(startTime, startSpan);
             Assert.Greater(fps, 0f, "FPS should be > 0");
 
             Assert.GreaterOrEqual(memMb, 0d);

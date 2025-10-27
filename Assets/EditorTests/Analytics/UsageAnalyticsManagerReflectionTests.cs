@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using com.mapcolonies.core.Services.Analytics.Managers;
 using NUnit.Framework;
 using UnityEngine;
-using com.mapcolonies.core.Utilities;
 
 namespace EditorTests.Analytics
 {
@@ -28,8 +27,7 @@ namespace EditorTests.Analytics
         public async Task PublishApplicationPerformance_Writes_Performance_Log()
         {
             Type type = typeof(UsageAnalyticsManager);
-            var helper = new PlatformUsageHelper();
-            object instance = System.Activator.CreateInstance(type, new object[] { helper });
+            object instance = System.Activator.CreateInstance(type);
 
             MethodInfo mi = type.GetMethod("PublishApplicationPerformance", BindingFlags.Instance | BindingFlags.NonPublic);
             Assert.NotNull(mi, "Expected private method PublishApplicationPerformance");

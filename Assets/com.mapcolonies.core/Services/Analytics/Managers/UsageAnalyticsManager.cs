@@ -9,19 +9,19 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
 {
     public class UsageAnalyticsManager : IInitializable, IDisposable
     {
-        private readonly PlatformUsageHelper _platformUsageHelper;
         private TimerController _timerController;
+        private DateTime _previousProcessorSamplingTime;
+        private TimeSpan _previousTotalProcessorTime;
 
         private const double DefaultPerformanceSampleIntervalSeconds = 60;
         private const string UsageLogComponent = "General";
 
-        public UsageAnalyticsManager(PlatformUsageHelper sampler)
-        {
-            _platformUsageHelper = sampler;
-        }
+        public UsageAnalyticsManager() { }
 
         public void Initialize()
         {
+            (_previousProcessorSamplingTime, _previousTotalProcessorTime) = PlatformUsageHelper.GetInitialProcessorTimes();
+
             var (performanceSamplingIntervalInSeconds, enabled) = GetConfig();
             if (!enabled) return;
 
@@ -33,7 +33,11 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
 
         private void HandleTimerElapsed()
         {
-            var (fps, allocatedMemory, cpuUsage) = _platformUsageHelper.GetApplicationPerformanceSnapshot();
+            var (fps, allocatedMemory, cpuUsage, newTime, newSpan) = PlatformUsageHelper.GetApplicationPerformanceSnapshot(_previousProcessorSamplingTime, _previousTotalProcessorTime);
+
+            _previousProcessorSamplingTime = newTime;
+            _previousTotalProcessorTime = newSpan;
+
             PublishApplicationPerformance(fps, allocatedMemory, cpuUsage);
         }
 

@@ -4,30 +4,37 @@ using UnityEngine;
 
 namespace com.mapcolonies.core.Utilities
 {
-    public class PlatformUsageHelper
+    public static class PlatformUsageHelper
     {
-        private Process _currentProcess;
-        private TimeSpan _previousTotalProcessorTime;
-        private DateTime _previousProcessorSamplingTime;
-        private int _logicalProcessorCount;
+        private static Process _currentProcess;
+        private static int _logicalProcessorCount;
 
         private const float PROCESSOR_MULTIPLIER = 100f;
         private const int BYTES_TO_MB = 1048576;
 
-        public PlatformUsageHelper()
+        static PlatformUsageHelper()
         {
             _currentProcess = Process.GetCurrentProcess();
-            _previousTotalProcessorTime = _currentProcess.TotalProcessorTime;
-            _previousProcessorSamplingTime = DateTime.UtcNow;
             _logicalProcessorCount = Environment.ProcessorCount;
         }
 
-        public (float, double, double) GetApplicationPerformanceSnapshot()
+        public static (float, double, double, DateTime, TimeSpan) GetApplicationPerformanceSnapshot(DateTime previousProcessorSamplingTime,
+            TimeSpan previousTotalProcessorTime)
         {
             float fps = CalculateFps();
             double allocatedMemory = CalculateAllocatedMemory();
-            double cpuUsage = CalculateCpuUsage();
-            return (fps, allocatedMemory, cpuUsage);
+            (double cpuUsage, DateTime newSamplingTime, TimeSpan newProcessorTime) = CalculateCpuUsage(previousProcessorSamplingTime, previousTotalProcessorTime);
+            return (fps, allocatedMemory, cpuUsage, newSamplingTime, newProcessorTime);
+        }
+
+        public static (DateTime, TimeSpan) GetInitialProcessorTimes()
+        {
+            if (_currentProcess == null)
+            {
+                _currentProcess = Process.GetCurrentProcess();
+            }
+
+            return (DateTime.UtcNow, _currentProcess.TotalProcessorTime);
         }
 
         private static float CalculateFps()
@@ -42,18 +49,16 @@ namespace com.mapcolonies.core.Utilities
             return allocatedMemoryInMb;
         }
 
-        private double CalculateCpuUsage()
+        private static (double, DateTime, TimeSpan) CalculateCpuUsage(DateTime previousProcessorSamplingTime,
+            TimeSpan previousTotalProcessorTime)
         {
             DateTime currentTime = DateTime.UtcNow;
             TimeSpan currentTotalProcessorTime = _currentProcess.TotalProcessorTime;
-            double elapsedSeconds = (currentTime - _previousProcessorSamplingTime).TotalSeconds;
-            double cpuTimeUsed = (currentTotalProcessorTime - _previousTotalProcessorTime).TotalSeconds;
+            double elapsedSeconds = (currentTime - previousProcessorSamplingTime).TotalSeconds;
+            double cpuTimeUsed = (currentTotalProcessorTime - previousTotalProcessorTime).TotalSeconds;
             double cpuUsageInPercentage = cpuTimeUsed / (elapsedSeconds * _logicalProcessorCount) * PROCESSOR_MULTIPLIER;
 
-            _previousProcessorSamplingTime = currentTime;
-            _previousTotalProcessorTime = currentTotalProcessorTime;
-
-            return cpuUsageInPercentage;
+            return (cpuUsageInPercentage, currentTime, currentTotalProcessorTime);
         }
     }
 }

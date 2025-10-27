@@ -1,8 +1,6 @@
 using System.Collections;
 using System.IO;
-using System.Reflection;
 using com.mapcolonies.core.Services.Analytics.Managers;
-using com.mapcolonies.core.Utilities;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -17,9 +15,7 @@ namespace PlayModeTests.Analytics
 
         private class UsageAnalyticsShim : UsageAnalyticsManager
         {
-            public UsageAnalyticsShim(PlatformUsageHelper helper) : base(helper)
-            {
-            }
+            public UsageAnalyticsShim() : base() { }
 
             public void ForceOnePublish()
             {
@@ -49,8 +45,7 @@ namespace PlayModeTests.Analytics
         [UnityTest]
         public IEnumerator TimerController_To_FileWrite_EndToEnd_Works()
         {
-            PlatformUsageHelper helper = new PlatformUsageHelper();
-            _mgr = new UsageAnalyticsShim(helper);
+            _mgr = new UsageAnalyticsShim();
             _mgr.Initialize();
             _mgr.ForceOnePublish();
 
