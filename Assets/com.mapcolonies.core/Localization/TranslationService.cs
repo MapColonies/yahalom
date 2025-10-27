@@ -18,7 +18,8 @@ public class TranslationConfig
 public class TranslationEntry
 {
     public string key;
-    public string value;
+    public string english;
+    public string hebrew;
 }
 
 public class TranslationService
@@ -241,7 +242,7 @@ public class TranslationService
         try
         {
             return config.words.GroupBy(e => e.key)
-                .ToDictionary(g => g.Key, g => g.Last().value);
+                .ToDictionary(g => g.Key, g => g.Last().hebrew);
         }
         catch (System.Exception ex)
         {
