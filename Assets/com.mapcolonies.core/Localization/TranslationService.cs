@@ -15,21 +15,6 @@ namespace com.mapcolonies.core.Localization
 {
     public class TranslationService
     {
-        private static TranslationService _instance;
-
-        public static TranslationService Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new TranslationService();
-                }
-
-                return _instance;
-            }
-        }
-
         private string _remoteConfigUrl;
         private bool _showTranslationWarnings;
 
@@ -49,7 +34,7 @@ namespace com.mapcolonies.core.Localization
         {
         }
 
-        public async Task InitializeService()
+        public async Task InitializeService(string localeIdentifier)
         {
             if (_isInitialized) return;
 
@@ -57,6 +42,8 @@ namespace com.mapcolonies.core.Localization
             _remoteConfigUrl = string.Empty;
 
             Debug.Log("TranslationService: Initializing...");
+
+            await SetStartUpLanguage(localeIdentifier);
 
             await LoadHardCodedTranslations();
 
@@ -79,6 +66,27 @@ namespace com.mapcolonies.core.Localization
 
             _isInitialized = true;
             Debug.Log("TranslationService: Initialization complete.");
+        }
+
+        private async Task SetStartUpLanguage(string localeIdentifier)
+        {
+            await LocalizationSettings.InitializationOperation.Task;
+
+            if (!string.IsNullOrWhiteSpace(localeIdentifier))
+            {
+                ILocalesProvider locales = LocalizationSettings.AvailableLocales;
+                Locale target = locales.GetLocale(localeIdentifier);
+
+                if (target != null)
+                {
+                    LocalizationSettings.SelectedLocale = target;
+                    Debug.Log($"TranslationService: Selected locale set to '{target.Identifier.Code}'.");
+                }
+                else
+                {
+                    Debug.LogWarning($"TranslationService: Requested locale '{localeIdentifier}' not found.");
+                }
+            }
         }
 
         private async Task LoadHardCodedTranslations()
