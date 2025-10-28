@@ -8,7 +8,7 @@ namespace com.mapcolonies.core.Services.Analytics.Model
     [Serializable]
     public class LogObject
     {
-        public string SessionID { get; private set; }
+        public string SessionID { get; internal set; }
         public string Severity { get; private set; } //TODO: Change to Log4Net enum
         public DateTime TimeStamp { get; private set; }
         public string Message { get; private set; }
@@ -17,7 +17,6 @@ namespace com.mapcolonies.core.Services.Analytics.Model
         public AnalyticsMessageTypes MessageType { get; private set; }
 
         private LogObject(
-            string sessionId,
             string severity,
             DateTime timeStamp,
             string message,
@@ -25,7 +24,6 @@ namespace com.mapcolonies.core.Services.Analytics.Model
             string component,
             AnalyticsMessageTypes messageType)
         {
-            SessionID = sessionId;
             Severity = severity;
             TimeStamp = timeStamp;
             Message = message;
@@ -44,7 +42,6 @@ namespace com.mapcolonies.core.Services.Analytics.Model
         /// <param name="messageType">Analytics message type</param>
         /// <returns>LogObject</returns>
         public static LogObject Create(
-            string sessionId,
             LogType severity,
             string message,
             IAnalyticLogParameter messageParameters,
@@ -52,7 +49,6 @@ namespace com.mapcolonies.core.Services.Analytics.Model
             AnalyticsMessageTypes messageType)
         {
             return new LogObject(
-                sessionId,
                 severity.ToString(),
                 DateTime.UtcNow,
                 message,

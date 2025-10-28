@@ -25,7 +25,6 @@ namespace EditorTests.Analytics
 
                 LayerData msgParams = LayerData.Create("imagery", "layer-abc");
                 LogObject log = LogObject.Create(
-                    am.SessionId,
                     LogType.Log,
                     AnalyticsMessageTypes.LayerUseStarted.ToString(),
                     msgParams,
@@ -65,7 +64,6 @@ namespace EditorTests.Analytics
 
                 LayerData msgParams = LayerData.Create("imagery", "layer-xyz");
                 LogObject log = LogObject.Create(
-                    am.SessionId,
                     LogType.Log,
                     AnalyticsMessageTypes.LayerUseStarted.ToString(),
                     msgParams,

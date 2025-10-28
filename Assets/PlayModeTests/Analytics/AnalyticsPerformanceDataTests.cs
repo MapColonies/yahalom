@@ -42,7 +42,6 @@ namespace PlayModeTests.Analytics
         {
             PerformanceData perf = PerformanceData.Create(fps: 60f, allocatedMemoryInMb: 256d, cpuUsagePercentage: 12.34d);
             LogObject log = LogObject.Create(
-                _am.SessionId,
                 LogType.Log,
                 AnalyticsMessageTypes.ConsumptionStatus.ToString(),
                 perf,

@@ -12,16 +12,14 @@ namespace EditorTests.Analytics.SerializationTests
         [Test]
         public void Create_Sets_All_Fields()
         {
-            string fakeSession = Guid.NewGuid().ToString();
             LogType severity = LogType.Warning;
             string message = "LayerUseStarted";
             LayerData parameters = LayerData.Create("imagery", "layer-001");
             string component = "General";
             AnalyticsMessageTypes type = AnalyticsMessageTypes.LayerUseStarted;
 
-            LogObject log = LogObject.Create(fakeSession,severity, message, parameters, component, type);
+            LogObject log = LogObject.Create(severity, message, parameters, component, type);
 
-            Assert.AreEqual(fakeSession, log.SessionID);
             Assert.AreEqual(severity.ToString(), log.Severity);
             Assert.AreEqual(message, log.Message);
             Assert.AreSame(parameters, log.MessageParameters);
@@ -33,19 +31,16 @@ namespace EditorTests.Analytics.SerializationTests
         [Test]
         public void Serialize_ToJson_Contains_Expected_Fields()
         {
-            string expectedSessionId = Guid.NewGuid().ToString();
-
             var severity = LogType.Log;
             var message = "LayerUseStarted";
             var parameters = LayerData.Create("imagery", "layer-001");
             var component = "General";
             var type = AnalyticsMessageTypes.LayerUseStarted;
 
-            var log = LogObject.Create(expectedSessionId, severity, message, parameters, component, type);
+            var log = LogObject.Create(severity, message, parameters, component, type);
 
             string json = JsonConvert.SerializeObject(log, Formatting.None);
 
-            StringAssert.Contains($"\"SessionID\":\"{expectedSessionId}\"", json);
             StringAssert.Contains("\"Severity\":\"Log\"", json);
             StringAssert.Contains("\"Message\":\"LayerUseStarted\"", json);
             StringAssert.Contains("\"Component\":\"General\"", json);

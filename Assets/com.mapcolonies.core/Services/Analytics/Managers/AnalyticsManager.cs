@@ -138,6 +138,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
                 return;
             }
 
+            logObject.SessionID = SessionId;
             await _publish(logObject);
         }
 

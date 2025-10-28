@@ -80,7 +80,6 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
         {
             var performanceData = PerformanceData.Create(fps, allocatedMemory, cpuUsage);
             var logObject = LogObject.Create(
-                _analyticsManager.SessionId,
                 LogType.Log,
                 AnalyticsMessageTypes.ConsumptionStatus.ToString(),
                 performanceData,
