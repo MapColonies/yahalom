@@ -41,14 +41,10 @@ namespace com.mapcolonies.core.Localization
             //TODO: Get from global config file
             _remoteConfigUrl = string.Empty;
 
-            Debug.Log("TranslationService: Initializing...");
-
             await SetLanguage(localeIdentifier);
-
             await LoadHardCodedTranslations();
 
             TranslationConfig fileConfig = await LoadFromFileAsync();
-
             if (fileConfig != null)
             {
                 _fileTranslations = ConfigToDictionary(fileConfig);
@@ -56,7 +52,6 @@ namespace com.mapcolonies.core.Localization
             }
 
             TranslationConfig remoteConfig = await LoadFromRemoteAsync();
-
             if (remoteConfig != null)
             {
                 _remoteTranslations = ConfigToDictionary(remoteConfig);
@@ -67,13 +62,11 @@ namespace com.mapcolonies.core.Localization
             await ApplyToUnityLocalization();
 
             _isInitialized = true;
-            Debug.Log("TranslationService: Initialization complete.");
         }
 
         private async Task SetLanguage(string localeIdentifier)
         {
             await LocalizationSettings.InitializationOperation.Task;
-
             if (!string.IsNullOrWhiteSpace(localeIdentifier))
             {
                 ILocalesProvider locales = LocalizationSettings.AvailableLocales;
@@ -82,7 +75,6 @@ namespace com.mapcolonies.core.Localization
                 if (target != null)
                 {
                     LocalizationSettings.SelectedLocale = target;
-                    Debug.Log($"TranslationService: Selected locale set to '{target.Identifier.Code}'.");
                 }
                 else
                 {
@@ -98,7 +90,6 @@ namespace com.mapcolonies.core.Localization
 
             Locale enLocale = LocalizationSettings.AvailableLocales.GetLocale(EnglishLocaleIdentifier);
             Locale heLocale = LocalizationSettings.AvailableLocales.GetLocale(HebrewLocaleIdentifier);
-
             if (enLocale == null && heLocale == null)
             {
                 Debug.LogWarning($"TranslationService: No matching locales found for '{EnglishLocaleIdentifier}' or '{HebrewLocaleIdentifier}'.");
@@ -107,7 +98,6 @@ namespace com.mapcolonies.core.Localization
 
             StringTable enTable = null;
             StringTable heTable = null;
-
             if (enLocale != null)
             {
                 enTable = await LocalizationSettings.StringDatabase.GetTableAsync(TargetStringTableName, enLocale).Task;
@@ -125,7 +115,6 @@ namespace com.mapcolonies.core.Localization
             }
 
             HashSet<string> allKeys = new HashSet<string>();
-
             if (enTable != null)
             {
                 foreach (StringTableEntry entry in enTable.Values) allKeys.Add(entry.Key);
@@ -176,18 +165,15 @@ namespace com.mapcolonies.core.Localization
         {
             if (string.IsNullOrEmpty(_remoteConfigUrl))
             {
-                Debug.Log("TranslationService: Remote config URL is empty, skipping.");
+                Debug.LogWarning("TranslationService: Remote config URL is empty, skipping.");
                 return null;
             }
-
-            Debug.Log($"TranslationService: Loading from remote: {_remoteConfigUrl}");
 
             using (UnityWebRequest www = UnityWebRequest.Get(_remoteConfigUrl))
             {
                 try
                 {
                     await www.SendWebRequest();
-
                     if (www.result == UnityWebRequest.Result.Success)
                     {
                         string jsonContent = www.downloadHandler.text;
@@ -217,7 +203,6 @@ namespace com.mapcolonies.core.Localization
         private async Task ApplyToUnityLocalization()
         {
             await LocalizationSettings.InitializationOperation.Task;
-
             Locale hebrewLocale = LocalizationSettings.AvailableLocales.GetLocale(HebrewLocaleIdentifier);
             Locale englishLocale = LocalizationSettings.AvailableLocales.GetLocale(EnglishLocaleIdentifier);
 
@@ -268,7 +253,6 @@ namespace com.mapcolonies.core.Localization
         private static bool IsLocale(string targetCode)
         {
             Locale selected = LocalizationSettings.SelectedLocale;
-
             if (selected == null)
             {
                 Debug.LogWarning("IsLocale: LocalizationSettings.SelectedLocale is null.");
