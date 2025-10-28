@@ -30,7 +30,7 @@ namespace com.mapcolonies.core.Localization
 
         private bool _isInitialized;
 
-        private TranslationService()
+        public TranslationService()
         {
         }
 
@@ -43,7 +43,7 @@ namespace com.mapcolonies.core.Localization
 
             Debug.Log("TranslationService: Initializing...");
 
-            await SetStartUpLanguage(localeIdentifier);
+            await SetLanguage(localeIdentifier);
 
             await LoadHardCodedTranslations();
 
@@ -68,7 +68,7 @@ namespace com.mapcolonies.core.Localization
             Debug.Log("TranslationService: Initialization complete.");
         }
 
-        private async Task SetStartUpLanguage(string localeIdentifier)
+        private async Task SetLanguage(string localeIdentifier)
         {
             await LocalizationSettings.InitializationOperation.Task;
 
