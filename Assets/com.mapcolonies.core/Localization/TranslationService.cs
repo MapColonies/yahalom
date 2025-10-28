@@ -48,6 +48,7 @@ namespace com.mapcolonies.core.Localization
             await LoadHardCodedTranslations();
 
             TranslationConfig fileConfig = await LoadFromFileAsync();
+
             if (fileConfig != null)
             {
                 _fileTranslations = ConfigToDictionary(fileConfig);
@@ -55,6 +56,7 @@ namespace com.mapcolonies.core.Localization
             }
 
             TranslationConfig remoteConfig = await LoadFromRemoteAsync();
+
             if (remoteConfig != null)
             {
                 _remoteTranslations = ConfigToDictionary(remoteConfig);
@@ -91,7 +93,7 @@ namespace com.mapcolonies.core.Localization
 
         private async Task LoadHardCodedTranslations()
         {
-            _hardCodedTranslations = new Dictionary<string, TranslationEntry>();
+            _hardCodedTranslations.Clear();
             await LocalizationSettings.InitializationOperation.Task;
 
             Locale enLocale = LocalizationSettings.AvailableLocales.GetLocale(EnglishLocaleIdentifier);
@@ -160,7 +162,7 @@ namespace com.mapcolonies.core.Localization
 
             try
             {
-                string jsonContent = await Task.Run(() => File.ReadAllText(path));
+                string jsonContent = await File.ReadAllTextAsync(path);
                 return JsonConvert.DeserializeObject<TranslationConfig>(jsonContent);
             }
             catch (System.Exception ex)
@@ -182,50 +184,34 @@ namespace com.mapcolonies.core.Localization
 
             using (UnityWebRequest www = UnityWebRequest.Get(_remoteConfigUrl))
             {
-                var operation = www.SendWebRequest();
-
-                while (!operation.isDone)
+                try
                 {
-                    await Task.Yield();
-                }
+                    await www.SendWebRequest();
 
-                if (www.result == UnityWebRequest.Result.Success)
-                {
-                    try
+                    if (www.result == UnityWebRequest.Result.Success)
                     {
                         string jsonContent = www.downloadHandler.text;
                         return JsonConvert.DeserializeObject<TranslationConfig>(jsonContent);
                     }
-                    catch (System.Exception ex)
-                    {
-                        Debug.LogError($"TranslationService: Failed to parse remote config. Error: {ex.Message}");
-                        return null;
-                    }
-                }
 
-                Debug.LogError($"TranslationService: Failed to download remote config. Error: {www.error}");
-                return null;
+                    Debug.LogError($"TranslationService: Failed to download remote config. Error: {www.error}");
+                    return null;
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.LogError($"TranslationService: Failed to parse remote config. Error: {ex.Message} (URL: {_remoteConfigUrl})");
+                    return null;
+                }
             }
         }
 
         private void MergeTranslations()
         {
-            _mergedTranslations.Clear();
-
-            foreach (var entry in _hardCodedTranslations)
-            {
-                _mergedTranslations[entry.Key] = entry.Value;
-            }
-
-            foreach (var entry in _fileTranslations)
-            {
-                _mergedTranslations[entry.Key] = entry.Value;
-            }
-
-            foreach (var entry in _remoteTranslations)
-            {
-                _mergedTranslations[entry.Key] = entry.Value;
-            }
+            _mergedTranslations = _hardCodedTranslations
+                .Concat(_fileTranslations)
+                .Concat(_remoteTranslations)
+                .GroupBy(kvp => kvp.Key)
+                .ToDictionary(g => g.Key, g => g.Last().Value);
         }
 
         private async Task ApplyToUnityLocalization()
@@ -235,15 +221,9 @@ namespace com.mapcolonies.core.Localization
             Locale hebrewLocale = LocalizationSettings.AvailableLocales.GetLocale(HebrewLocaleIdentifier);
             Locale englishLocale = LocalizationSettings.AvailableLocales.GetLocale(EnglishLocaleIdentifier);
 
-            if (hebrewLocale == null)
+            if (hebrewLocale == null || englishLocale == null)
             {
-                Debug.LogError($"TranslationService: Hebrew locale '{HebrewLocaleIdentifier}' not found. Make sure it's added to Localization Settings.");
-                return;
-            }
-
-            if (englishLocale == null)
-            {
-                Debug.LogError($"TranslationService: English locale '{EnglishLocaleIdentifier}' not found. Make sure it's added to Localization Settings.");
+                Debug.LogError($"TranslationService: One or both locales not found. HE: '{HebrewLocaleIdentifier}', EN: '{EnglishLocaleIdentifier}'. Make sure they are in Localization Settings.");
                 return;
             }
 
@@ -253,15 +233,9 @@ namespace com.mapcolonies.core.Localization
             await hebrewTableOperation.Task;
             await englishTableOperation.Task;
 
-            if (hebrewTableOperation.Status != AsyncOperationStatus.Succeeded)
+            if (hebrewTableOperation.Status != AsyncOperationStatus.Succeeded || englishTableOperation.Status != AsyncOperationStatus.Succeeded)
             {
-                Debug.LogError($"TranslationService: Could not load Hebrew String Table '{TargetStringTableName}'. Error: {hebrewTableOperation.OperationException}");
-                return;
-            }
-
-            if (englishTableOperation.Status != AsyncOperationStatus.Succeeded)
-            {
-                Debug.LogError($"TranslationService: Could not load English String Table '{TargetStringTableName}'. Error: {englishTableOperation.OperationException}");
+                Debug.LogError($"TranslationService: Could not load String Tables. HE Error: {hebrewTableOperation.OperationException} | EN Error: {englishTableOperation.OperationException}");
                 return;
             }
 
@@ -294,8 +268,14 @@ namespace com.mapcolonies.core.Localization
         private static bool IsLocale(string targetCode)
         {
             Locale selected = LocalizationSettings.SelectedLocale;
-            string code = selected.Identifier.Code;
 
+            if (selected == null)
+            {
+                Debug.LogWarning("IsLocale: LocalizationSettings.SelectedLocale is null.");
+                return false;
+            }
+
+            string code = selected.Identifier.Code;
             if (string.IsNullOrEmpty(code) || string.IsNullOrEmpty(targetCode))
                 return false;
 
@@ -304,6 +284,8 @@ namespace com.mapcolonies.core.Localization
 
         public string Translate(string key)
         {
+            if (string.IsNullOrEmpty(key)) return string.Empty;
+
             TranslationEntry entry = GetTranslationEntry(key);
 
             if (entry == null)
@@ -312,22 +294,19 @@ namespace com.mapcolonies.core.Localization
                 {
                     Debug.LogWarning($"TranslationService: Translation not found for key: {key}");
                 }
+
                 return key;
             }
 
             if (IsLocale(HebrewLocaleIdentifier))
             {
                 if (!string.IsNullOrEmpty(entry.Hebrew)) return entry.Hebrew;
-                //Ask asaf about ux
-                if (!string.IsNullOrEmpty(entry.English)) return entry.English;
                 return key;
             }
 
             if (IsLocale(EnglishLocaleIdentifier))
             {
                 if (!string.IsNullOrEmpty(entry.English)) return entry.English;
-                //Ask asaf about ux
-                if (!string.IsNullOrEmpty(entry.Hebrew)) return entry.Hebrew;
                 return key;
             }
 
@@ -343,7 +322,10 @@ namespace com.mapcolonies.core.Localization
 
             try
             {
-                return config.Words.GroupBy(e => e.Key).ToDictionary(g => g.Key, g => g.Last());
+                return config.Words
+                    .Where(e => e != null && e.Key != null)
+                    .GroupBy(e => e.Key)
+                    .ToDictionary(g => g.Key, g => g.Last());
             }
             catch (System.Exception ex)
             {
