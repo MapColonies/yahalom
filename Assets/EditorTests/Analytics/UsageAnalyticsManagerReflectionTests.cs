@@ -15,8 +15,7 @@ namespace EditorTests.Analytics
         [SetUp]
         public void Setup()
         {
-            AnalyticsManager am = new AnalyticsManager();
-            am.Initialize();
+            new AnalyticsManager().Initialize();
 
             string dir = Path.Combine(Application.persistentDataPath, "AnalyticsLogs");
             _logPath = Path.Combine(dir, $"session-{AnalyticsManager.SessionId}.log");
