@@ -1,36 +1,23 @@
-using com.mapcolonies.core.Services.ConfigurationService;
+using com.mapcolonies.core.Utilities;
 using com.mapcolonies.yahalom.Redux;
 using Cysharp.Threading.Tasks;
 using Unity.AppUI.Redux;
-using UnityEngine;
 
 namespace com.mapcolonies.yahalom.Configuration
 {
     public class ConfigurationManager
     {
+        private readonly IStore<AppState> _store;
+
         public ConfigurationManager(IStore<AppState> store)
         {
-            Debug.Log("ConfigurationManager initialized");
+            _store = store;
         }
 
         public async UniTask Load()
         {
-            // get offline / online config
-
-            // if offline
-            IConfigurationController configurationController;
-
-            if (true) //offline
-            {
-                configurationController = new OfflineConfigurationController();
-            }
-            else
-            {
-                configurationController = new RemoteConfigurationController();
-            }
-
-            ConfigurationState configurationState = configurationController.Load();
-
+            ConfigurationState configurationState = await JsonLoader.LoadStreamingAssetsJsonAsync<ConfigurationState>("config.json");
+            _store.Dispatch(new SetConfigurationAction(configurationState));
         }
     }
 }

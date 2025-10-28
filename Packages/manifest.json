@@ -5,6 +5,7 @@
     "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
     "com.github-glitchenzo.nugetforunity": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity",
     "com.mapcolonies.yahalom-ui": "https://github.com/MapColonies/yahalom-ui-components.git?path=/Assets/YahalomUIPackage",
+    "com.unity.nuget.newtonsoft-json": "3.2.1",
     "com.unity.dt.app-ui": "2.1.1",
     "com.unity.ide.rider": "3.0.36",
     "com.unity.multiplayer.center": "1.0.0",

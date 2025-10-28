@@ -1,3 +1,4 @@
+using com.mapcolonies.yahalom.Configuration;
 using Unity.AppUI.Redux;
 
 namespace com.mapcolonies.yahalom.Redux
@@ -6,7 +7,7 @@ namespace com.mapcolonies.yahalom.Redux
     {
         public static AppState Reduce(AppState state, IAction action)
         {
-            return state;
+            return state.With(ConfigurationReducer.Reduce(state.ConfigurationState, action));
         }
     }
 }

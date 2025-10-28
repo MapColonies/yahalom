@@ -1,7 +1,19 @@
-namespace com.mapcolonies.core.Services.ConfigurationService
+using Unity.AppUI.Redux;
+
+namespace com.mapcolonies.yahalom.Configuration
 {
-    public class ConfigurationReducer
+    public static class ConfigurationReducer
     {
-        
+        public static ConfigurationState Reduce(ConfigurationState state, IAction action)
+        {
+            switch (action)
+            {
+                case SetConfigurationAction setConfig:
+                    return setConfig.ConfigurationState;
+
+                default:
+                    return state;
+            }
+        }
     }
 }

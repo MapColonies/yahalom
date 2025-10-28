@@ -26,12 +26,13 @@ namespace com.mapcolonies.yahalom.EntryPoint
             Debug.Log("End Configure Startup Registrations");
 
             #region Register store
-            _initialState = new AppState();
+                _initialState = new AppState(new ConfigurationState());
                 IStore<AppState> store = new Store<AppState>(RootReducer.Reduce, _initialState);
                 builder.RegisterInstance(store);
             #endregion
 
             #region Register Services
+                builder.Register<ReduxStoreManager>(Lifetime.Singleton);
                 builder.Register<ConfigurationManager>(Lifetime.Singleton);
             #endregion
 

@@ -1,7 +1,10 @@
-namespace com.mapcolonies.core.Services.ConfigurationService
+using System;
+
+namespace com.mapcolonies.yahalom.Configuration
 {
-    public class ConfigurationState
+    [Serializable]
+    public record ConfigurationState
     {
-        
+
     }
 }
