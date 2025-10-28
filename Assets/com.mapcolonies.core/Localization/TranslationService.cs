@@ -38,9 +38,6 @@ namespace com.mapcolonies.core.Localization
         private const string LocalFilePath = "Translations/Yahalom_HardCoded_Translations.json";
         private const string TargetStringTableName = "Yahalom_HardCoded_Translations";
 
-        private const string ActiveLocalePlayerPrefsKey = "core.translation.activeLocale";
-        private const string DefaultLocaleIdentifier = HebrewLocaleIdentifier;
-
         private Dictionary<string, TranslationEntry> _hardCodedTranslations = new Dictionary<string, TranslationEntry>();
         private Dictionary<string, TranslationEntry> _fileTranslations = new Dictionary<string, TranslationEntry>();
         private Dictionary<string, TranslationEntry> _remoteTranslations = new Dictionary<string, TranslationEntry>();
@@ -136,9 +133,9 @@ namespace com.mapcolonies.core.Localization
 
                 _hardCodedTranslations[key] = new TranslationEntry
                 {
-                    Key     = key,
+                    Key = key,
                     English = enVal,
-                    Hebrew  = heVal
+                    Hebrew = heVal
                 };
             }
         }
