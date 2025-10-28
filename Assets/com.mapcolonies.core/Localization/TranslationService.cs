@@ -9,6 +9,7 @@ using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
 using UnityEngine.Networking;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace com.mapcolonies.core.Localization
 {
@@ -29,13 +30,16 @@ namespace com.mapcolonies.core.Localization
             }
         }
 
-        private string _targetStringTableName;
-        private string _hebrewLocaleIdentifier;
-        private string _englishLocaleIdentifier;
         private string _remoteConfigUrl;
-        private string _localFilePath;
-
         private bool _showTranslationWarnings;
+
+        private const string HebrewLocaleIdentifier = "he-IL";
+        private const string EnglishLocaleIdentifier = "en";
+        private const string LocalFilePath = "Translations/Yahalom_HardCoded_Translations.json";
+        private const string TargetStringTableName = "Yahalom_HardCoded_Translations";
+
+        private const string ActiveLocalePlayerPrefsKey = "core.translation.activeLocale";
+        private const string DefaultLocaleIdentifier = HebrewLocaleIdentifier;
 
         private Dictionary<string, TranslationEntry> _hardCodedTranslations = new Dictionary<string, TranslationEntry>();
         private Dictionary<string, TranslationEntry> _fileTranslations = new Dictionary<string, TranslationEntry>();
@@ -48,21 +52,18 @@ namespace com.mapcolonies.core.Localization
         {
         }
 
-        public async Task InitializeService(string targetStringTableName, string hebrewLocaleIdentifier, string englishLocaleIdentifier, string remoteConfigUrl, string localFilePath)
+        public async Task InitializeService()
         {
             if (_isInitialized) return;
 
-            _targetStringTableName = targetStringTableName;
-            _hebrewLocaleIdentifier = hebrewLocaleIdentifier;
-            _englishLocaleIdentifier = englishLocaleIdentifier;
-            _remoteConfigUrl = remoteConfigUrl;
-            _localFilePath = localFilePath;
+            //TODO: Get from global config file
+            _remoteConfigUrl = string.Empty;
 
             Debug.Log("TranslationService: Initializing...");
 
             await LoadHardCodedTranslations();
-            TranslationConfig fileConfig = await LoadFromFileAsync();
 
+            TranslationConfig fileConfig = await LoadFromFileAsync();
             if (fileConfig != null)
             {
                 _fileTranslations = ConfigToDictionary(fileConfig);
@@ -70,7 +71,6 @@ namespace com.mapcolonies.core.Localization
             }
 
             TranslationConfig remoteConfig = await LoadFromRemoteAsync();
-
             if (remoteConfig != null)
             {
                 _remoteTranslations = ConfigToDictionary(remoteConfig);
@@ -89,12 +89,12 @@ namespace com.mapcolonies.core.Localization
             _hardCodedTranslations = new Dictionary<string, TranslationEntry>();
             await LocalizationSettings.InitializationOperation.Task;
 
-            Locale enLocale = LocalizationSettings.AvailableLocales.GetLocale(_englishLocaleIdentifier);
-            Locale heLocale = LocalizationSettings.AvailableLocales.GetLocale(_hebrewLocaleIdentifier);
+            Locale enLocale = LocalizationSettings.AvailableLocales.GetLocale(EnglishLocaleIdentifier);
+            Locale heLocale = LocalizationSettings.AvailableLocales.GetLocale(HebrewLocaleIdentifier);
 
             if (enLocale == null && heLocale == null)
             {
-                Debug.LogWarning($"TranslationService: No matching locales found for '{_englishLocaleIdentifier}' or '{_hebrewLocaleIdentifier}'.");
+                Debug.LogWarning($"TranslationService: No matching locales found for '{EnglishLocaleIdentifier}' or '{HebrewLocaleIdentifier}'.");
                 return;
             }
 
@@ -103,36 +103,36 @@ namespace com.mapcolonies.core.Localization
 
             if (enLocale != null)
             {
-                enTable = await LocalizationSettings.StringDatabase.GetTableAsync(_targetStringTableName, enLocale).Task;
+                enTable = await LocalizationSettings.StringDatabase.GetTableAsync(TargetStringTableName, enLocale).Task;
             }
 
             if (heLocale != null)
             {
-                heTable = await LocalizationSettings.StringDatabase.GetTableAsync(_targetStringTableName, heLocale).Task;
+                heTable = await LocalizationSettings.StringDatabase.GetTableAsync(TargetStringTableName, heLocale).Task;
             }
 
             if (enTable == null && heTable == null)
             {
-                Debug.LogWarning($"TranslationService: StringTable '{_targetStringTableName}' not found for EN or HE at runtime.");
+                Debug.LogWarning($"TranslationService: StringTable '{TargetStringTableName}' not found for EN or HE at runtime.");
                 return;
             }
 
-            var allKeys = new HashSet<string>();
+            HashSet<string> allKeys = new HashSet<string>();
 
             if (enTable != null)
             {
-                foreach (var entry in enTable.Values) allKeys.Add(entry.Key);
+                foreach (StringTableEntry entry in enTable.Values) allKeys.Add(entry.Key);
             }
 
             if (heTable != null)
             {
-                foreach (var entry in heTable.Values) allKeys.Add(entry.Key);
+                foreach (StringTableEntry entry in heTable.Values) allKeys.Add(entry.Key);
             }
 
-            foreach (var key in allKeys)
+            foreach (string key in allKeys)
             {
-                var enVal = enTable?.GetEntry(key)?.LocalizedValue;
-                var heVal = heTable?.GetEntry(key)?.LocalizedValue;
+                string enVal = enTable?.GetEntry(key)?.LocalizedValue;
+                string heVal = heTable?.GetEntry(key)?.LocalizedValue;
 
                 _hardCodedTranslations[key] = new TranslationEntry
                 {
@@ -143,9 +143,9 @@ namespace com.mapcolonies.core.Localization
             }
         }
 
-        private async Task<TranslationConfig> LoadFromFileAsync()
+        private static async Task<TranslationConfig> LoadFromFileAsync()
         {
-            string path = Path.Combine(Application.streamingAssetsPath, _localFilePath);
+            string path = Path.Combine(Application.streamingAssetsPath, LocalFilePath);
 
             if (!File.Exists(path))
             {
@@ -221,59 +221,53 @@ namespace com.mapcolonies.core.Localization
             {
                 _mergedTranslations[entry.Key] = entry.Value;
             }
-
-            Debug.Log($"TranslationService: Merged {_mergedTranslations.Count} total translations.");
         }
 
         private async Task ApplyToUnityLocalization()
         {
             await LocalizationSettings.InitializationOperation.Task;
 
-            var hebrewLocale = LocalizationSettings.AvailableLocales.GetLocale(_hebrewLocaleIdentifier);
-            var englishLocale = LocalizationSettings.AvailableLocales.GetLocale(_englishLocaleIdentifier);
+            Locale hebrewLocale = LocalizationSettings.AvailableLocales.GetLocale(HebrewLocaleIdentifier);
+            Locale englishLocale = LocalizationSettings.AvailableLocales.GetLocale(EnglishLocaleIdentifier);
 
             if (hebrewLocale == null)
             {
-                Debug.LogError($"TranslationService: Hebrew locale '{_hebrewLocaleIdentifier}' not found. Make sure it's added to Localization Settings.");
+                Debug.LogError($"TranslationService: Hebrew locale '{HebrewLocaleIdentifier}' not found. Make sure it's added to Localization Settings.");
                 return;
             }
 
             if (englishLocale == null)
             {
-                Debug.LogError($"TranslationService: English locale '{_englishLocaleIdentifier}' not found. Make sure it's added to Localization Settings.");
+                Debug.LogError($"TranslationService: English locale '{EnglishLocaleIdentifier}' not found. Make sure it's added to Localization Settings.");
                 return;
             }
 
-            Debug.Log($"TranslationService: Applying translations to String Table '{_targetStringTableName}' for locale '{hebrewLocale.Identifier.Code}'...");
-
-            var hebrewTableOperation = LocalizationSettings.StringDatabase.GetTableAsync(_targetStringTableName, hebrewLocale);
-            var englishTableOperation = LocalizationSettings.StringDatabase.GetTableAsync(_targetStringTableName, englishLocale);
+            AsyncOperationHandle<StringTable> hebrewTableOperation = LocalizationSettings.StringDatabase.GetTableAsync(TargetStringTableName, hebrewLocale);
+            AsyncOperationHandle<StringTable> englishTableOperation = LocalizationSettings.StringDatabase.GetTableAsync(TargetStringTableName, englishLocale);
 
             await hebrewTableOperation.Task;
             await englishTableOperation.Task;
 
-            if (hebrewTableOperation.Status != UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
+            if (hebrewTableOperation.Status != AsyncOperationStatus.Succeeded)
             {
-                Debug.LogError($"TranslationService: Could not load Hebrew String Table '{_targetStringTableName}'. Error: {hebrewTableOperation.OperationException}");
+                Debug.LogError($"TranslationService: Could not load Hebrew String Table '{TargetStringTableName}'. Error: {hebrewTableOperation.OperationException}");
                 return;
             }
 
-            if (englishTableOperation.Status != UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
+            if (englishTableOperation.Status != AsyncOperationStatus.Succeeded)
             {
-                Debug.LogError($"TranslationService: Could not load English String Table '{_targetStringTableName}'. Error: {englishTableOperation.OperationException}");
+                Debug.LogError($"TranslationService: Could not load English String Table '{TargetStringTableName}'. Error: {englishTableOperation.OperationException}");
                 return;
             }
 
             StringTable hebrewStringTable = hebrewTableOperation.Result;
             StringTable englishStringTable = englishTableOperation.Result;
 
-            foreach (var entry in _mergedTranslations)
+            foreach (KeyValuePair<string, TranslationEntry> entry in _mergedTranslations)
             {
                 hebrewStringTable.AddEntry(entry.Key, entry.Value.Hebrew);
                 englishStringTable.AddEntry(entry.Key, entry.Value.English);
             }
-
-            Debug.Log($"TranslationService: Successfully updated String Table '{_targetStringTableName}'.");
         }
 
         public TranslationEntry GetTranslationEntry(string key)
@@ -316,22 +310,22 @@ namespace com.mapcolonies.core.Localization
                 return key;
             }
 
-            if (IsLocale(_hebrewLocaleIdentifier))
+            if (IsLocale(HebrewLocaleIdentifier))
             {
                 if (!string.IsNullOrEmpty(entry.Hebrew)) return entry.Hebrew;
+                //Ask asaf about ux
                 if (!string.IsNullOrEmpty(entry.English)) return entry.English;
                 return key;
             }
 
-            if (IsLocale(_englishLocaleIdentifier))
+            if (IsLocale(EnglishLocaleIdentifier))
             {
                 if (!string.IsNullOrEmpty(entry.English)) return entry.English;
+                //Ask asaf about ux
                 if (!string.IsNullOrEmpty(entry.Hebrew)) return entry.Hebrew;
                 return key;
             }
 
-            if (!string.IsNullOrEmpty(entry.English)) return entry.English;
-            if (!string.IsNullOrEmpty(entry.Hebrew)) return entry.Hebrew;
             return key;
         }
 
