@@ -70,7 +70,6 @@ namespace EditorTests.Analytics
             _am = new AnalyticsManager();
             _am.Initialize();
 
-            new AnalyticsManager().Initialize();
             _logFilePath = Path.Combine(_logDirPath, $"session-{_am.SessionId}.log");
 
             LayerData msgParams = LayerData.Create("imagery", "layer-xyz");
