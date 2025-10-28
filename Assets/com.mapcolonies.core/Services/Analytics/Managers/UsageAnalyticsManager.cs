@@ -9,6 +9,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
 {
     public class UsageAnalyticsManager : IInitializable, IDisposable
     {
+        private readonly IAnalyticsManager _analyticsManager;
         private TimerController _timerController;
         private DateTime _previousProcessorSamplingTime;
         private TimeSpan _previousTotalProcessorTime;
@@ -16,7 +17,10 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
         private const double DefaultPerformanceSampleIntervalSeconds = 60;
         private const string UsageLogComponent = "General";
 
-        public UsageAnalyticsManager() { }
+        public UsageAnalyticsManager(IAnalyticsManager analyticsManager)
+        {
+            _analyticsManager = analyticsManager;
+        }
 
         public void Initialize()
         {
@@ -82,7 +86,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
                 UsageLogComponent,
                 AnalyticsMessageTypes.ConsumptionStatus);
 
-            _ = AnalyticsManager.Publish(logObject);
+            _ = _analyticsManager.Publish(logObject);
         }
     }
 }

@@ -9,20 +9,25 @@ using VContainer.Unity;
 
 namespace com.mapcolonies.core.Services.Analytics.Managers
 {
+    public interface IAnalyticsManager
+    {
+        Task Publish(LogObject logObject);
+    }
+
     /// <summary>
     /// Analytics Manager responsible for creating and publishing logs to a local file.
     /// </summary>
-    public class AnalyticsManager : IInitializable, IDisposable
+    public class AnalyticsManager : IInitializable, IDisposable, IAnalyticsManager
     {
-        public static string SessionId;
+        public string SessionId { get; private set; }
         public const string AnalyticsFileName = "AnalyticsLogs";
 
         private delegate Task PublishDelegate(LogObject logObject);
 
-        private static PublishDelegate _publish;
-        private static string _logFilePath;
-        private static readonly SemaphoreSlim _fileSemaphore = new SemaphoreSlim(1, 1);
-        private static bool _isInitialized;
+        private PublishDelegate _publish;
+        private string _logFilePath;
+        private readonly SemaphoreSlim _fileSemaphore = new SemaphoreSlim(1, 1);
+        private bool _isInitialized;
 
         public void Initialize()
         {
@@ -59,9 +64,6 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
             }
         }
 
-        /// <summary>
-        /// Sets up the directory and file path for the current session's analytics log.
-        /// </summary>
         private void SetupLogFile()
         {
             try
@@ -84,7 +86,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
             }
         }
 
-        private static async Task PublishAnalytics(LogObject logObject)
+        private async Task PublishAnalytics(LogObject logObject)
         {
             try
             {
@@ -98,7 +100,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
             }
         }
 
-        private static async Task WriteLogToFileAsync(string logContent)
+        private async Task WriteLogToFileAsync(string logContent)
         {
             if (string.IsNullOrEmpty(_logFilePath))
             {
@@ -121,7 +123,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
             }
         }
 
-        public static async Task Publish(LogObject logObject)
+        public async Task Publish(LogObject logObject)
         {
             if (!_isInitialized)
             {
