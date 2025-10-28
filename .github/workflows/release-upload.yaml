@@ -59,7 +59,7 @@ jobs:
           targetPlatform: ${{ matrix.targetPlatform }}
 
       # Upload the build folder as a workflow artifact.
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: Build-${{ matrix.targetPlatform }}
           path: build/${{ matrix.targetPlatform }}
