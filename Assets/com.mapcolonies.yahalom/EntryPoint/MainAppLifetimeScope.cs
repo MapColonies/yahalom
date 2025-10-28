@@ -1,8 +1,7 @@
 using com.mapcolonies.yahalom.Configuration;
 using com.mapcolonies.yahalom.InitPipeline;
 using com.mapcolonies.yahalom.Preloader;
-using com.mapcolonies.yahalom.Redux;
-using Unity.AppUI.Redux;
+using com.mapcolonies.yahalom.ReduxStore;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -11,7 +10,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
 {
     public class MainAppLifetimeScope : LifetimeScope
     {
-        private AppState _initialState;
+        //private AppState _initialState;
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -26,9 +25,9 @@ namespace com.mapcolonies.yahalom.EntryPoint
             Debug.Log("End Configure Startup Registrations");
 
             #region Register store
-                _initialState = new AppState(new ConfigurationState());
-                IStore<AppState> store = new Store<AppState>(RootReducer.Reduce, _initialState);
-                builder.RegisterInstance(store);
+                //_initialState = new AppState(new ConfigurationState());
+                //IStore<AppState> store = new Store<AppState>(RootReducer.Reduce, _initialState);
+                //builder.RegisterInstance(store);
             #endregion
 
             #region Register Services
