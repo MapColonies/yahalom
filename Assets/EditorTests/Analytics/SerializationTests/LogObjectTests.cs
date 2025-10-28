@@ -1,12 +1,11 @@
 using System;
 using com.mapcolonies.core.Services.Analytics.Enums;
-using com.mapcolonies.core.Services.Analytics.Managers;
 using com.mapcolonies.core.Services.Analytics.Model;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using UnityEngine;
 
-namespace EditorTests.Analytics
+namespace EditorTests.Analytics.SerializationTests
 {
     public class LogObjectTests
     {
