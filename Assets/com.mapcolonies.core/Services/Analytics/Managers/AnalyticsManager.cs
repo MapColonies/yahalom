@@ -14,7 +14,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
     /// </summary>
     public class AnalyticsManager : IInitializable, IDisposable
     {
-        public static long SessionId;
+        public static string SessionId;
         public const string AnalyticsFileName = "AnalyticsLogs";
 
         private delegate Task PublishDelegate(LogObject logObject);
@@ -28,12 +28,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
         {
             try
             {
-                SessionId = UnityEngine.Analytics.AnalyticsSessionInfo.sessionId;
-
-                if (SessionId == 0)
-                {
-                    SessionId = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                }
+                SessionId = Guid.NewGuid().ToString();
 
                 SetupLogFile();
 

@@ -13,7 +13,7 @@ namespace EditorTests.Analytics
         [Test]
         public void Create_Sets_All_Fields()
         {
-            long fakeSession = 123456789L;
+            string fakeSession = Guid.NewGuid().ToString();
             AnalyticsManager.SessionId = fakeSession;
             LogType severity = LogType.Warning;
             string message = "LayerUseStarted";
@@ -34,7 +34,9 @@ namespace EditorTests.Analytics
         [Test]
         public void Serialize_ToJson_Contains_Expected_Fields()
         {
-            AnalyticsManager.SessionId = 987654321L;
+            string expectedSessionId = Guid.NewGuid().ToString();
+            AnalyticsManager.SessionId = expectedSessionId;
+
             var severity = LogType.Log;
             var message = "LayerUseStarted";
             var parameters = LayerData.Create("imagery", "layer-001");
@@ -45,7 +47,7 @@ namespace EditorTests.Analytics
 
             string json = JsonConvert.SerializeObject(log, Formatting.None);
 
-            StringAssert.Contains("\"SessionID\":987654321", json);
+            StringAssert.Contains($"\"SessionID\":\"{expectedSessionId}\"", json);
             StringAssert.Contains("\"Severity\":\"Log\"", json);
             StringAssert.Contains("\"Message\":\"LayerUseStarted\"", json);
             StringAssert.Contains("\"Component\":\"General\"", json);
