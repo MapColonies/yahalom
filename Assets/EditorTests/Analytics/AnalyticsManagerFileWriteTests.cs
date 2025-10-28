@@ -20,7 +20,7 @@ namespace EditorTests.Analytics
             _manager = new AnalyticsManager();
             _manager.Initialize();
 
-            _logDirPath = Path.Combine(Application.persistentDataPath, "AnalyticsLogs");
+            _logDirPath = Path.Combine(Application.persistentDataPath, AnalyticsManager.AnalyticsFileName);
             _logFilePath = Path.Combine(_logDirPath, $"session-{AnalyticsManager.SessionId}.log");
 
             if (File.Exists(_logFilePath))

@@ -15,6 +15,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
     public class AnalyticsManager : IInitializable, IDisposable
     {
         public static long SessionId;
+        public const string AnalyticsFileName = "AnalyticsLogs";
 
         private delegate Task PublishDelegate(LogObject logObject);
 
@@ -70,7 +71,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
         {
             try
             {
-                string logDirectory = Path.Combine(Application.persistentDataPath, "AnalyticsLogs");
+                string logDirectory = Path.Combine(Application.persistentDataPath, AnalyticsFileName);
 
                 if (!Directory.Exists(logDirectory))
                 {
@@ -93,7 +94,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
             try
             {
                 string json = JsonConvert.SerializeObject(logObject, Formatting.None);
-                Debug.Log($"{logObject.MessageType}: {json}");
+                //TODO:Write to file only in "disconnected" mode
                 await WriteLogToFileAsync(json);
             }
             catch (Exception ex)
