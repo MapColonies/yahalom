@@ -45,7 +45,7 @@ namespace EditorTests.Analytics
             _logFilePath = Path.Combine(_logDirPath, $"session-{_am.SessionId}.log");
 
             LayerData msgParams = LayerData.Create("imagery", "layer-abc");
-            LogObject log = LogObject.Create(_am.SessionId,LogType.Log,
+            LogObject log = LogObject.Create(_am.SessionId, LogType.Log,
                 AnalyticsMessageTypes.LayerUseStarted.ToString(),
                 msgParams,
                 "General",
@@ -73,7 +73,7 @@ namespace EditorTests.Analytics
             _logFilePath = Path.Combine(_logDirPath, $"session-{_am.SessionId}.log");
 
             LayerData msgParams = LayerData.Create("imagery", "layer-xyz");
-            LogObject log = LogObject.Create(_am.SessionId,LogType.Log,
+            LogObject log = LogObject.Create(_am.SessionId, LogType.Log,
                 AnalyticsMessageTypes.LayerUseStarted.ToString(),
                 msgParams,
                 "General",
