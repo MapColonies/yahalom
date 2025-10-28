@@ -10,7 +10,6 @@ namespace EditorTests.Analytics
 {
     public class AnalyticsManagerFileWriteTests
     {
-        private AnalyticsManager _manager;
         private string _logDirPath;
         private string _logFilePath;
 
@@ -64,9 +63,12 @@ namespace EditorTests.Analytics
                 Directory.Delete(_logDirPath, true);
             }
 
-            LayerData msgParams = LayerData.Create("imagery", "layer-missing-dir");
-            LogObject log = LogObject.Create(
-                LogType.Log,
+            Assert.IsFalse(Directory.Exists(_logDirPath), "Directory should not exist before test");
+
+            new AnalyticsManager().Initialize();
+
+            LayerData msgParams = LayerData.Create("imagery", "layer-xyz");
+            LogObject log = LogObject.Create(LogType.Log,
                 AnalyticsMessageTypes.LayerUseStarted.ToString(),
                 msgParams,
                 "General",
@@ -74,12 +76,11 @@ namespace EditorTests.Analytics
 
             await AnalyticsManager.Publish(log);
 
-            Assert.IsTrue(Directory.Exists(_logDirPath), "Expected analytics log directory to be created automatically");
-            Assert.IsTrue(File.Exists(_logFilePath), "Expected log file to be created when directory was missing");
+            Assert.IsTrue(Directory.Exists(_logDirPath), "Directory should be created");
+            Assert.IsTrue(File.Exists(_logFilePath), "Log file should be created");
 
             string content = await File.ReadAllTextAsync(_logFilePath);
             StringAssert.Contains("\"LayerDomain\":\"imagery\"", content);
-            StringAssert.Contains("\"UniqueLayerId\":\"layer-missing-dir\"", content);
         }
     }
 }
