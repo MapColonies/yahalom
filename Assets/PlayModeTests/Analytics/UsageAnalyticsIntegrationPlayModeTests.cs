@@ -16,7 +16,9 @@ namespace PlayModeTests.Analytics
 
         private class UsageAnalyticsShim : UsageAnalyticsManager
         {
-            public UsageAnalyticsShim(IAnalyticsManager analyticsManager) : base(analyticsManager) { }
+            public UsageAnalyticsShim(IAnalyticsManager analyticsManager) : base(analyticsManager)
+            {
+            }
 
             public void ForceOnePublish()
             {

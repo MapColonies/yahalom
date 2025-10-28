@@ -10,48 +10,44 @@ namespace EditorTests.Analytics
 {
     public class UsageAnalyticsManagerReflectionTests
     {
-        private string _logPath;
-        private AnalyticsManager _am;
-
-        [SetUp]
-        public void Setup()
-        {
-            _am = new AnalyticsManager();
-            _am.Initialize();
-
-            string dir = Path.Combine(Application.persistentDataPath, "AnalyticsLogs");
-            _logPath = Path.Combine(dir, $"session-{_am.SessionId}.log");
-            if (File.Exists(_logPath)) File.Delete(_logPath);
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            _am?.Dispose();
-            _am = null;
-        }
-
         [Test]
         public async Task PublishApplicationPerformance_Writes_Performance_Log()
         {
-            Type type = typeof(UsageAnalyticsManager);
-            ConstructorInfo ctor = type.GetConstructor(new[] { typeof(IAnalyticsManager) });
-            Assert.NotNull(ctor, "Expected ctor(IAnalyticsManager) on UsageAnalyticsManager");
+            AnalyticsManager am = new AnalyticsManager();
+            object instance = null;
 
-            object instance = ctor.Invoke(new object[] { _am });
+            try
+            {
+                am.Initialize();
 
-            MethodInfo mi = type.GetMethod("PublishApplicationPerformance", BindingFlags.Instance | BindingFlags.NonPublic);
-            Assert.NotNull(mi, "Expected private method PublishApplicationPerformance");
+                string dir = Path.Combine(Application.persistentDataPath, AnalyticsManager.AnalyticsFileName);
+                string path = Path.Combine(dir, $"session-{am.SessionId}.log");
+                if (File.Exists(path)) File.Delete(path);
 
-            mi.Invoke(instance, new object[] { 30f, 123.0d, 45.6d });
+                Type type = typeof(UsageAnalyticsManager);
+                ConstructorInfo ctor = type.GetConstructor(new[] { typeof(IAnalyticsManager) });
+                Assert.NotNull(ctor, "Expected ctor(IAnalyticsManager) on UsageAnalyticsManager");
 
-            await Task.Delay(100);
+                instance = ctor.Invoke(new object[] { am });
 
-            Assert.IsTrue(File.Exists(_logPath), "Log file should exist");
-            string content = await File.ReadAllTextAsync(_logPath);
-            StringAssert.Contains("\"Fps\":30", content);
-            StringAssert.Contains("\"AllocatedMemoryInMB\":123", content);
-            StringAssert.Contains("\"CpuUsagePercentage\":45.6", content);
+                MethodInfo mi = type.GetMethod("PublishApplicationPerformance", BindingFlags.Instance | BindingFlags.NonPublic);
+                Assert.NotNull(mi, "Expected private method PublishApplicationPerformance");
+
+                mi.Invoke(instance, new object[] { 30f, 123.0d, 45.6d });
+
+                await Task.Delay(100);
+
+                Assert.IsTrue(File.Exists(path), "Log file should exist");
+                string content = await File.ReadAllTextAsync(path);
+                StringAssert.Contains("\"Fps\":30", content);
+                StringAssert.Contains("\"AllocatedMemoryInMB\":123", content);
+                StringAssert.Contains("\"CpuUsagePercentage\":45.6", content);
+            }
+            finally
+            {
+                (instance as IDisposable)?.Dispose();
+                am.Dispose();
+            }
         }
     }
 }

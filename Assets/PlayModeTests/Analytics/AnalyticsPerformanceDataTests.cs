@@ -22,7 +22,7 @@ namespace PlayModeTests.Analytics
             _am = new AnalyticsManager();
             _am.Initialize();
 
-            _logDir  = Path.Combine(Application.persistentDataPath, "AnalyticsLogs");
+            _logDir = Path.Combine(Application.persistentDataPath, "AnalyticsLogs");
             _logPath = Path.Combine(_logDir, $"session-{_am.SessionId}.log");
             if (File.Exists(_logPath)) File.Delete(_logPath);
 
@@ -41,7 +41,7 @@ namespace PlayModeTests.Analytics
         public IEnumerator Publish_Performance_Snapshot_Writes_To_File()
         {
             PerformanceData perf = PerformanceData.Create(fps: 60f, allocatedMemoryInMb: 256d, cpuUsagePercentage: 12.34d);
-            LogObject log  = LogObject.Create(
+            LogObject log = LogObject.Create(
                 _am.SessionId,
                 LogType.Log,
                 AnalyticsMessageTypes.ConsumptionStatus.ToString(),

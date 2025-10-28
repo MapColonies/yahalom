@@ -15,7 +15,10 @@ namespace PlayModeTests.Analytics
 
             using (var timer = new TimerController(interval: 25d, isRepeating: true))
             {
-                timer.OnTimerElapsed = () => { count++; };
+                timer.OnTimerElapsed = () =>
+                {
+                    count++;
+                };
                 timer.StartTimer();
 
                 yield return new WaitForSeconds(0.2f);
