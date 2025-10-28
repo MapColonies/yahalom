@@ -10,7 +10,7 @@ using UnityEngine.TestTools;
 
 namespace PlayModeTests.Analytics
 {
-    public class AnalyticsPerformanceE2ETests
+    public class AnalyticsPerformanceDataTests
     {
         private string _logDir;
         private string _logPath;
