@@ -18,8 +18,7 @@ namespace PlayModeTests.Analytics
         [UnitySetUp]
         public IEnumerator Setup()
         {
-            AnalyticsManager mgr = new AnalyticsManager();
-            mgr.Initialize();
+            new AnalyticsManager().Initialize();
 
             _logDir  = Path.Combine(Application.persistentDataPath, "AnalyticsLogs");
             _logPath = Path.Combine(_logDir, $"session-{AnalyticsManager.SessionId}.log");
