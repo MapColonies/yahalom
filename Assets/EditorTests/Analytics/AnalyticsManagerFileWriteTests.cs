@@ -17,8 +17,7 @@ namespace EditorTests.Analytics
         [SetUp]
         public void Setup()
         {
-            _manager = new AnalyticsManager();
-            _manager.Initialize();
+            new AnalyticsManager().Initialize();
 
             _logDirPath = Path.Combine(Application.persistentDataPath, AnalyticsManager.AnalyticsFileName);
             _logFilePath = Path.Combine(_logDirPath, $"session-{AnalyticsManager.SessionId}.log");
@@ -55,6 +54,32 @@ namespace EditorTests.Analytics
             StringAssert.Contains("\"UniqueLayerId\":\"layer-abc\"", content);
             StringAssert.Contains("\"MessageType\":" + (int)AnalyticsMessageTypes.LayerUseStarted, content);
             StringAssert.Contains("\"Severity\":\"Log\"", content);
+        }
+
+        [Test]
+        public async Task Publish_Creates_Directory_If_Not_Exists()
+        {
+            if (Directory.Exists(_logDirPath))
+            {
+                Directory.Delete(_logDirPath, true);
+            }
+
+            LayerData msgParams = LayerData.Create("imagery", "layer-missing-dir");
+            LogObject log = LogObject.Create(
+                LogType.Log,
+                AnalyticsMessageTypes.LayerUseStarted.ToString(),
+                msgParams,
+                "General",
+                AnalyticsMessageTypes.LayerUseStarted);
+
+            await AnalyticsManager.Publish(log);
+
+            Assert.IsTrue(Directory.Exists(_logDirPath), "Expected analytics log directory to be created automatically");
+            Assert.IsTrue(File.Exists(_logFilePath), "Expected log file to be created when directory was missing");
+
+            string content = await File.ReadAllTextAsync(_logFilePath);
+            StringAssert.Contains("\"LayerDomain\":\"imagery\"", content);
+            StringAssert.Contains("\"UniqueLayerId\":\"layer-missing-dir\"", content);
         }
     }
 }
