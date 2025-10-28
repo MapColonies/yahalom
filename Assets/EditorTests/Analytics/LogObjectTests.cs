@@ -14,13 +14,13 @@ namespace EditorTests.Analytics
         public void Create_Sets_All_Fields()
         {
             string fakeSession = Guid.NewGuid().ToString();
-            AnalyticsManager.SessionId = fakeSession;
             LogType severity = LogType.Warning;
             string message = "LayerUseStarted";
             LayerData parameters = LayerData.Create("imagery", "layer-001");
             string component = "General";
             AnalyticsMessageTypes type = AnalyticsMessageTypes.LayerUseStarted;
-            LogObject log = LogObject.Create(severity, message, parameters, component, type);
+
+            LogObject log = LogObject.Create(fakeSession,severity, message, parameters, component, type);
 
             Assert.AreEqual(fakeSession, log.SessionID);
             Assert.AreEqual(severity.ToString(), log.Severity);
@@ -35,7 +35,6 @@ namespace EditorTests.Analytics
         public void Serialize_ToJson_Contains_Expected_Fields()
         {
             string expectedSessionId = Guid.NewGuid().ToString();
-            AnalyticsManager.SessionId = expectedSessionId;
 
             var severity = LogType.Log;
             var message = "LayerUseStarted";
@@ -43,7 +42,7 @@ namespace EditorTests.Analytics
             var component = "General";
             var type = AnalyticsMessageTypes.LayerUseStarted;
 
-            var log = LogObject.Create(severity, message, parameters, component, type);
+            var log = LogObject.Create(expectedSessionId, severity, message, parameters, component, type);
 
             string json = JsonConvert.SerializeObject(log, Formatting.None);
 

@@ -12,10 +12,11 @@ namespace PlayModeTests.Analytics
         private string _logDir;
         private string _logPath;
         private UsageAnalyticsShim _mgr;
+        private AnalyticsManager _am;
 
         private class UsageAnalyticsShim : UsageAnalyticsManager
         {
-            public UsageAnalyticsShim() : base() { }
+            public UsageAnalyticsShim(IAnalyticsManager analyticsManager) : base(analyticsManager) { }
 
             public void ForceOnePublish()
             {
@@ -26,11 +27,13 @@ namespace PlayModeTests.Analytics
         [UnitySetUp]
         public IEnumerator Setup()
         {
-            AnalyticsManager am = new AnalyticsManager();
-            am.Initialize();
+            _am = new AnalyticsManager();
+            _am.Initialize();
+
             _logDir = Path.Combine(Application.persistentDataPath, "AnalyticsLogs");
-            _logPath = Path.Combine(_logDir, $"session-{AnalyticsManager.SessionId}.log");
+            _logPath = Path.Combine(_logDir, $"session-{_am.SessionId}.log");
             if (File.Exists(_logPath)) File.Delete(_logPath);
+
             yield return null;
         }
 
@@ -45,7 +48,7 @@ namespace PlayModeTests.Analytics
         [UnityTest]
         public IEnumerator TimerController_To_FileWrite_EndToEnd_Works()
         {
-            _mgr = new UsageAnalyticsShim();
+            _mgr = new UsageAnalyticsShim(_am);
             _mgr.Initialize();
             _mgr.ForceOnePublish();
 

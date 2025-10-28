@@ -44,6 +44,7 @@ namespace com.mapcolonies.core.Services.Analytics.Model
         /// <param name="messageType">Analytics message type</param>
         /// <returns>LogObject</returns>
         public static LogObject Create(
+            string sessionId,
             LogType severity,
             string message,
             IAnalyticLogParameter messageParameters,
@@ -51,7 +52,7 @@ namespace com.mapcolonies.core.Services.Analytics.Model
             AnalyticsMessageTypes messageType)
         {
             return new LogObject(
-                AnalyticsManager.SessionId,
+                sessionId,
                 severity.ToString(),
                 DateTime.UtcNow,
                 message,

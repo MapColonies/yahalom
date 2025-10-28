@@ -11,14 +11,16 @@ namespace EditorTests.Analytics
     public class UsageAnalyticsManagerReflectionTests
     {
         private string _logPath;
+        private AnalyticsManager _am;
 
         [SetUp]
         public void Setup()
         {
-            new AnalyticsManager().Initialize();
+            _am = new AnalyticsManager();
+            _am.Initialize();
 
             string dir = Path.Combine(Application.persistentDataPath, "AnalyticsLogs");
-            _logPath = Path.Combine(dir, $"session-{AnalyticsManager.SessionId}.log");
+            _logPath = Path.Combine(dir, $"session-{_am.SessionId}.log");
             if (File.Exists(_logPath)) File.Delete(_logPath);
         }
 
@@ -26,7 +28,10 @@ namespace EditorTests.Analytics
         public async Task PublishApplicationPerformance_Writes_Performance_Log()
         {
             Type type = typeof(UsageAnalyticsManager);
-            object instance = System.Activator.CreateInstance(type);
+            ConstructorInfo ctor = type.GetConstructor(new[] { typeof(IAnalyticsManager) });
+            Assert.NotNull(ctor, "Expected ctor(IAnalyticsManager) on UsageAnalyticsManager");
+
+            object instance = ctor.Invoke(new object[] { _am });
 
             MethodInfo mi = type.GetMethod("PublishApplicationPerformance", BindingFlags.Instance | BindingFlags.NonPublic);
             Assert.NotNull(mi, "Expected private method PublishApplicationPerformance");

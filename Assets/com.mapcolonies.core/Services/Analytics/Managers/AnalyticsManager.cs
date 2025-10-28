@@ -11,6 +11,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
 {
     public interface IAnalyticsManager
     {
+        string SessionId { get; }
         Task Publish(LogObject logObject);
     }
 

@@ -12,6 +12,7 @@ namespace EditorTests.Analytics
     {
         private string _logDirPath;
         private string _logFilePath;
+        private AnalyticsManager _am;
 
         [SetUp]
         public void Setup()
@@ -36,17 +37,18 @@ namespace EditorTests.Analytics
         [Test]
         public async Task Publish_Writes_JSON_Line_To_Session_Log_File()
         {
-            new AnalyticsManager().Initialize();
-            _logFilePath = Path.Combine(_logDirPath, $"session-{AnalyticsManager.SessionId}.log");
+            _am = new AnalyticsManager();
+            _am.Initialize();
+            _logFilePath = Path.Combine(_logDirPath, $"session-{_am.SessionId}.log");
 
             LayerData msgParams = LayerData.Create("imagery", "layer-abc");
-            LogObject log = LogObject.Create(LogType.Log,
+            LogObject log = LogObject.Create(_am.SessionId,LogType.Log,
                 AnalyticsMessageTypes.LayerUseStarted.ToString(),
                 msgParams,
                 "General",
                 AnalyticsMessageTypes.LayerUseStarted);
 
-            await AnalyticsManager.Publish(log);
+            await _am.Publish(log);
 
             Assert.IsTrue(File.Exists(_logFilePath), $"Log file was not created at {_logFilePath}");
 
@@ -62,17 +64,20 @@ namespace EditorTests.Analytics
         {
             Assert.IsFalse(Directory.Exists(_logDirPath), "Directory should not exist before test");
 
+            _am = new AnalyticsManager();
+            _am.Initialize();
+
             new AnalyticsManager().Initialize();
-            _logFilePath = Path.Combine(_logDirPath, $"session-{AnalyticsManager.SessionId}.log");
+            _logFilePath = Path.Combine(_logDirPath, $"session-{_am.SessionId}.log");
 
             LayerData msgParams = LayerData.Create("imagery", "layer-xyz");
-            LogObject log = LogObject.Create(LogType.Log,
+            LogObject log = LogObject.Create(_am.SessionId,LogType.Log,
                 AnalyticsMessageTypes.LayerUseStarted.ToString(),
                 msgParams,
                 "General",
                 AnalyticsMessageTypes.LayerUseStarted);
 
-            await AnalyticsManager.Publish(log);
+            await _am.Publish(log);
 
             Assert.IsTrue(Directory.Exists(_logDirPath), "Directory should be created");
             Assert.IsTrue(File.Exists(_logFilePath), $"Log file was not created at {_logFilePath}");
