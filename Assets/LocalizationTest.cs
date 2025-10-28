@@ -1,4 +1,5 @@
 using System.Collections;
+using com.mapcolonies.core.Localization;
 using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
@@ -107,7 +108,7 @@ public class LocalizationTest : MonoBehaviour
         var entry = service.GetTranslationEntry("yahalom.welcome");
         if (entry != null)
         {
-            Debug.Log($"GetTranslationEntry('welcome'): Key={entry.key}, English={entry.english}, Hebrew={entry.hebrew}");
+            Debug.Log($"GetTranslationEntry('welcome'): Key={entry.Key}, English={entry.English}, Hebrew={entry.Hebrew}");
         }
         else
         {

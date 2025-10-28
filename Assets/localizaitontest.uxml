@@ -3,7 +3,7 @@
     <ui:Button text="Button" />
     <ui:Label text="Label">
         <Bindings>
-            <UnityEngine.Localization.LocalizedString property="text" table="GUID:2465e5a7b3021e9458f3fa175051c803" entry="Id(679048219250690)" />
+            <UnityEngine.Localization.LocalizedString property="text" table="GUID:2465e5a7b3021e9458f3fa175051c803" entry="Id(728398119096321)" />
         </Bindings>
     </ui:Label>
 </ui:UXML>
