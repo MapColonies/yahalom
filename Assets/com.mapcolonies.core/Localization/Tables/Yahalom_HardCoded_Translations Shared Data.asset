@@ -15,51 +15,43 @@ MonoBehaviour:
   m_TableCollectionName: Yahalom_HardCoded_Translations
   m_TableCollectionNameGuidString: 2465e5a7b3021e9458f3fa175051c803
   m_Entries:
-  - m_Id: 416987618791424
-    m_Key: welcome
-    m_Metadata:
-      m_Items: []
-  - m_Id: 416987631374336
-    m_Key: test
-    m_Metadata:
-      m_Items: []
-  - m_Id: 416987635568640
+  - m_Id: 679048210862080
     m_Key: yahalom.example
     m_Metadata:
       m_Items: []
-  - m_Id: 416987635568641
+  - m_Id: 679048219250688
     m_Key: yahalom.home
     m_Metadata:
       m_Items: []
-  - m_Id: 416987639762944
+  - m_Id: 679048219250689
     m_Key: yahalom.hello
     m_Metadata:
       m_Items: []
-  - m_Id: 416987639762945
+  - m_Id: 679048219250690
     m_Key: yahalom.welcome
     m_Metadata:
       m_Items: []
-  - m_Id: 416987639762946
+  - m_Id: 679048219250691
     m_Key: yahalom.exit
     m_Metadata:
       m_Items: []
-  - m_Id: 416987639762947
+  - m_Id: 679048219250692
     m_Key: yahalom.settings
     m_Metadata:
       m_Items: []
-  - m_Id: 416987639762948
+  - m_Id: 679048219250693
     m_Key: yahalom.language
     m_Metadata:
       m_Items: []
-  - m_Id: 416987639762949
+  - m_Id: 679048219250694
     m_Key: yahalom.confirm
     m_Metadata:
       m_Items: []
-  - m_Id: 416987639762950
+  - m_Id: 679048219250695
     m_Key: yahalom.cancel
     m_Metadata:
       m_Items: []
-  - m_Id: 416987639762951
+  - m_Id: 679048219250696
     m_Key: yahalom.error
     m_Metadata:
       m_Items: []
