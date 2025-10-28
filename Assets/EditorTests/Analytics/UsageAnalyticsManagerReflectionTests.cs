@@ -24,6 +24,8 @@ namespace EditorTests.Analytics
                 string path = Path.Combine(dir, $"session-{am.SessionId}.log");
                 if (File.Exists(path)) File.Delete(path);
 
+                Assert.IsFalse(File.Exists(path), "File should not exist before PublishApplicationPerformance invocation");
+
                 Type type = typeof(UsageAnalyticsManager);
                 ConstructorInfo ctor = type.GetConstructor(new[] { typeof(IAnalyticsManager) });
                 Assert.NotNull(ctor, "Expected ctor(IAnalyticsManager) on UsageAnalyticsManager");
