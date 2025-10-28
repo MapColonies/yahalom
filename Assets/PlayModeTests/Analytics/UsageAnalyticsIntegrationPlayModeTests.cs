@@ -42,6 +42,10 @@ namespace PlayModeTests.Analytics
         {
             _mgr?.Dispose();
             _mgr = null;
+
+            _am?.Dispose();
+            _am = null;
+
             yield return null;
         }
 

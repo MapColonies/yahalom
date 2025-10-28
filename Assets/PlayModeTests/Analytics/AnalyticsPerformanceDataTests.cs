@@ -29,6 +29,14 @@ namespace PlayModeTests.Analytics
             yield return null;
         }
 
+        [UnityTearDown]
+        public IEnumerator TearDown()
+        {
+            _am?.Dispose();
+            _am = null;
+            yield return null;
+        }
+
         [UnityTest]
         public IEnumerator Publish_Performance_Snapshot_Writes_To_File()
         {

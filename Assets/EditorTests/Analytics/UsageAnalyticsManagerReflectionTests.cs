@@ -24,6 +24,13 @@ namespace EditorTests.Analytics
             if (File.Exists(_logPath)) File.Delete(_logPath);
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            _am?.Dispose();
+            _am = null;
+        }
+
         [Test]
         public async Task PublishApplicationPerformance_Writes_Performance_Log()
         {

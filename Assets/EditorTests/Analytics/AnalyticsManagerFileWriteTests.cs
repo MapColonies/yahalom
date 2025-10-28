@@ -28,6 +28,9 @@ namespace EditorTests.Analytics
         [TearDown]
         public void Teardown()
         {
+            _am?.Dispose();
+            _am = null;
+
             if (Directory.Exists(_logDirPath))
             {
                 Directory.Delete(_logDirPath, true);
