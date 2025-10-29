@@ -1,3 +1,4 @@
+using com.mapcolonies.yahalom.AppSettings;
 using com.mapcolonies.yahalom.Configuration;
 using Cysharp.Threading.Tasks;
 using Unity.AppUI.Redux;
@@ -8,10 +9,12 @@ namespace com.mapcolonies.yahalom.ReduxStore
     {
         #region Slices Definition
             public const string ConfigurationSlice = "configuration";
+            public const string AppSettingsSlice = "appSettings";
         #endregion
 
         #region Actions Definitions
             public const string SetConfigurationAction = "configuration/SetConfigurationAction";
+            public const string SetAppSettingsAction = "appSettings/SetAppSettingsAction";
         #endregion
 
         public IStore<PartitionedState> Store
@@ -22,12 +25,17 @@ namespace com.mapcolonies.yahalom.ReduxStore
 
         public UniTask Create()
         {
-            Slice<ConfigurationState, PartitionedState> slice = StoreFactory.CreateSlice(ConfigurationSlice, new ConfigurationState(), (configurationSliceBuilder) =>
+            Slice<ConfigurationState, PartitionedState> configurationSlice = StoreFactory.CreateSlice(ConfigurationSlice, new ConfigurationState(), (configurationSliceBuilder) =>
             {
                 configurationSliceBuilder.AddCase(new ActionCreator<ConfigurationState>(SetConfigurationAction), ConfigurationReducer.Reduce);
             });
 
-            Store = StoreFactory.CreateStore(new[] { slice });
+            Slice<AppSettingsState, PartitionedState> appSettingsSlice = StoreFactory.CreateSlice(AppSettingsSlice, new AppSettingsState(), (appSettingsSliceBuilder) =>
+            {
+                appSettingsSliceBuilder.AddCase(new ActionCreator<AppSettingsState>(SetAppSettingsAction), AppSettingsReducer.Reduce);
+            });
+
+            Store = StoreFactory.CreateStore(new ISlice<PartitionedState>[] { configurationSlice, appSettingsSlice });
             return UniTask.CompletedTask;
         }
     }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading;
+using com.mapcolonies.yahalom.AppSettings;
 using com.mapcolonies.yahalom.Configuration;
 using com.mapcolonies.yahalom.InitPipeline;
 using com.mapcolonies.yahalom.InitPipeline.InitSteps;
@@ -29,7 +30,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
             {
                 new InitStep("PreInit", StepMode.Sequential, new IInitUnit[]
                 {
-                    new ActionUnit("Redux Store", 0.5f, InitPolicy.Fail,
+                    new ActionUnit("Redux Store", 0.1f, InitPolicy.Fail,
                         () =>
                         {
                             ReduxStoreManager reduxStore = scope.Container.Resolve<ReduxStoreManager>();
@@ -38,7 +39,13 @@ namespace com.mapcolonies.yahalom.EntryPoint
                 }),
                 new InitStep("ServicesInit", StepMode.Sequential, new IInitUnit[]
                 {
-                    new ActionUnit("Configuration Service", 0.5f, InitPolicy.Fail,
+                    new ActionUnit("App Settings", 0.1f, InitPolicy.Fail,
+                        () =>
+                        {
+                            AppSettingsManager appSettings = scope.Container.Resolve<AppSettingsManager>();
+                            return appSettings.Load();
+                        }),
+                    new ActionUnit("Configuration", 0.1f, InitPolicy.Fail,
                         () =>
                         {
                             ConfigurationManager config = scope.Container.Resolve<ConfigurationManager>();

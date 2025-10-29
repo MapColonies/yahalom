@@ -7,13 +7,11 @@ namespace com.mapcolonies.yahalom.Configuration
     {
         public static ConfigurationState Reduce(ConfigurationState state, IAction<ConfigurationState> action)
         {
-            switch (action.type)
+            return action.type switch
             {
-                case ReduxStoreManager.SetConfigurationAction:
-                    return action.payload;
-                default:
-                    return state;
-            }
+                ReduxStoreManager.SetConfigurationAction => action.payload,
+                _ => state
+            };
         }
     }
 }
