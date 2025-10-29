@@ -30,7 +30,7 @@ namespace com.mapcolonies.core.Utilities
             if (string.IsNullOrEmpty(url))
                 throw new ArgumentException("URL cannot be null or empty.", nameof(url));
 
-            using var request = UnityWebRequest.Get(url);
+            using UnityWebRequest request = UnityWebRequest.Get(url);
             await request.SendWebRequest();
 
             if (request.result != UnityWebRequest.Result.Success)
