@@ -234,7 +234,7 @@ namespace com.mapcolonies.core.Localization
             }
         }
 
-        public TranslationEntry GetTranslationEntry(string key)
+        private TranslationEntry GetTranslationEntry(string key)
         {
             if (!_isInitialized)
             {
