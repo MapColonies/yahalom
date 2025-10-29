@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using com.mapcolonies.core.Services;
+using com.mapcolonies.core.Services.Analytics.Managers;
 using com.mapcolonies.yahalom.InitPipeline;
 using com.mapcolonies.yahalom.InitPipeline.InitSteps;
 using com.mapcolonies.yahalom.InitPipeline.InitUnits;
@@ -47,6 +49,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
                             Task.Run(resolver.Resolve<WmtsService>().Init);
                             return default;
                         }),
+                    AnalyticsServices(scope),
                 }),
                 new InitStep("FeaturesInit", StepMode.Sequential, new IInitUnit[]
                 {
@@ -64,6 +67,33 @@ namespace com.mapcolonies.yahalom.EntryPoint
             Debug.Log("Start initializing");
             await _pipeline.RunAsync(_initSteps);
             Debug.Log("Initialized");
+        }
+
+        private IInitUnit AnalyticsServices(LifetimeScope scope)
+        {
+            return new RegisterScopeUnit(
+                "AnalyticsServices",
+                0.20f,
+                scope,
+                InitPolicy.Fail,
+                builder =>
+                {
+                    builder.Register<AnalyticsManager>(Lifetime.Singleton)
+                        .AsSelf()
+                        .As<IAnalyticsManager>()
+                        .As<IDisposable>();
+
+                    builder.Register<UsageAnalyticsManager>(Lifetime.Singleton)
+                        .AsSelf()
+                        .As<IDisposable>();
+                },
+                resolver =>
+                {
+                    resolver.Resolve<AnalyticsManager>().Initialize();
+                    resolver.Resolve<UsageAnalyticsManager>().Initialize();
+                    return default;
+                }
+            );
         }
     }
 }

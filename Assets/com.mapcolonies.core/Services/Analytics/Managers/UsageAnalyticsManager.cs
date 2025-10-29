@@ -3,11 +3,10 @@ using com.mapcolonies.core.Services.Analytics.Enums;
 using com.mapcolonies.core.Services.Analytics.Model;
 using com.mapcolonies.core.Utilities;
 using UnityEngine;
-using VContainer.Unity;
 
 namespace com.mapcolonies.core.Services.Analytics.Managers
 {
-    public class UsageAnalyticsManager : IInitializable, IDisposable
+    public class UsageAnalyticsManager : IDisposable
     {
         private readonly IAnalyticsManager _analyticsManager;
         private TimerController _timerController;

@@ -5,7 +5,6 @@ using com.mapcolonies.core.Services.Analytics.Model;
 using com.mapcolonies.core.Utilities;
 using Newtonsoft.Json;
 using UnityEngine;
-using VContainer.Unity;
 
 namespace com.mapcolonies.core.Services.Analytics.Managers
 {
@@ -22,7 +21,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
     /// <summary>
     /// Analytics Manager responsible for creating and publishing logs to a local file.
     /// </summary>
-    public class AnalyticsManager : IInitializable, IDisposable, IAnalyticsManager
+    public class AnalyticsManager : IDisposable, IAnalyticsManager
     {
         public string SessionId
         {
