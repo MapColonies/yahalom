@@ -1,18 +1,14 @@
 using System.Collections;
 using System.IO;
-using System.Text;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using UnityEngine.TestTools;
 using com.mapcolonies.core.Localization;
 
-using Tests.Localization.Helpers;
-
-namespace EditorTests.Localization
+namespace PlayModeTests.Localization
 {
-    public class TranslationServiceEditor_DuplicateKeysTests
+    public class TranslationServicePlayModeRuntimeSwitchTests
     {
         private string _jsonPath;
 
@@ -33,14 +29,14 @@ namespace EditorTests.Localization
         }
 
         [UnityTest]
-        public IEnumerator Duplicate_Keys_Prefer_Last_Entry()
+        public IEnumerator Runtime_Language_Switch_Reflects_In_Translate()
         {
             string json = @"
 {
-  ""ShowTranslationWarnings"": false,
+  ""ShowTranslationWarnings"": true,
   ""Words"": [
-    { ""Key"": ""title"", ""English"": ""Title"",      ""Hebrew"": ""כותרת"" },
-    { ""Key"": ""title"", ""English"": ""App Title"",  ""Hebrew"": ""כותרת האפליקציה"" }
+    { ""Key"": ""start"", ""English"": ""Start"", ""Hebrew"": ""התחלה"" },
+    { ""Key"": ""exit"",  ""English"": ""Exit"",  ""Hebrew"": ""יציאה"" }
   ]
 }";
             TranslationTestHelper.WriteJson(_jsonPath, json);
@@ -50,10 +46,12 @@ namespace EditorTests.Localization
             yield return new WaitUntil(() => initTask.IsCompleted);
 
             LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale("en");
-            Assert.AreEqual("App Title", svc.Translate("title"));
+            Assert.AreEqual("Start", svc.Translate("start"));
+            Assert.AreEqual("Exit", svc.Translate("exit"));
 
             LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale("he-IL");
-            Assert.AreEqual("כותרת האפליקציה", svc.Translate("title"));
+            Assert.AreEqual("התחלה", svc.Translate("start"));
+            Assert.AreEqual("יציאה", svc.Translate("exit"));
         }
     }
 }

@@ -1,18 +1,14 @@
 using System.Collections;
 using System.IO;
-using System.Text;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using UnityEngine.TestTools;
 using com.mapcolonies.core.Localization;
 
-using Tests.Localization.Helpers;
-
 namespace EditorTests.Localization
 {
-    public class TranslationServiceEditor_FileLoadingAndSwitchTests
+    public class TranslationServiceEditorDuplicateKeysTests
     {
         private string _jsonPath;
 
@@ -33,14 +29,14 @@ namespace EditorTests.Localization
         }
 
         [UnityTest]
-        public IEnumerator Initialize_From_File_And_Translate_English_And_Hebrew()
+        public IEnumerator Duplicate_Keys_Prefer_Last_Entry()
         {
             string json = @"
 {
-  ""ShowTranslationWarnings"": true,
+  ""ShowTranslationWarnings"": false,
   ""Words"": [
-    { ""Key"": ""hello"", ""English"": ""hello"", ""Hebrew"": ""שלום"" },
-    { ""Key"": ""home"",  ""English"": ""home"",  ""Hebrew"": ""בית"" }
+    { ""Key"": ""title"", ""English"": ""Title"",      ""Hebrew"": ""כותרת"" },
+    { ""Key"": ""title"", ""English"": ""App Title"",  ""Hebrew"": ""כותרת האפליקציה"" }
   ]
 }";
             TranslationTestHelper.WriteJson(_jsonPath, json);
@@ -49,17 +45,11 @@ namespace EditorTests.Localization
             var initTask = svc.InitializeService("en");
             yield return new WaitUntil(() => initTask.IsCompleted);
 
-            // EN
             LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale("en");
-            Assert.AreEqual("hello", svc.Translate("hello"));
-            Assert.AreEqual("home",  svc.Translate("home"));
+            Assert.AreEqual("App Title", svc.Translate("title"));
 
-            // HE
             LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale("he-IL");
-            Assert.AreEqual("שלום", svc.Translate("hello"));
-            Assert.AreEqual("בית",  svc.Translate("home"));
-
-            Assert.AreEqual("missing_key", svc.Translate("missing_key"));
+            Assert.AreEqual("כותרת האפליקציה", svc.Translate("title"));
         }
     }
 }

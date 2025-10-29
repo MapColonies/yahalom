@@ -4,9 +4,8 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
-using UnityEngine.TestTools;
 
-namespace Tests.Localization.Helpers
+namespace EditorTests.Localization
 {
     public static class TranslationTestHelper
     {
@@ -24,6 +23,7 @@ namespace Tests.Localization.Helpers
             var available = LocalizationSettings.AvailableLocales;
 
             var en = available.GetLocale("en");
+
             if (en == null)
             {
                 en = Locale.CreateLocale(SystemLanguage.English);
@@ -31,6 +31,7 @@ namespace Tests.Localization.Helpers
             }
 
             var he = available.GetLocale("he-IL");
+
             if (he == null)
             {
                 he = Locale.CreateLocale("he-IL");

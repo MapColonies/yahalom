@@ -1,18 +1,14 @@
 using System.Collections;
 using System.IO;
-using System.Text;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using UnityEngine.TestTools;
 using com.mapcolonies.core.Localization;
 
-using Tests.Localization.Helpers;
-
-namespace PlayModeTests.Localization
+namespace EditorTests.Localization
 {
-    public class TranslationServicePlayMode_MissingFileTests
+    public class TranslationServiceEditorFileLoadingAndSwitchTests
     {
         private string _jsonPath;
 
@@ -33,14 +29,33 @@ namespace PlayModeTests.Localization
         }
 
         [UnityTest]
-        public IEnumerator Missing_File_Does_Not_Throw_And_Unknown_Key_Passthrough()
+        public IEnumerator Initialize_From_File_And_Translate_English_And_Hebrew()
         {
+            string json = @"
+{
+  ""ShowTranslationWarnings"": true,
+  ""Words"": [
+    { ""Key"": ""hello"", ""English"": ""hello"", ""Hebrew"": ""שלום"" },
+    { ""Key"": ""home"",  ""English"": ""home"",  ""Hebrew"": ""בית"" }
+  ]
+}";
+            TranslationTestHelper.WriteJson(_jsonPath, json);
+
             var svc = new TranslationService();
             var initTask = svc.InitializeService("en");
             yield return new WaitUntil(() => initTask.IsCompleted);
 
+            // EN
             LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale("en");
-            Assert.AreEqual("unknown_key", svc.Translate("unknown_key"));
+            Assert.AreEqual("hello", svc.Translate("hello"));
+            Assert.AreEqual("home", svc.Translate("home"));
+
+            // HE
+            LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale("he-IL");
+            Assert.AreEqual("שלום", svc.Translate("hello"));
+            Assert.AreEqual("בית", svc.Translate("home"));
+
+            Assert.AreEqual("missing_key", svc.Translate("missing_key"));
         }
     }
 }
