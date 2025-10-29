@@ -1,6 +1,7 @@
 using System.Collections;
 using System.IO;
 using System.Text;
+using com.mapcolonies.core.Localization.Constants;
 using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
@@ -11,7 +12,7 @@ namespace PlayModeTests.Localization
     {
         public static string EnsureTranslationsDir()
         {
-            string dir = Path.Combine(Application.streamingAssetsPath, "Translations");
+            string dir = Path.Combine(Application.streamingAssetsPath, LocalizationConstants.TranslationsFileName);
             if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
             return dir;
         }
@@ -22,7 +23,7 @@ namespace PlayModeTests.Localization
 
             var available = LocalizationSettings.AvailableLocales;
 
-            var en = available.GetLocale("en");
+            var en = available.GetLocale(LocalizationConstants.EnglishLocaleIdentifier);
 
             if (en == null)
             {
@@ -30,11 +31,11 @@ namespace PlayModeTests.Localization
                 available.AddLocale(en);
             }
 
-            var he = available.GetLocale("he-IL");
+            var he = available.GetLocale(LocalizationConstants.HebrewLocaleIdentifier);
 
             if (he == null)
             {
-                he = Locale.CreateLocale("he-IL");
+                he = Locale.CreateLocale(LocalizationConstants.HebrewLocaleIdentifier);
                 available.AddLocale(he);
             }
 

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using com.mapcolonies.core.Localization.Constants;
 using com.mapcolonies.core.Localization.Models;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -24,8 +25,6 @@ namespace com.mapcolonies.core.Localization
         private string _remoteConfigUrl;
         private bool _showTranslationWarnings;
 
-        public const string HebrewLocaleIdentifier = "he-IL";
-        public const string EnglishLocaleIdentifier = "en";
         private const string LocalFilePath = "Translations/Yahalom_HardCoded_Translations.json";
         private const string TargetStringTableName = "Yahalom_HardCoded_Translations";
 
@@ -94,11 +93,11 @@ namespace com.mapcolonies.core.Localization
             _hardCodedTranslations.Clear();
             await LocalizationSettings.InitializationOperation.Task;
 
-            Locale enLocale = LocalizationSettings.AvailableLocales.GetLocale(EnglishLocaleIdentifier);
-            Locale heLocale = LocalizationSettings.AvailableLocales.GetLocale(HebrewLocaleIdentifier);
+            Locale enLocale = LocalizationSettings.AvailableLocales.GetLocale(LocalizationConstants.EnglishLocaleIdentifier);
+            Locale heLocale = LocalizationSettings.AvailableLocales.GetLocale(LocalizationConstants.HebrewLocaleIdentifier);
             if (enLocale == null && heLocale == null)
             {
-                Debug.LogWarning($"TranslationService: No matching locales found for '{EnglishLocaleIdentifier}' or '{HebrewLocaleIdentifier}'.");
+                Debug.LogWarning($"TranslationService: No matching locales found for '{LocalizationConstants.EnglishLocaleIdentifier}' or '{LocalizationConstants.HebrewLocaleIdentifier}'.");
                 return;
             }
 
@@ -209,12 +208,12 @@ namespace com.mapcolonies.core.Localization
         private async Task ApplyToUnityLocalization()
         {
             await LocalizationSettings.InitializationOperation.Task;
-            Locale hebrewLocale = LocalizationSettings.AvailableLocales.GetLocale(HebrewLocaleIdentifier);
-            Locale englishLocale = LocalizationSettings.AvailableLocales.GetLocale(EnglishLocaleIdentifier);
+            Locale hebrewLocale = LocalizationSettings.AvailableLocales.GetLocale(LocalizationConstants.HebrewLocaleIdentifier);
+            Locale englishLocale = LocalizationSettings.AvailableLocales.GetLocale(LocalizationConstants.EnglishLocaleIdentifier);
 
             if (hebrewLocale == null || englishLocale == null)
             {
-                Debug.LogError($"TranslationService: One or both locales not found. HE: '{HebrewLocaleIdentifier}', EN: '{EnglishLocaleIdentifier}'. Make sure they are in Localization Settings.");
+                Debug.LogError($"TranslationService: One or both locales not found. HE: '{LocalizationConstants.HebrewLocaleIdentifier}', EN: '{LocalizationConstants.EnglishLocaleIdentifier}'. Make sure they are in Localization Settings.");
                 return;
             }
 
@@ -288,13 +287,13 @@ namespace com.mapcolonies.core.Localization
                 return key;
             }
 
-            if (IsLocale(HebrewLocaleIdentifier))
+            if (IsLocale(LocalizationConstants.HebrewLocaleIdentifier))
             {
                 if (!string.IsNullOrEmpty(entry.Hebrew)) return entry.Hebrew;
                 return key;
             }
 
-            if (IsLocale(EnglishLocaleIdentifier))
+            if (IsLocale(LocalizationConstants.EnglishLocaleIdentifier))
             {
                 if (!string.IsNullOrEmpty(entry.English)) return entry.English;
                 return key;

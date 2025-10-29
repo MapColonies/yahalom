@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Localization.Settings;
 using UnityEngine.TestTools;
 using com.mapcolonies.core.Localization;
+using com.mapcolonies.core.Localization.Constants;
 
 namespace EditorTests.Localization
 {
@@ -42,13 +43,13 @@ namespace EditorTests.Localization
             TranslationTestHelper.WriteJson(_jsonPath, json);
 
             var svc = new TranslationService();
-            var initTask = svc.InitializeService(TranslationService.EnglishLocaleIdentifier);
+            var initTask = svc.InitializeService(LocalizationConstants.EnglishLocaleIdentifier);
             yield return new WaitUntil(() => initTask.IsCompleted);
 
-            LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale(TranslationService.EnglishLocaleIdentifier);
+            LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale(LocalizationConstants.EnglishLocaleIdentifier);
             Assert.AreEqual("App Title", svc.Translate("title"));
 
-            LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale(TranslationService.HebrewLocaleIdentifier);
+            LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale(LocalizationConstants.HebrewLocaleIdentifier);
             Assert.AreEqual("כותרת האפליקציה", svc.Translate("title"));
         }
     }
