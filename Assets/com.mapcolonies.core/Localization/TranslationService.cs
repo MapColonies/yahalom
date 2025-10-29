@@ -26,7 +26,7 @@ namespace com.mapcolonies.core.Localization
         private string _remoteConfigUrl;
         private bool _showTranslationWarnings;
 
-        private const string LocalFilePath = "Translations/Yahalom_HardCoded_Translations.json";
+        private const string LocalFilePath = "Translations/" + LocalizationConstants.TranslationsFileName + ".json";
         private const string TargetStringTableName = "Yahalom_HardCoded_Translations";
 
         private Dictionary<string, TranslationEntry> _hardCodedTranslations = new Dictionary<string, TranslationEntry>();

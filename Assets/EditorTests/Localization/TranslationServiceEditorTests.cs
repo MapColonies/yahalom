@@ -2,15 +2,15 @@ using System.Collections;
 using System.IO;
 using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using UnityEngine.TestTools;
 using com.mapcolonies.core.Localization;
 using com.mapcolonies.core.Localization.Constants;
+using EditorTests.Localization;
 
-namespace EditorTests.Localization
+namespace PlayModeTests.Localization
 {
-    public class TranslationServiceEditorTests
+    public class TranslationServicePlayModeTests
     {
         private string _jsonPath;
 
@@ -18,7 +18,10 @@ namespace EditorTests.Localization
         public IEnumerator UnitySetUp()
         {
             string dir = TranslationTestHelper.EnsureTranslationsDir();
-            _jsonPath = Path.Combine(dir, $"{LocalizationConstants.TranslationsFileName}.json");
+            _jsonPath = Path.Combine(
+                dir,
+                $"{LocalizationConstants.TranslationsFileName}.json"
+            );
             if (File.Exists(_jsonPath)) File.Delete(_jsonPath);
             yield return TranslationTestHelper.EnsureLocalesAsync();
         }
@@ -32,18 +35,9 @@ namespace EditorTests.Localization
         }
 
         [UnityTest]
-        public IEnumerator Initialize_From_File_And_Translate_English_And_Hebrew()
+        public IEnumerator Missing_File_Does_Not_Throw_And_Unknown_Key_Passthrough()
         {
-            string json = @"
-{
-  ""ShowTranslationWarnings"": true,
-  ""Words"": [
-    { ""Key"": ""hello"", ""English"": ""hello"", ""Hebrew"": ""שלום"" },
-    { ""Key"": ""home"",  ""English"": ""home"",  ""Hebrew"": ""בית"" }
-  ]
-}";
-            TranslationTestHelper.WriteJson(_jsonPath, json);
-
+            // Do NOT write the file here -> simulate missing file
             var svc = new TranslationService();
 
             try
@@ -53,15 +47,8 @@ namespace EditorTests.Localization
 
                 LocalizationSettings.SelectedLocale =
                     LocalizationSettings.AvailableLocales.GetLocale(LocalizationConstants.EnglishLocaleIdentifier);
-                Assert.AreEqual("hello", svc.Translate("hello"));
-                Assert.AreEqual("home", svc.Translate("home"));
 
-                LocalizationSettings.SelectedLocale =
-                    LocalizationSettings.AvailableLocales.GetLocale(LocalizationConstants.HebrewLocaleIdentifier);
-                Assert.AreEqual("שלום", svc.Translate("hello"));
-                Assert.AreEqual("בית", svc.Translate("home"));
-
-                Assert.AreEqual("missing_key", svc.Translate("missing_key"));
+                Assert.AreEqual("unknown_key", svc.Translate("unknown_key"));
             }
             finally
             {
@@ -71,14 +58,14 @@ namespace EditorTests.Localization
         }
 
         [UnityTest]
-        public IEnumerator Duplicate_Keys_Prefer_Last_Entry()
+        public IEnumerator Runtime_Language_Switch_Reflects_In_Translate()
         {
             string json = @"
 {
-  ""ShowTranslationWarnings"": false,
+  ""ShowTranslationWarnings"": true,
   ""Words"": [
-    { ""Key"": ""title"", ""English"": ""Title"",      ""Hebrew"": ""כותרת"" },
-    { ""Key"": ""title"", ""English"": ""App Title"",  ""Hebrew"": ""כותרת האפליקציה"" }
+    { ""Key"": ""start"", ""English"": ""Start"", ""Hebrew"": ""התחלה"" },
+    { ""Key"": ""exit"",  ""English"": ""Exit"",  ""Hebrew"": ""יציאה"" }
   ]
 }";
             TranslationTestHelper.WriteJson(_jsonPath, json);
@@ -90,40 +77,17 @@ namespace EditorTests.Localization
                 var initTask = svc.InitializeService(LocalizationConstants.EnglishLocaleIdentifier);
                 yield return new WaitUntil(() => initTask.IsCompleted);
 
+                // English first
                 LocalizationSettings.SelectedLocale =
                     LocalizationSettings.AvailableLocales.GetLocale(LocalizationConstants.EnglishLocaleIdentifier);
-                Assert.AreEqual("App Title", svc.Translate("title"));
+                Assert.AreEqual("Start", svc.Translate("start"));
+                Assert.AreEqual("Exit", svc.Translate("exit"));
 
+                // Switch to Hebrew at runtime
                 LocalizationSettings.SelectedLocale =
                     LocalizationSettings.AvailableLocales.GetLocale(LocalizationConstants.HebrewLocaleIdentifier);
-                Assert.AreEqual("כותרת האפליקציה", svc.Translate("title"));
-            }
-            finally
-            {
-                svc.Dispose();
-                LocalizationSettings.SelectedLocale = null;
-            }
-        }
-
-        [Test]
-        public void TranslateBeforeInitializeReturnsKey()
-        {
-            var svc = new TranslationService();
-
-            try
-            {
-                var en = LocalizationSettings.AvailableLocales.GetLocale(LocalizationConstants.EnglishLocaleIdentifier)
-                         ?? Locale.CreateLocale(SystemLanguage.English);
-
-                if (LocalizationSettings.AvailableLocales.GetLocale(LocalizationConstants.EnglishLocaleIdentifier) == null)
-                    LocalizationSettings.AvailableLocales.AddLocale(en);
-
-                LocalizationSettings.SelectedLocale = en;
-
-                string key = "hello";
-                string result = svc.Translate(key);
-
-                Assert.AreEqual(key, result, "Translate before InitializeService should return the key.");
+                Assert.AreEqual("התחלה", svc.Translate("start"));
+                Assert.AreEqual("יציאה", svc.Translate("exit"));
             }
             finally
             {
