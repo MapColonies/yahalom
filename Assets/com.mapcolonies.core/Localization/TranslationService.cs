@@ -13,13 +13,19 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace com.mapcolonies.core.Localization
 {
-    public class TranslationService
+    public interface ITranslationService
+    {
+        Task InitializeService(string localeIdentifier);
+        string Translate(string key);
+    }
+
+    public class TranslationService : ITranslationService
     {
         private string _remoteConfigUrl;
         private bool _showTranslationWarnings;
 
-        private const string HebrewLocaleIdentifier = "he-IL";
-        private const string EnglishLocaleIdentifier = "en";
+        public const string HebrewLocaleIdentifier = "he-IL";
+        public const string EnglishLocaleIdentifier = "en";
         private const string LocalFilePath = "Translations/Yahalom_HardCoded_Translations.json";
         private const string TargetStringTableName = "Yahalom_HardCoded_Translations";
 

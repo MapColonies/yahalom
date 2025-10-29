@@ -42,13 +42,13 @@ namespace EditorTests.Localization
             TranslationTestHelper.WriteJson(_jsonPath, json);
 
             var svc = new TranslationService();
-            var initTask = svc.InitializeService("en");
+            var initTask = svc.InitializeService(TranslationService.EnglishLocaleIdentifier);
             yield return new WaitUntil(() => initTask.IsCompleted);
 
-            LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale("en");
+            LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale(TranslationService.EnglishLocaleIdentifier);
             Assert.AreEqual("App Title", svc.Translate("title"));
 
-            LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale("he-IL");
+            LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.GetLocale(TranslationService.HebrewLocaleIdentifier);
             Assert.AreEqual("כותרת האפליקציה", svc.Translate("title"));
         }
     }
