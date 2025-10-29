@@ -4,8 +4,17 @@ namespace com.mapcolonies.core.Services.Analytics.Model
 {
     public class ApplicationData : IAnalyticLogParameter
     {
-        public string ApplicationName { get; private set; }
-        public string ApplicationVersion { get; private set; }
+        public string ApplicationName
+        {
+            get;
+            private set;
+        }
+
+        public string ApplicationVersion
+        {
+            get;
+            private set;
+        }
 
         private ApplicationData(string applicationName, string applicationVersion)
         {

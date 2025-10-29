@@ -5,7 +5,11 @@ namespace com.mapcolonies.core.Services.Analytics.Model
 {
     public class ApplicationUsageData : IAnalyticLogParameter
     {
-        public TimeSpan Time { get; private set; }
+        public TimeSpan Time
+        {
+            get;
+            private set;
+        }
 
         private ApplicationUsageData(TimeSpan time)
         {

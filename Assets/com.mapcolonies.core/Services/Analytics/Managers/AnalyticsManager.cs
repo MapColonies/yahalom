@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using com.mapcolonies.core.Services.Analytics.Model;
@@ -12,7 +11,11 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
 {
     public interface IAnalyticsManager
     {
-        string SessionId { get; }
+        string SessionId
+        {
+            get;
+        }
+
         Task Publish(LogObject logObject);
     }
 
@@ -21,7 +24,12 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
     /// </summary>
     public class AnalyticsManager : IInitializable, IDisposable, IAnalyticsManager
     {
-        public string SessionId { get; private set; }
+        public string SessionId
+        {
+            get;
+            private set;
+        }
+
         public const string AnalyticsFileName = "AnalyticsLogs";
 
         private delegate Task PublishDelegate(LogObject logObject);

@@ -4,9 +4,17 @@ namespace com.mapcolonies.core.Services.Analytics.Model
 {
     public class LayerData : IAnalyticLogParameter
     {
-        public string LayerDomain { get; private set; }
+        public string LayerDomain
+        {
+            get;
+            private set;
+        }
 
-        public string UniqueLayerId { get; private set; }
+        public string UniqueLayerId
+        {
+            get;
+            private set;
+        }
 
         private LayerData(string layerDomain, string uniqueLayerId)
         {

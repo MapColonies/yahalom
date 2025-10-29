@@ -4,9 +4,17 @@ namespace com.mapcolonies.core.Services.Analytics.Model
 {
     public class GameModeData : IAnalyticLogParameter
     {
-        public string Mode { get; private set; }
+        public string Mode
+        {
+            get;
+            private set;
+        }
 
-        public string ViewMode { get; private set; }
+        public string ViewMode
+        {
+            get;
+            private set;
+        }
 
         private GameModeData(string mode, string playerViewMode)
         {
