@@ -25,6 +25,15 @@ namespace com.mapcolonies.core
             _viewModel = viewModel;
             RootVisualElement = _uiDocument.rootVisualElement;
             RootVisualElement.dataSource = _viewModel;
+            OnViewModelBound();
         }
+
+        protected virtual void OnDestroy()
+        {
+            OnViewModelUnbound();
+        }
+
+        protected virtual void OnViewModelBound() {}
+        protected virtual void OnViewModelUnbound() {}
     }
 }

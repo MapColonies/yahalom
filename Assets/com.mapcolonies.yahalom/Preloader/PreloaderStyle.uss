@@ -44,3 +44,12 @@
     color: rgb(255, 255, 255);
     -unity-text-align: upper-center;
 }
+
+.preloader-root {
+    opacity: 1;
+    transition: opacity 1s ease;
+}
+
+.preloader-fadeout {
+    opacity: 0;
+}
