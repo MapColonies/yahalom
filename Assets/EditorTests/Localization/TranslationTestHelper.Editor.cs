@@ -1,6 +1,7 @@
 using System.Collections;
 using System.IO;
 using System.Text;
+using com.mapcolonies.core.Localization.Constants;
 using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
@@ -11,7 +12,7 @@ namespace EditorTests.Localization
     {
         public static string EnsureTranslationsDir()
         {
-            string dir = Path.Combine(Application.streamingAssetsPath, "Translations");
+            string dir = Path.Combine(Application.streamingAssetsPath, LocalizationConstants.TranslationsFileName);
             if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
             return dir;
         }
