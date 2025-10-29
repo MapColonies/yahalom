@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using com.mapcolonies.core.Services.Analytics.Model;
+using com.mapcolonies.core.Utilities;
 using Newtonsoft.Json;
 using UnityEngine;
 using VContainer.Unity;
@@ -67,24 +68,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
 
         private void SetupLogFile()
         {
-            try
-            {
-                string logDirectory = Path.Combine(Application.persistentDataPath, AnalyticsFileName);
-
-                if (!Directory.Exists(logDirectory))
-                {
-                    Directory.CreateDirectory(logDirectory);
-                    Debug.Log($"Created analytics log directory: {logDirectory}");
-                }
-
-                _logFilePath = Path.Combine(logDirectory, $"session-{SessionId}.log");
-                Debug.Log($"Analytics log file for this session: {_logFilePath}");
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"Failed to create analytics log file: {ex.Message}");
-                _logFilePath = null;
-            }
+            _logFilePath = FileUtility.SetupFilePath(AnalyticsFileName, $"session-{SessionId}.log");
         }
 
         private async Task PublishAnalytics(LogObject logObject)
@@ -103,25 +87,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
 
         private async Task WriteLogToFileAsync(string logContent)
         {
-            if (string.IsNullOrEmpty(_logFilePath))
-            {
-                Debug.LogWarning("Log file path is not set, skipping file write");
-                return;
-            }
-
-            await _fileSemaphore.WaitAsync();
-            try
-            {
-                await File.AppendAllTextAsync(_logFilePath, logContent + Environment.NewLine);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"Failed to write analytics to file {_logFilePath}: {ex.Message}");
-            }
-            finally
-            {
-                _fileSemaphore.Release();
-            }
+            await FileUtility.AppendLineToFileSafeAsync(logContent, _logFilePath, _fileSemaphore);
         }
 
         public async Task Publish(LogObject logObject)
