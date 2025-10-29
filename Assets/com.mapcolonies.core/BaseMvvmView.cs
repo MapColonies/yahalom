@@ -33,7 +33,12 @@ namespace com.mapcolonies.core
             OnViewModelUnbound();
         }
 
-        protected virtual void OnViewModelBound() {}
-        protected virtual void OnViewModelUnbound() {}
+        protected virtual void OnViewModelBound()
+        {
+        }
+
+        protected virtual void OnViewModelUnbound()
+        {
+        }
     }
 }
