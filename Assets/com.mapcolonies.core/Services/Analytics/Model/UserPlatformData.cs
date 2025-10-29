@@ -6,15 +6,59 @@ namespace com.mapcolonies.core.Services.Analytics.Model
     [System.Serializable]
     public class UserPlatformData : IAnalyticLogParameter
     {
-        public string OperatingSystem { get; private set; }
-        public string ProcessorType { get; private set; }
-        public string GraphicsDeviceType { get; private set; }
-        public int Ram { get; private set; }
-        public string GraphicsDeviceName { get; private set; }
-        public string GraphicsDeviceVersion { get; private set; }
-        public int GraphicsMemorySize { get; private set; }
-        public Resolution ScreenResolution { get; private set; }
-        public string DeviceModel { get; private set; }
+        public string OperatingSystem
+        {
+            get;
+            private set;
+        }
+
+        public string ProcessorType
+        {
+            get;
+            private set;
+        }
+
+        public string GraphicsDeviceType
+        {
+            get;
+            private set;
+        }
+
+        public int Ram
+        {
+            get;
+            private set;
+        }
+
+        public string GraphicsDeviceName
+        {
+            get;
+            private set;
+        }
+
+        public string GraphicsDeviceVersion
+        {
+            get;
+            private set;
+        }
+
+        public int GraphicsMemorySize
+        {
+            get;
+            private set;
+        }
+
+        public Resolution ScreenResolution
+        {
+            get;
+            private set;
+        }
+
+        public string DeviceModel
+        {
+            get;
+            private set;
+        }
 
         private UserPlatformData(string operatingSystem, string processorType, string graphicsDeviceType, int ram,
             string graphicsDeviceName, string graphicsDeviceVersion, int graphicsMemorySize, Resolution screenResolution,

@@ -4,9 +4,23 @@ namespace com.mapcolonies.core.Services.Analytics.Model
 {
     public class PerformanceData : IAnalyticLogParameter
     {
-        public float Fps { get; private set; }
-        public double AllocatedMemoryInMB { get; private set; }
-        public double CpuUsagePercentage { get; private set; }
+        public float Fps
+        {
+            get;
+            private set;
+        }
+
+        public double AllocatedMemoryInMB
+        {
+            get;
+            private set;
+        }
+
+        public double CpuUsagePercentage
+        {
+            get;
+            private set;
+        }
 
         private PerformanceData(float fps, double allocatedMemoryInMb, double cpuUsagePercentage)
         {

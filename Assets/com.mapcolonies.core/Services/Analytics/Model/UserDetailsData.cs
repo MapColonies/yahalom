@@ -4,9 +4,23 @@ namespace com.mapcolonies.core.Services.Analytics.Model
 {
     public class UserDetailsData : IAnalyticLogParameter
     {
-        public string UserName { get; private set; }
-        public string UserDomainName { get; private set; }
-        public string MachineName { get; private set; }
+        public string UserName
+        {
+            get;
+            private set;
+        }
+
+        public string UserDomainName
+        {
+            get;
+            private set;
+        }
+
+        public string MachineName
+        {
+            get;
+            private set;
+        }
 
         private UserDetailsData(string userName, string userDomainName, string machineName)
         {

@@ -4,8 +4,17 @@ namespace com.mapcolonies.core.Services.Analytics.Model
 {
     public class LocationData : IAnalyticLogParameter
     {
-        public double Longitude { get; private set; }
-        public double Latitude { get; private set; }
+        public double Longitude
+        {
+            get;
+            private set;
+        }
+
+        public double Latitude
+        {
+            get;
+            private set;
+        }
 
         private LocationData(double longitude, double latitude)
         {

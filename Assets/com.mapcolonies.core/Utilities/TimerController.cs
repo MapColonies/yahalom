@@ -12,7 +12,11 @@ namespace com.mapcolonies.core.Utilities
         private readonly bool _isRepeating;
         private readonly SynchronizationContext _syncContext;
 
-        public Action OnTimerElapsed { get; set; }
+        public Action OnTimerElapsed
+        {
+            get;
+            set;
+        }
 
         public TimerController(double interval, bool isRepeating = true)
         {
@@ -58,6 +62,7 @@ namespace com.mapcolonies.core.Utilities
                 _timer.Dispose();
                 _timer = null;
             }
+
             OnTimerElapsed = null;
         }
     }

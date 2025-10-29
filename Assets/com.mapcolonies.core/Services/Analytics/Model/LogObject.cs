@@ -8,13 +8,47 @@ namespace com.mapcolonies.core.Services.Analytics.Model
     [Serializable]
     public class LogObject
     {
-        public string SessionID { get; internal set; }
-        public string Severity { get; private set; } //TODO: Change to Log4Net enum
-        public DateTime TimeStamp { get; private set; }
-        public string Message { get; private set; }
-        public IAnalyticLogParameter MessageParameters { get; private set; }
-        public string Component { get; private set; }
-        public AnalyticsMessageTypes MessageType { get; private set; }
+        public string SessionID
+        {
+            get;
+            internal set;
+        }
+
+        public string Severity
+        {
+            get;
+            private set;
+        } //TODO: Change to Log4Net enum
+
+        public DateTime TimeStamp
+        {
+            get;
+            private set;
+        }
+
+        public string Message
+        {
+            get;
+            private set;
+        }
+
+        public IAnalyticLogParameter MessageParameters
+        {
+            get;
+            private set;
+        }
+
+        public string Component
+        {
+            get;
+            private set;
+        }
+
+        public AnalyticsMessageTypes MessageType
+        {
+            get;
+            private set;
+        }
 
         private LogObject(
             string severity,

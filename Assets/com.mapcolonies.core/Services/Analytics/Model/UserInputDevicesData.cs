@@ -5,7 +5,11 @@ namespace com.mapcolonies.core.Services.Analytics.Model
     [System.Serializable]
     public class UserInputDevicesData : IAnalyticLogParameter
     {
-        public string[] InputDevices { get; private set; }
+        public string[] InputDevices
+        {
+            get;
+            private set;
+        }
 
         private UserInputDevicesData(string[] inputDevices)
         {
