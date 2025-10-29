@@ -41,6 +41,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          ROOT="${GITHUB_WORKSPACE}"
 
           count="${{ steps.discover.outputs.solution_count }}"
           if [ "$count" != "0" ]; then
@@ -55,26 +56,26 @@ jobs:
                 --profile="Built-in: Reformat Code" \
                 --no-build \
                 --verbosity=WARN \
-                --include="Assets/**/*.cs" \
-                --exclude="**/bin/**" \
-                --exclude="**/obj/**" \
-                --exclude="**/.idea/**" \
-                --exclude="**/Library/**" \
-                --exclude="**/Logs/**" \
-                --exclude="**/Temp/**"
+                --include="$ROOT/Assets/**/*.cs" \
+                --exclude="$ROOT/**/bin/**" \
+                --exclude="$ROOT/**/obj/**" \
+                --exclude="$ROOT/**/.idea/**" \
+                --exclude="$ROOT/**/Library/**" \
+                --exclude="$ROOT/**/Logs/**" \
+                --exclude="$ROOT/**/Temp/**"
             done < solutions.txt
           else
-            echo "==> No .sln files found. Running jb cleanupcode by glob include."
-            jb cleanupcode . \
+            echo "==> No .sln files found. Running jb cleanupcode by glob include (absolute paths)."
+            jb cleanupcode "$ROOT" \
               --profile="Built-in: Reformat Code" \
               --verbosity=WARN \
-              --include="Assets/**/*.cs" \
-              --exclude="**/bin/**" \
-              --exclude="**/obj/**" \
-              --exclude="**/.idea/**" \
-              --exclude="**/Library/**" \
-              --exclude="**/Logs/**" \
-              --exclude="**/Temp/**"
+              --include="$ROOT/Assets/**/*.cs" \
+              --exclude="$ROOT/**/bin/**" \
+              --exclude="$ROOT/**/obj/**" \
+              --exclude="$ROOT/**/.idea/**" \
+              --exclude="$ROOT/**/Library/**" \
+              --exclude="$ROOT/**/Logs/**" \
+              --exclude="$ROOT/**/Temp/**"
           fi
 
       - name: Diff & annotate unformatted files (fail if any)
@@ -83,6 +84,8 @@ jobs:
           set -euo pipefail
           DIFF_FILE=cleanup.diff
           git --no-pager diff --unified=0 -- 'Assets/**/*.cs' > "$DIFF_FILE" || true
+
+          git --no-pager diff --name-only -- 'Assets/**/*.cs' || true
 
           if [ -s "$DIFF_FILE" ]; then
             echo "Unformatted changes detected in Assets/:"
