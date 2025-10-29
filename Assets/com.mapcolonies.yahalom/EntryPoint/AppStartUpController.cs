@@ -5,8 +5,11 @@ using com.mapcolonies.core.Services;
 using com.mapcolonies.yahalom.InitPipeline;
 using com.mapcolonies.yahalom.InitPipeline.InitSteps;
 using com.mapcolonies.yahalom.InitPipeline.InitUnits;
+using com.mapcolonies.yahalom.SceneController;
+using com.mapcolonies.yahalom.SceneController.Enums;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using VContainer;
 using VContainer.Unity;
 
@@ -47,6 +50,11 @@ namespace com.mapcolonies.yahalom.EntryPoint
                             Task.Run(resolver.Resolve<WmtsService>().Init);
                             return default;
                         }),
+                    new RegisterScopeUnit("Scene Services", 0.05f, scope, InitPolicy.Fail,
+                        builder =>
+                        {
+                            builder.Register<ISceneController, SceneController.SceneController>(Lifetime.Singleton);
+                        })
                 }),
                 new InitStep("FeaturesInit", StepMode.Sequential, new IInitUnit[]
                 {
@@ -54,6 +62,15 @@ namespace com.mapcolonies.yahalom.EntryPoint
                         () =>
                         {
                             return Cysharp.Threading.Tasks.UniTask.Delay(1000);
+                        })
+                }),
+                new InitStep("SwitchScene", StepMode.Sequential, new IInitUnit[]
+                {
+                    new ActionUnit("Load Target Scene", 0.10f, InitPolicy.Fail,
+                        () =>
+                        {
+                            var sceneController = scope.Container.Resolve<ISceneController>();
+                            return sceneController.SwitchToAsync(Scenes.PlanningScene.ToString(), LoadSceneMode.Additive);
                         })
                 })
             };

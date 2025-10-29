@@ -1,5 +1,6 @@
 using com.mapcolonies.yahalom.InitPipeline;
 using com.mapcolonies.yahalom.Preloader;
+using com.mapcolonies.yahalom.SceneController;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -14,7 +15,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
 
             builder.Register<PreloaderViewModel>(Lifetime.Scoped);
             builder.Register<InitializationPipeline>(Lifetime.Scoped);
-
+            builder.Register<ISceneController, SceneController.SceneController>(Lifetime.Singleton);
             builder.Register<AppStartUpController>(Lifetime.Singleton).As<IAsyncStartable>();
 
             Debug.Log("End Configure Startup Registrations");
