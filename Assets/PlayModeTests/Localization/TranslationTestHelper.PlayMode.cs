@@ -12,7 +12,7 @@ namespace PlayModeTests.Localization
     {
         public static string EnsureTranslationsDir()
         {
-            string dir = Path.Combine(Application.streamingAssetsPath, LocalizationConstants.TranslationsFileName);
+            string dir = Path.Combine(Application.streamingAssetsPath, $"{LocalizationConstants.TranslationsFileName}.json");
             if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
             return dir;
         }

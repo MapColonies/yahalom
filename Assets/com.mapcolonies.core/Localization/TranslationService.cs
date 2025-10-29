@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace com.mapcolonies.core.Localization
         string Translate(string key);
     }
 
-    public class TranslationService : ITranslationService
+    public class TranslationService : ITranslationService, IDisposable
     {
         private string _remoteConfigUrl;
         private bool _showTranslationWarnings;
@@ -321,6 +322,15 @@ namespace com.mapcolonies.core.Localization
                 Debug.LogError($"TranslationService: Error converting config list to dictionary. {ex.Message}");
                 return new Dictionary<string, TranslationEntry>();
             }
+        }
+
+        public void Dispose()
+        {
+            _isInitialized = false;
+            _hardCodedTranslations?.Clear();
+            _fileTranslations?.Clear();
+            _remoteTranslations?.Clear();
+            _mergedTranslations?.Clear();
         }
     }
 }
