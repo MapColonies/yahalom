@@ -105,7 +105,6 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
             try
             {
                 await FileUtility.AppendLineToFileAsync(logContent, _logFilePath);
-
             }
             catch (Exception e)
             {
