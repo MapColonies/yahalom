@@ -23,7 +23,6 @@ namespace com.mapcolonies.yahalom.EntryPoint
 
         public AppStartUpController(InitializationPipeline initializationPipeline, LifetimeScope scope)
         {
-
             _scope = scope;
             _pipeline = initializationPipeline;
             _initSteps = new List<InitStep>

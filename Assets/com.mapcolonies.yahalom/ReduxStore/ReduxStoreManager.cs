@@ -8,13 +8,17 @@ namespace com.mapcolonies.yahalom.ReduxStore
     public class ReduxStoreManager
     {
         #region Slices Definition
-            public const string ConfigurationSlice = "configuration";
-            public const string AppSettingsSlice = "appSettings";
+
+        public const string ConfigurationSlice = "configuration";
+        public const string AppSettingsSlice = "appSettings";
+
         #endregion
 
         #region Actions Definitions
-            public const string SetConfigurationAction = "configuration/SetConfigurationAction";
-            public const string SetAppSettingsAction = "appSettings/SetAppSettingsAction";
+
+        public const string SetConfigurationAction = "configuration/SetConfigurationAction";
+        public const string SetAppSettingsAction = "appSettings/SetAppSettingsAction";
+
         #endregion
 
         public IStore<PartitionedState> Store
