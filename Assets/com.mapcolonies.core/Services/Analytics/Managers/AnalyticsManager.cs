@@ -75,7 +75,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
 
         private void SetupLogFile()
         {
-            _logFilePath = FileUtility.SetupFilePath(AnalyticsFileName, $"session-{SessionId}.log");
+            _logFilePath = FileUtility.GetFullPath(AnalyticsFileName, $"session-{SessionId}.log");
         }
 
         private async UniTask PublishAnalytics(LogObject logObject)
@@ -94,7 +94,27 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
 
         private async UniTask WriteLogToFileAsync(string logContent)
         {
-            await FileUtility.AppendLineToFileSafeAsync(logContent, _logFilePath, _fileSemaphore);
+            if (_fileSemaphore == null)
+            {
+                Debug.LogError($"Semaphore is null for file {_logFilePath}. Write operation is not thread-safe and was skipped.");
+                return;
+            }
+
+            await _fileSemaphore.WaitAsync();
+
+            try
+            {
+                await FileUtility.AppendLineToFileAsync(logContent, _logFilePath);
+
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Failed to write to file {_logFilePath}: {e.Message}");
+            }
+            finally
+            {
+                _fileSemaphore.Release();
+            }
         }
 
         public async UniTask Publish(LogObject logObject)

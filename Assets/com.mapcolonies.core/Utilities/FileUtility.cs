@@ -8,7 +8,7 @@ namespace com.mapcolonies.core.Utilities
 {
     public class FileUtility
     {
-        public static string SetupFilePath(string folderName, string fileName = null)
+        public static string GetFullPath(string folderName, string fileName = null)
         {
             try
             {
@@ -37,21 +37,13 @@ namespace com.mapcolonies.core.Utilities
             }
         }
 
-        public static async Task AppendLineToFileSafeAsync(string line, string filePath, SemaphoreSlim fileSemaphore)
+        public static async Task AppendLineToFileAsync(string line, string filePath)
         {
             if (string.IsNullOrEmpty(filePath))
             {
                 Debug.LogWarning("File path is not set, skipping file write.");
                 return;
             }
-
-            if (fileSemaphore == null)
-            {
-                Debug.LogError($"Semaphore is null for file {filePath}. Write operation is not thread-safe and was skipped.");
-                return;
-            }
-
-            await fileSemaphore.WaitAsync();
 
             try
             {
@@ -60,10 +52,6 @@ namespace com.mapcolonies.core.Utilities
             catch (Exception ex)
             {
                 Debug.LogError($"Failed to write to file {filePath}: {ex.Message}");
-            }
-            finally
-            {
-                fileSemaphore.Release();
             }
         }
     }

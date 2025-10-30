@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using com.mapcolonies.core.Utilities;
 using NUnit.Framework;
@@ -10,7 +9,7 @@ using UnityEngine.TestTools;
 
 namespace PlayModeTests.Utilities
 {
-    public class FileUtilityPlayModeTests : MonoBehaviour
+    public class FileUtilityPlayModeTests
     {
         private static IEnumerator Await(Task t)
         {
@@ -22,7 +21,7 @@ namespace PlayModeTests.Utilities
         public IEnumerator SetupFilePath_Creates_Directory_And_FilePath()
         {
             var dirName = "FileUtility_Setup";
-            var path = FileUtility.SetupFilePath(dirName, "minimal.log");
+            var path = FileUtility.GetFullPath(dirName, "minimal.log");
 
             Assert.IsNotNull(path);
             Assert.IsTrue(Directory.Exists(Path.Combine(Application.persistentDataPath, dirName)), "Directory should be created");
@@ -33,13 +32,10 @@ namespace PlayModeTests.Utilities
         [UnityTest]
         public IEnumerator Append_Writes_Single_Line()
         {
-            var dir = FileUtility.SetupFilePath("FileUtility_Append");
+            var dir = FileUtility.GetFullPath("FileUtility_Append");
             var file = Path.Combine(dir, $"session-{Guid.NewGuid():N}.log");
 
-            using (var sem = new SemaphoreSlim(1, 1))
-            {
-                yield return Await(FileUtility.AppendLineToFileSafeAsync("hello", file, sem));
-            }
+            yield return Await(FileUtility.AppendLineToFileAsync("hello", file));
 
             Assert.IsTrue(File.Exists(file), "File should be created");
             StringAssert.Contains("hello", File.ReadAllText(file));
@@ -49,16 +45,18 @@ namespace PlayModeTests.Utilities
         [UnityTest]
         public IEnumerator Append_Skips_When_FilePath_Null()
         {
-            var dir = FileUtility.SetupFilePath("FileUtility_Skip");
-            var file = Path.Combine(dir, $"session-{Guid.NewGuid():N}.log");
+            var dirName = "FileUtility_Skip";
+            var dir = Path.Combine(Application.persistentDataPath, dirName);
 
-            using (var sem = new SemaphoreSlim(1, 1))
+            if (Directory.Exists(dir))
             {
-                string nullPath = null;
-                yield return Await(FileUtility.AppendLineToFileSafeAsync("ignored", nullPath, sem));
+                Directory.Delete(dir, true);
             }
 
-            Assert.IsFalse(Directory.Exists(dir) && File.Exists(file), "No file should be created when filePath is null");
+            string nullPath = null;
+            yield return Await(FileUtility.AppendLineToFileAsync("ignored", nullPath));
+
+            Assert.IsFalse(Directory.Exists(dir), "Directory should not be created when path is null");
             yield return null;
         }
     }
