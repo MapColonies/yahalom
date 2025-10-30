@@ -1,4 +1,3 @@
-using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine.SceneManagement;
 
@@ -6,25 +5,28 @@ namespace com.mapcolonies.yahalom.SceneController
 {
     public interface ISceneController
     {
-        UniTask SwitchToAsync(string sceneName, LoadSceneMode mode = LoadSceneMode.Single);
+        UniTask SwitchSceneAsync(string sceneName);
     }
 
     public class SceneController : ISceneController
     {
-        public async UniTask SwitchToAsync(string sceneName, LoadSceneMode mode = LoadSceneMode.Single)
+        private string _currentLoadedScene;
+
+        public async UniTask SwitchSceneAsync(string newSceneName)
         {
-            var op = SceneManager.LoadSceneAsync(sceneName, mode);
-
-            if (op == null)
+            if (!string.IsNullOrEmpty(_currentLoadedScene))
             {
-                throw new InvalidOperationException($"Failed to start loading scene '{sceneName}'. " +
-                                                    $"Make sure it’s added to Build Settings.");
+                var unloadOp = SceneManager.UnloadSceneAsync(_currentLoadedScene);
+                while (!unloadOp.isDone)
+                    await UniTask.Yield();
             }
 
-            while (!op.isDone)
-            {
+            var loadOp = SceneManager.LoadSceneAsync(newSceneName, LoadSceneMode.Additive);
+            while (!loadOp.isDone)
                 await UniTask.Yield();
-            }
+
+            _currentLoadedScene = newSceneName;
+            SceneManager.SetActiveScene(SceneManager.GetSceneByName(newSceneName));
         }
     }
 }

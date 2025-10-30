@@ -9,7 +9,6 @@ using com.mapcolonies.yahalom.SceneController;
 using com.mapcolonies.yahalom.SceneController.Enums;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using VContainer;
 using VContainer.Unity;
 
@@ -70,7 +69,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
                         () =>
                         {
                             var sceneController = scope.Container.Resolve<ISceneController>();
-                            return sceneController.SwitchToAsync(Scenes.PlanningScene.ToString(), LoadSceneMode.Additive);
+                            return sceneController.SwitchSceneAsync(Scenes.PlanningScene.ToString());
                         })
                 })
             };
