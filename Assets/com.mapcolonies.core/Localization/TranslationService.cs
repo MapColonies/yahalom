@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using com.mapcolonies.core.Localization.Constants;
 using com.mapcolonies.core.Localization.Models;
 using Newtonsoft.Json;
@@ -12,12 +11,13 @@ using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
 using UnityEngine.Networking;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using Cysharp.Threading.Tasks;
 
 namespace com.mapcolonies.core.Localization
 {
     public interface ITranslationService
     {
-        Task InitializeService(string localeIdentifier);
+        UniTask InitializeService(string localeIdentifier);
         string Translate(string key);
     }
 
@@ -29,10 +29,7 @@ namespace com.mapcolonies.core.Localization
         private const string LocalFilePath = "Translations/" + LocalizationConstants.TranslationsFileName + ".json";
         private const string TargetStringTableName = "Yahalom_HardCoded_Translations";
 
-        private Dictionary<string, TranslationEntry> _hardCodedTranslations = new Dictionary<string, TranslationEntry>();
-        private Dictionary<string, TranslationEntry> _fileTranslations = new Dictionary<string, TranslationEntry>();
-        private Dictionary<string, TranslationEntry> _remoteTranslations = new Dictionary<string, TranslationEntry>();
-        private Dictionary<string, TranslationEntry> _mergedTranslations = new Dictionary<string, TranslationEntry>();
+        private Dictionary<string, TranslationEntry> _translations = new Dictionary<string, TranslationEntry>();
 
         private bool _isInitialized;
 
@@ -40,7 +37,7 @@ namespace com.mapcolonies.core.Localization
         {
         }
 
-        public async Task InitializeService(string localeIdentifier)
+        public async UniTask InitializeService(string localeIdentifier)
         {
             if (_isInitialized) return;
 
@@ -48,31 +45,16 @@ namespace com.mapcolonies.core.Localization
             _remoteConfigUrl = string.Empty;
 
             await SetLanguage(localeIdentifier);
-            await LoadHardCodedTranslations();
-
-            TranslationConfig fileConfig = await LoadFromFileAsync();
-            if (fileConfig != null)
-            {
-                _fileTranslations = ConfigToDictionary(fileConfig);
-                _showTranslationWarnings = fileConfig.ShowTranslationWarnings;
-            }
-
-            TranslationConfig remoteConfig = await LoadFromRemoteAsync();
-            if (remoteConfig != null)
-            {
-                _remoteTranslations = ConfigToDictionary(remoteConfig);
-                _showTranslationWarnings = remoteConfig.ShowTranslationWarnings;
-            }
-
-            MergeTranslations();
+            await SetTranslations();
             await ApplyToUnityLocalization();
 
             _isInitialized = true;
         }
 
-        private async Task SetLanguage(string localeIdentifier)
+        private async UniTask SetLanguage(string localeIdentifier)
         {
             await LocalizationSettings.InitializationOperation.Task;
+
             if (!string.IsNullOrWhiteSpace(localeIdentifier))
             {
                 ILocalesProvider locales = LocalizationSettings.AvailableLocales;
@@ -89,21 +71,23 @@ namespace com.mapcolonies.core.Localization
             }
         }
 
-        private async Task LoadHardCodedTranslations()
+        private async UniTask<Dictionary<string, TranslationEntry>> LoadHardCodedTranslations()
         {
-            _hardCodedTranslations.Clear();
+            var hardCodedTranslations = new Dictionary<string, TranslationEntry>();
             await LocalizationSettings.InitializationOperation.Task;
 
             Locale enLocale = LocalizationSettings.AvailableLocales.GetLocale(LocalizationConstants.EnglishLocaleIdentifier);
             Locale heLocale = LocalizationSettings.AvailableLocales.GetLocale(LocalizationConstants.HebrewLocaleIdentifier);
+
             if (enLocale == null && heLocale == null)
             {
                 Debug.LogWarning($"TranslationService: No matching locales found for '{LocalizationConstants.EnglishLocaleIdentifier}' or '{LocalizationConstants.HebrewLocaleIdentifier}'.");
-                return;
+                return null;
             }
 
             StringTable enTable = null;
             StringTable heTable = null;
+
             if (enLocale != null)
             {
                 enTable = await LocalizationSettings.StringDatabase.GetTableAsync(TargetStringTableName, enLocale).Task;
@@ -117,10 +101,11 @@ namespace com.mapcolonies.core.Localization
             if (enTable == null && heTable == null)
             {
                 Debug.LogWarning($"TranslationService: StringTable '{TargetStringTableName}' not found for EN or HE at runtime.");
-                return;
+                return null;
             }
 
             HashSet<string> allKeys = new HashSet<string>();
+
             if (enTable != null)
             {
                 foreach (StringTableEntry entry in enTable.Values) allKeys.Add(entry.Key);
@@ -136,16 +121,18 @@ namespace com.mapcolonies.core.Localization
                 string enVal = enTable?.GetEntry(key)?.LocalizedValue;
                 string heVal = heTable?.GetEntry(key)?.LocalizedValue;
 
-                _hardCodedTranslations[key] = new TranslationEntry
+                hardCodedTranslations[key] = new TranslationEntry
                 {
                     Key = key,
                     English = enVal,
                     Hebrew = heVal
                 };
             }
+
+            return hardCodedTranslations;
         }
 
-        private static async Task<TranslationConfig> LoadFromFileAsync()
+        private static async UniTask<TranslationConfig> LoadFromFileAsync()
         {
             string path = Path.Combine(Application.streamingAssetsPath, LocalFilePath);
 
@@ -160,14 +147,14 @@ namespace com.mapcolonies.core.Localization
                 string jsonContent = await File.ReadAllTextAsync(path);
                 return JsonConvert.DeserializeObject<TranslationConfig>(jsonContent);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 Debug.LogError($"TranslationService: Failed to parse local file. Error: {ex.Message}");
                 return null;
             }
         }
 
-        private async Task<TranslationConfig> LoadFromRemoteAsync()
+        private async UniTask<TranslationConfig> LoadFromRemoteAsync()
         {
             if (string.IsNullOrEmpty(_remoteConfigUrl))
             {
@@ -180,6 +167,7 @@ namespace com.mapcolonies.core.Localization
                 try
                 {
                     await www.SendWebRequest();
+
                     if (www.result == UnityWebRequest.Result.Success)
                     {
                         string jsonContent = www.downloadHandler.text;
@@ -189,7 +177,7 @@ namespace com.mapcolonies.core.Localization
                     Debug.LogError($"TranslationService: Failed to download remote config. Error: {www.error}");
                     return null;
                 }
-                catch (System.Exception ex)
+                catch (Exception ex)
                 {
                     Debug.LogError($"TranslationService: Failed to parse remote config. Error: {ex.Message} (URL: {_remoteConfigUrl})");
                     return null;
@@ -197,16 +185,36 @@ namespace com.mapcolonies.core.Localization
             }
         }
 
-        private void MergeTranslations()
+        private async UniTask SetTranslations()
         {
-            _mergedTranslations = _hardCodedTranslations
-                .Concat(_fileTranslations)
-                .Concat(_remoteTranslations)
+            var hardCodedTranslations = await LoadHardCodedTranslations();
+
+            var fileTranslations = new Dictionary<string, TranslationEntry>();
+            TranslationConfig fileConfig = await LoadFromFileAsync();
+
+            if (fileConfig != null)
+            {
+                fileTranslations = ConfigToDictionary(fileConfig);
+                _showTranslationWarnings = fileConfig.ShowTranslationWarnings;
+            }
+
+            var remoteTranslations = new Dictionary<string, TranslationEntry>();
+            TranslationConfig remoteConfig = await LoadFromRemoteAsync();
+
+            if (remoteConfig != null)
+            {
+                remoteTranslations = ConfigToDictionary(remoteConfig);
+                _showTranslationWarnings = remoteConfig.ShowTranslationWarnings;
+            }
+
+            _translations = hardCodedTranslations
+                .Concat(fileTranslations)
+                .Concat(remoteTranslations)
                 .GroupBy(kvp => kvp.Key)
                 .ToDictionary(g => g.Key, g => g.Last().Value);
         }
 
-        private async Task ApplyToUnityLocalization()
+        private async UniTask ApplyToUnityLocalization()
         {
             await LocalizationSettings.InitializationOperation.Task;
             Locale hebrewLocale = LocalizationSettings.AvailableLocales.GetLocale(LocalizationConstants.HebrewLocaleIdentifier);
@@ -233,7 +241,7 @@ namespace com.mapcolonies.core.Localization
             StringTable hebrewStringTable = hebrewTableOperation.Result;
             StringTable englishStringTable = englishTableOperation.Result;
 
-            foreach (KeyValuePair<string, TranslationEntry> entry in _mergedTranslations)
+            foreach (KeyValuePair<string, TranslationEntry> entry in _translations)
             {
                 hebrewStringTable.AddEntry(entry.Key, entry.Value.Hebrew);
                 englishStringTable.AddEntry(entry.Key, entry.Value.English);
@@ -248,7 +256,7 @@ namespace com.mapcolonies.core.Localization
                 return new TranslationEntry { Key = key, English = key, Hebrew = key };
             }
 
-            if (_mergedTranslations.TryGetValue(key, out TranslationEntry entry))
+            if (_translations.TryGetValue(key, out TranslationEntry entry))
             {
                 return entry;
             }
@@ -259,6 +267,7 @@ namespace com.mapcolonies.core.Localization
         private static bool IsLocale(string targetCode)
         {
             Locale selected = LocalizationSettings.SelectedLocale;
+
             if (selected == null)
             {
                 Debug.LogWarning("IsLocale: LocalizationSettings.SelectedLocale is null.");
@@ -317,7 +326,7 @@ namespace com.mapcolonies.core.Localization
                     .GroupBy(e => e.Key)
                     .ToDictionary(g => g.Key, g => g.Last());
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 Debug.LogError($"TranslationService: Error converting config list to dictionary. {ex.Message}");
                 return new Dictionary<string, TranslationEntry>();
@@ -327,10 +336,7 @@ namespace com.mapcolonies.core.Localization
         public void Dispose()
         {
             _isInitialized = false;
-            _hardCodedTranslations?.Clear();
-            _fileTranslations?.Clear();
-            _remoteTranslations?.Clear();
-            _mergedTranslations?.Clear();
+            _translations?.Clear();
         }
     }
 }

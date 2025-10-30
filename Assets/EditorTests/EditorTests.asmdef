@@ -6,7 +6,8 @@
         "UnityEditor.TestRunner",
         "Unity.Localization",
         "com.mapcolonies.core",
-        "Unity.ResourceManager"
+        "Unity.ResourceManager",
+        "UniTask"
     ],
     "includePlatforms": [
         "Editor"
