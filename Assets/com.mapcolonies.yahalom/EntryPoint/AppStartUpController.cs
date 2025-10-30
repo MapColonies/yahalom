@@ -49,7 +49,14 @@ namespace com.mapcolonies.yahalom.EntryPoint
                             Task.Run(resolver.Resolve<WmtsService>().Init);
                             return default;
                         }),
-                    AnalyticsServices(scope),
+                    new ActionUnit("Analytics Manager", 0.05f, InitPolicy.Fail,
+                        () =>
+                        {
+                            AnalyticsManager analyticsManager = scope.Container.Resolve<AnalyticsManager>();
+                            analyticsManager.Initialize();
+                            return default;
+                        }),
+                    UsageAnalyticsServices(scope),
                 }),
                 new InitStep("FeaturesInit", StepMode.Sequential, new IInitUnit[]
                 {
@@ -69,27 +76,21 @@ namespace com.mapcolonies.yahalom.EntryPoint
             Debug.Log("Initialized");
         }
 
-        private IInitUnit AnalyticsServices(LifetimeScope scope)
+        private IInitUnit UsageAnalyticsServices(LifetimeScope scope)
         {
             return new RegisterScopeUnit(
-                "AnalyticsServices",
+                "Usage Analytics Manager",
                 0.20f,
                 scope,
                 InitPolicy.Fail,
                 builder =>
                 {
-                    builder.Register<AnalyticsManager>(Lifetime.Singleton)
-                        .AsSelf()
-                        .As<IAnalyticsManager>()
-                        .As<IDisposable>();
-
                     builder.Register<UsageAnalyticsManager>(Lifetime.Singleton)
                         .AsSelf()
                         .As<IDisposable>();
                 },
                 resolver =>
                 {
-                    resolver.Resolve<AnalyticsManager>().Initialize();
                     resolver.Resolve<UsageAnalyticsManager>().Initialize();
                     return default;
                 }
