@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace com.mapcolonies.core.Utilities
 {
-    public class FileUtility : MonoBehaviour
+    public class FileUtility
     {
         public static string SetupFilePath(string folderName, string fileName = null)
         {
