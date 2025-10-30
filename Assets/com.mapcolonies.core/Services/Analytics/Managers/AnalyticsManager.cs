@@ -1,8 +1,8 @@
 using System;
 using System.Threading;
-using System.Threading.Tasks;
 using com.mapcolonies.core.Services.Analytics.Model;
 using com.mapcolonies.core.Utilities;
+using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -15,7 +15,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
             get;
         }
 
-        Task Publish(LogObject logObject);
+        UniTask Publish(LogObject logObject);
     }
 
     /// <summary>
@@ -31,7 +31,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
 
         public const string AnalyticsFileName = "AnalyticsLogs";
 
-        private delegate Task PublishDelegate(LogObject logObject);
+        private delegate UniTask PublishDelegate(LogObject logObject);
 
         private PublishDelegate _publish;
         private string _logFilePath;
@@ -61,7 +61,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
                     }
                 }*/
 
-                _publish = enablePublishing ? PublishAnalytics : (_) => Task.CompletedTask;
+                _publish = enablePublishing ? PublishAnalytics : (_) => UniTask.CompletedTask;
                 _isInitialized = true;
 
                 Debug.Log($"AnalyticsManager initialized successfully (Session: {SessionId})");
@@ -78,7 +78,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
             _logFilePath = FileUtility.SetupFilePath(AnalyticsFileName, $"session-{SessionId}.log");
         }
 
-        private async Task PublishAnalytics(LogObject logObject)
+        private async UniTask PublishAnalytics(LogObject logObject)
         {
             try
             {
@@ -92,12 +92,12 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
             }
         }
 
-        private async Task WriteLogToFileAsync(string logContent)
+        private async UniTask WriteLogToFileAsync(string logContent)
         {
             await FileUtility.AppendLineToFileSafeAsync(logContent, _logFilePath, _fileSemaphore);
         }
 
-        public async Task Publish(LogObject logObject)
+        public async UniTask Publish(LogObject logObject)
         {
             if (!_isInitialized)
             {

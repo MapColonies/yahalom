@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using com.mapcolonies.core.Services.Analytics.Enums;
 using com.mapcolonies.core.Services.Analytics.Managers;
 using com.mapcolonies.core.Services.Analytics.Model;
+using Cysharp.Threading.Tasks;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -48,8 +49,7 @@ namespace PlayModeTests.Analytics
                 "General",
                 AnalyticsMessageTypes.ConsumptionStatus);
 
-            Task task = _am.Publish(log);
-            yield return new WaitUntil(() => task.IsCompleted);
+            yield return _am.Publish(log).ToCoroutine();
 
             Assert.IsTrue(File.Exists(_logPath), "Log file should exist after publish");
             string content = File.ReadAllText(_logPath);
