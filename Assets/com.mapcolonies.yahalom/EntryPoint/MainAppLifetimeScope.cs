@@ -18,6 +18,9 @@ namespace com.mapcolonies.yahalom.EntryPoint
             builder.Register<ISceneController, SceneController.SceneController>(Lifetime.Singleton);
             builder.Register<AppStartUpController>(Lifetime.Singleton).As<IAsyncStartable>();
 
+            //This is a Demo script, will be deleted in the near future.
+            builder.RegisterComponentInHierarchy<DemoController>();
+
             Debug.Log("End Configure Startup Registrations");
         }
     }
