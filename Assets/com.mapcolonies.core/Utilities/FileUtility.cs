@@ -45,14 +45,7 @@ namespace com.mapcolonies.core.Utilities
                 return;
             }
 
-            try
-            {
-                await File.AppendAllTextAsync(filePath, line + Environment.NewLine);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"Failed to write to file {filePath}: {ex.Message}");
-            }
+            await File.AppendAllTextAsync(filePath, line + Environment.NewLine);
         }
     }
 }
