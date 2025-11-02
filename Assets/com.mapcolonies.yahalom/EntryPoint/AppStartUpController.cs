@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using com.mapcolonies.core.Services;
+using com.mapcolonies.core.Services.Analytics.Managers;
 using com.mapcolonies.yahalom.InitPipeline;
 using com.mapcolonies.yahalom.InitPipeline.InitSteps;
 using com.mapcolonies.yahalom.InitPipeline.InitUnits;
@@ -47,6 +49,14 @@ namespace com.mapcolonies.yahalom.EntryPoint
                             Task.Run(resolver.Resolve<WmtsService>().Init);
                             return default;
                         }),
+                    new ActionUnit("Analytics Manager", 0.05f, InitPolicy.Fail,
+                        () =>
+                        {
+                            AnalyticsManager analyticsManager = scope.Container.Resolve<AnalyticsManager>();
+                            analyticsManager.Initialize();
+                            return default;
+                        }),
+                    UsageAnalyticsServices(scope),
                 }),
                 new InitStep("FeaturesInit", StepMode.Sequential, new IInitUnit[]
                 {
@@ -64,6 +74,27 @@ namespace com.mapcolonies.yahalom.EntryPoint
             Debug.Log("Start initializing");
             await _pipeline.RunAsync(_initSteps);
             Debug.Log("Initialized");
+        }
+
+        private IInitUnit UsageAnalyticsServices(LifetimeScope scope)
+        {
+            return new RegisterScopeUnit(
+                "Usage Analytics Manager",
+                0.20f,
+                scope,
+                InitPolicy.Fail,
+                builder =>
+                {
+                    builder.Register<UsageAnalyticsManager>(Lifetime.Singleton)
+                        .AsSelf()
+                        .As<IDisposable>();
+                },
+                resolver =>
+                {
+                    resolver.Resolve<UsageAnalyticsManager>().Initialize();
+                    return default;
+                }
+            );
         }
     }
 }

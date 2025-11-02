@@ -1,3 +1,5 @@
+using System;
+using com.mapcolonies.core.Services.Analytics.Managers;
 using com.mapcolonies.yahalom.InitPipeline;
 using com.mapcolonies.yahalom.Preloader;
 using UnityEngine;
@@ -14,8 +16,8 @@ namespace com.mapcolonies.yahalom.EntryPoint
 
             builder.Register<PreloaderViewModel>(Lifetime.Scoped);
             builder.Register<InitializationPipeline>(Lifetime.Scoped);
-
             builder.Register<AppStartUpController>(Lifetime.Singleton).As<IAsyncStartable>();
+            builder.Register<AnalyticsManager>(Lifetime.Singleton).AsSelf().As<IAnalyticsManager>().As<IDisposable>();
 
             Debug.Log("End Configure Startup Registrations");
         }
