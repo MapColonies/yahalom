@@ -1,20 +1,20 @@
 {
-    "name": "com.mapcolonies.yahalom",
-    "rootNamespace": "",
-    "references": [
-        "com.mapcolonies.core",
-        "VContainer",
-        "UniTask",
-        "preloader",
-        "Unity.AppUI.Redux"
-    ],
-    "includePlatforms": [],
-    "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": [],
-    "noEngineReferences": false
+  "name": "com.mapcolonies.yahalom",
+  "rootNamespace": "",
+  "references": [
+    "com.mapcolonies.core",
+    "VContainer",
+    "UniTask",
+    "preloader",
+    "Unity.AppUI.Redux"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
 }

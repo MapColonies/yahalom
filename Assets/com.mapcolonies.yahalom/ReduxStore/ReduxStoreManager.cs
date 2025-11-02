@@ -5,22 +5,8 @@ using Unity.AppUI.Redux;
 
 namespace com.mapcolonies.yahalom.ReduxStore
 {
-    public class ReduxStoreManager
+    public class ReduxStoreManager : IReduxStoreManager
     {
-        #region Slices Definition
-
-        public const string ConfigurationSlice = "configuration";
-        public const string AppSettingsSlice = "appSettings";
-
-        #endregion
-
-        #region Actions Definitions
-
-        public const string SetConfigurationAction = "configuration/SetConfigurationAction";
-        public const string SetAppSettingsAction = "appSettings/SetAppSettingsAction";
-
-        #endregion
-
         public IStore<PartitionedState> Store
         {
             get;
@@ -29,14 +15,14 @@ namespace com.mapcolonies.yahalom.ReduxStore
 
         public UniTask Create()
         {
-            Slice<ConfigurationState, PartitionedState> configurationSlice = StoreFactory.CreateSlice(ConfigurationSlice, new ConfigurationState(), (configurationSliceBuilder) =>
+            Slice<ConfigurationState, PartitionedState> configurationSlice = StoreFactory.CreateSlice(ConfigurationReducer.SliceName, new ConfigurationState(), (configurationSliceBuilder) =>
             {
-                configurationSliceBuilder.AddCase(new ActionCreator<ConfigurationState>(SetConfigurationAction), ConfigurationReducer.Reduce);
+                configurationSliceBuilder.AddCase(ConfigurationActions.LoadConfigurationActionCreator(), ConfigurationReducer.Reduce);
             });
 
-            Slice<AppSettingsState, PartitionedState> appSettingsSlice = StoreFactory.CreateSlice(AppSettingsSlice, new AppSettingsState(), (appSettingsSliceBuilder) =>
+            Slice<AppSettingsState, PartitionedState> appSettingsSlice = StoreFactory.CreateSlice(AppSettingsReducer.SliceName, new AppSettingsState(), (appSettingsSliceBuilder) =>
             {
-                appSettingsSliceBuilder.AddCase(new ActionCreator<AppSettingsState>(SetAppSettingsAction), AppSettingsReducer.Reduce);
+                appSettingsSliceBuilder.AddCase(AppSettingsActions.LoadAppSettingsActionCreator(), AppSettingsReducer.Reduce);
             });
 
             Store = StoreFactory.CreateStore(new ISlice<PartitionedState>[] { configurationSlice, appSettingsSlice });

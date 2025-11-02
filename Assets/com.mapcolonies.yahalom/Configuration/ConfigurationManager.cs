@@ -8,9 +8,9 @@ namespace com.mapcolonies.yahalom.Configuration
 {
     public class ConfigurationManager
     {
-        private readonly ReduxStoreManager _reduxStoreManager;
+        private readonly IReduxStoreManager _reduxStoreManager;
 
-        public ConfigurationManager(ReduxStoreManager reduxStoreManager)
+        public ConfigurationManager(IReduxStoreManager reduxStoreManager)
         {
             _reduxStoreManager = reduxStoreManager;
         }
@@ -18,7 +18,7 @@ namespace com.mapcolonies.yahalom.Configuration
         public async UniTask Load()
         {
             ConfigurationState configurationState;
-            AppSettingsState settings = _reduxStoreManager.Store.GetState<AppSettingsState>(ReduxStoreManager.AppSettingsSlice);
+            AppSettingsState settings = _reduxStoreManager.Store.GetState<AppSettingsState>(AppSettingsReducer.SliceName);
 
             if (settings.OfflineMode)
             {
@@ -26,10 +26,10 @@ namespace com.mapcolonies.yahalom.Configuration
             }
             else
             {
-                configurationState = await JsonLoader.LoadRemoteJsonAsync<ConfigurationState>("some url");
+                configurationState = await JsonLoader.LoadRemoteJsonAsync<ConfigurationState>("settings.RemoteConfigurationUrl");
             }
 
-            _reduxStoreManager.Store.Dispatch(new ActionCreator<ConfigurationState>(ReduxStoreManager.SetConfigurationAction).Invoke(configurationState));
+            _reduxStoreManager.Store.Dispatch(ConfigurationActions.LoadConfigurationAction(configurationState));
         }
     }
 }

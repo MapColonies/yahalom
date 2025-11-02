@@ -27,7 +27,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
 
             #region Services
 
-            builder.Register<ReduxStoreManager>(Lifetime.Singleton);
+            builder.Register<ReduxStoreManager>(Lifetime.Singleton).As<IReduxStoreManager>();
             builder.Register<AppSettingsManager>(Lifetime.Singleton);
             builder.Register<ConfigurationManager>(Lifetime.Singleton);
 

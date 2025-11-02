@@ -58,8 +58,10 @@ namespace com.mapcolonies.yahalom.EntryPoint
         {
             Debug.Log("Start initializing");
             await _pipeline.RunAsync(_initSteps);
+
             ReduxStoreManager reduxStore = _scope.Container.Resolve<ReduxStoreManager>();
-            var config = reduxStore.Store.GetState<ConfigurationState>(ReduxStoreManager.ConfigurationSlice);
+            var config = reduxStore.Store.GetState<ConfigurationState>(ConfigurationReducer.SliceName);
+
             Debug.Log("Initialized");
         }
     }
