@@ -4,7 +4,7 @@ namespace com.mapcolonies.yahalom.AppSettings
 {
     public static class AppSettingsActions
     {
-        public const string LoadAction = "configuration/load_appsettings_action";
+        public const string LoadAction = "appsettings/load_appsettings_action";
 
         #region Actions
 

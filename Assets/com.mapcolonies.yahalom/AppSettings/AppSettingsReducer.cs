@@ -4,7 +4,7 @@ namespace com.mapcolonies.yahalom.AppSettings
 {
     public static class AppSettingsReducer
     {
-        public const string SliceName = "appSettings";
+        public const string SliceName = "appsettings";
 
         public static AppSettingsState Reduce(AppSettingsState state, IAction<AppSettingsState> action)
         {
