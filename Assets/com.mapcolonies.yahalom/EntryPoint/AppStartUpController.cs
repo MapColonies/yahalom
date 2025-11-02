@@ -6,6 +6,7 @@ using com.mapcolonies.yahalom.InitPipeline;
 using com.mapcolonies.yahalom.InitPipeline.InitSteps;
 using com.mapcolonies.yahalom.InitPipeline.InitUnits;
 using com.mapcolonies.yahalom.ReduxStore;
+using com.mapcolonies.yahalom.UserSettings;
 using Cysharp.Threading.Tasks;
 using Unity.AppUI.Redux;
 using UnityEngine;
@@ -38,12 +39,18 @@ namespace com.mapcolonies.yahalom.EntryPoint
                 }),
                 new InitStep("ServicesInit", StepMode.Sequential, new IInitUnit[]
                 {
-                    new ActionUnit("App Settings", 0.1f, InitPolicy.Fail,
-                        () =>
-                        {
-                            AppSettingsManager appSettings = scope.Container.Resolve<AppSettingsManager>();
-                            return appSettings.Load();
+                     new ActionUnit("App Settings", 0.1f, InitPolicy.Fail,
+                                                  () =>
+                                                  {
+                                                      AppSettingsManager appSettings = scope.Container.Resolve<AppSettingsManager>();
+                                                     return appSettings.Load();
                         }),
+                     new ActionUnit("User Settings", 0.1f, InitPolicy.Fail,
+                         () =>
+                         {
+                             UserSettingsManager userSettingsSettings = scope.Container.Resolve<UserSettingsManager>();
+                             return userSettingsSettings.Load();
+                         }),
                     new ActionUnit("Configuration", 0.1f, InitPolicy.Fail,
                         () =>
                         {

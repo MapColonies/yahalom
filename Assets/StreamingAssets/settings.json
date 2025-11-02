@@ -1,4 +1,5 @@
 {
   "offlineMode": true,
+  "userSettingsPath": "user_settings.json",
   "configurationPath": "config.json"
 }

@@ -11,6 +11,12 @@ namespace com.mapcolonies.yahalom.AppSettings
             set;
         }
 
+        public string UserSettingsPath
+        {
+            get;
+            set;
+        }
+
         public bool OfflineMode
         {
             get;

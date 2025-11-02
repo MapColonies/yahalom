@@ -15,6 +15,12 @@ namespace com.mapcolonies.core.Utilities
             return await LoadLocalJsonAsync<T>(path);
         }
 
+        public static async UniTask<T> LoadPersistentJsonAsync<T>(string relativePath)
+        {
+            string path = Path.Combine(Application.persistentDataPath, relativePath);
+            return await LoadLocalJsonAsync<T>(path);
+        }
+
         public static async UniTask<T> LoadLocalJsonAsync<T>(string path)
         {
             if (!File.Exists(path))

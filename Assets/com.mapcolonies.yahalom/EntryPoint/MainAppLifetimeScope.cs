@@ -3,6 +3,7 @@ using com.mapcolonies.yahalom.Configuration;
 using com.mapcolonies.yahalom.InitPipeline;
 using com.mapcolonies.yahalom.Preloader;
 using com.mapcolonies.yahalom.ReduxStore;
+using com.mapcolonies.yahalom.UserSettings;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -29,6 +30,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
 
             builder.Register<ReduxStoreManager>(Lifetime.Singleton).As<IReduxStoreManager>();
             builder.Register<AppSettingsManager>(Lifetime.Singleton);
+            builder.Register<UserSettingsManager>(Lifetime.Singleton);
             builder.Register<ConfigurationManager>(Lifetime.Singleton);
 
             #endregion

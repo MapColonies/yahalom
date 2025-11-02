@@ -1,5 +1,6 @@
 using com.mapcolonies.yahalom.AppSettings;
 using com.mapcolonies.yahalom.Configuration;
+using com.mapcolonies.yahalom.UserSettings;
 using Cysharp.Threading.Tasks;
 using Unity.AppUI.Redux;
 
@@ -25,7 +26,12 @@ namespace com.mapcolonies.yahalom.ReduxStore
                 appSettingsSliceBuilder.AddCase(AppSettingsActions.LoadAppSettingsActionCreator(), AppSettingsReducer.Reduce);
             });
 
-            Store = StoreFactory.CreateStore(new ISlice<PartitionedState>[] { configurationSlice, appSettingsSlice });
+            Slice<UserSettingsState, PartitionedState> userSettingsSlice = StoreFactory.CreateSlice(UserSettingsReducer.SliceName, new UserSettingsState(), (userSettingsSliceBuilder) =>
+            {
+                userSettingsSliceBuilder.AddCase(UserSettingsActions.LoadUserSettingsActionCreator(), UserSettingsReducer.Reduce);
+            });
+
+            Store = StoreFactory.CreateStore(new ISlice<PartitionedState>[] { configurationSlice, appSettingsSlice, userSettingsSlice });
             return UniTask.CompletedTask;
         }
     }
