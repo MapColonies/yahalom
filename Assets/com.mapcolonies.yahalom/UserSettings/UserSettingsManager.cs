@@ -1,3 +1,4 @@
+using System;
 using com.mapcolonies.core.Utilities;
 using com.mapcolonies.yahalom.AppSettings;
 using com.mapcolonies.yahalom.ReduxStore;
@@ -6,17 +7,18 @@ using Unity.AppUI.Redux;
 
 namespace com.mapcolonies.yahalom.UserSettings
 {
-    public class UserSettingsManager
+    public class UserSettingsManager : IDisposable
     {
         private readonly IReduxStoreManager _reduxStoreManager;
         private readonly AppSettingsState _settings;
         private bool _exists;
+        private readonly IDisposableSubscription _unsubscribe;
 
         public UserSettingsManager(IReduxStoreManager reduxStoreManager)
         {
             _reduxStoreManager = reduxStoreManager;
             _settings = _reduxStoreManager.Store.GetState<AppSettingsState>(AppSettingsReducer.SliceName);
-            _reduxStoreManager.Store.Subscribe(s => s.Get<UserSettingsState>(UserSettingsReducer.SliceName), state =>
+            _unsubscribe = _reduxStoreManager.Store.Subscribe(s => s.Get<UserSettingsState>(UserSettingsReducer.SliceName), state =>
             {
                 if(!_exists)
                 {
@@ -39,6 +41,11 @@ namespace com.mapcolonies.yahalom.UserSettings
 
             }
             _reduxStoreManager.Store.Dispatch(UserSettingsActions.LoadUserSettingsAction(userSettingsState));
+        }
+
+        public void Dispose()
+        {
+            _unsubscribe?.Dispose();
         }
     }
 }
