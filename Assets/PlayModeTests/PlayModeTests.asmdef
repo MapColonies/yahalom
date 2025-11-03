@@ -7,7 +7,8 @@
     "com.mapcolonies.yahalom",
     "UniTask",
     "VContainer",
-    "preloader"
+    "preloader",
+    "com.mapcolonies.core"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

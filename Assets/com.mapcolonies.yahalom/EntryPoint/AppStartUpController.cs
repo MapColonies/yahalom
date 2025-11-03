@@ -2,6 +2,9 @@ using System.Collections.Generic;
 using System.Threading;
 using com.mapcolonies.yahalom.AppSettings;
 using com.mapcolonies.yahalom.Configuration;
+using System.Threading.Tasks;
+using com.mapcolonies.core.Services;
+using com.mapcolonies.core.Services.Analytics.Managers;
 using com.mapcolonies.yahalom.InitPipeline;
 using com.mapcolonies.yahalom.InitPipeline.InitSteps;
 using com.mapcolonies.yahalom.InitPipeline.InitUnits;
@@ -39,18 +42,26 @@ namespace com.mapcolonies.yahalom.EntryPoint
                 }),
                 new InitStep("ServicesInit", StepMode.Sequential, new IInitUnit[]
                 {
-                     new ActionUnit("App Settings", 0.1f, InitPolicy.Fail,
-                                                  () =>
-                                                  {
-                                                      AppSettingsManager appSettings = scope.Container.Resolve<AppSettingsManager>();
-                                                     return appSettings.Load();
+                    new ActionUnit("App Settings", 0.1f, InitPolicy.Fail,
+                        () =>
+                        {
+                            AppSettingsManager appSettings = scope.Container.Resolve<AppSettingsManager>();
+                            return appSettings.Load();
                         }),
-                     new ActionUnit("User Settings", 0.1f, InitPolicy.Fail,
-                         () =>
-                         {
-                             UserSettingsManager userSettingsSettings = scope.Container.Resolve<UserSettingsManager>();
-                             return userSettingsSettings.Load();
-                         }),
+                    new ActionUnit("Analytics Manager", 0.05f, InitPolicy.Fail,
+                        () =>
+                        {
+                            AnalyticsManager analyticsManager = scope.Container.Resolve<AnalyticsManager>();
+                            analyticsManager.Initialize();
+                            return default;
+                        }),
+                    UsageAnalyticsServices(scope),
+                    new ActionUnit("User Settings", 0.1f, InitPolicy.Fail,
+                        () =>
+                        {
+                            UserSettingsManager userSettingsSettings = scope.Container.Resolve<UserSettingsManager>();
+                            return userSettingsSettings.Load();
+                        }),
                     new ActionUnit("Configuration", 0.1f, InitPolicy.Fail,
                         () =>
                         {
@@ -65,11 +76,28 @@ namespace com.mapcolonies.yahalom.EntryPoint
         {
             Debug.Log("Start initializing");
             await _pipeline.RunAsync(_initSteps);
-
-            ReduxStoreManager reduxStore = _scope.Container.Resolve<ReduxStoreManager>();
-            var config = reduxStore.Store.GetState<ConfigurationState>(ConfigurationReducer.SliceName);
-
             Debug.Log("Initialized");
+        }
+
+        private IInitUnit UsageAnalyticsServices(LifetimeScope scope)
+        {
+            return new RegisterScopeUnit(
+                "Usage Analytics Manager",
+                0.20f,
+                scope,
+                InitPolicy.Fail,
+                builder =>
+                {
+                    builder.Register<UsageAnalyticsManager>(Lifetime.Singleton)
+                        .AsSelf()
+                        .As<IDisposable>();
+                },
+                resolver =>
+                {
+                    resolver.Resolve<UsageAnalyticsManager>().Initialize();
+                    return default;
+                }
+            );
         }
     }
 }

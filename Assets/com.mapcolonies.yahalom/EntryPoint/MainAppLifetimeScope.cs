@@ -1,3 +1,5 @@
+using System;
+using com.mapcolonies.core.Services.Analytics.Managers;
 using com.mapcolonies.yahalom.AppSettings;
 using com.mapcolonies.yahalom.Configuration;
 using com.mapcolonies.yahalom.InitPipeline;
@@ -32,6 +34,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
             builder.Register<AppSettingsManager>(Lifetime.Singleton);
             builder.Register<UserSettingsManager>(Lifetime.Singleton);
             builder.Register<ConfigurationManager>(Lifetime.Singleton);
+            builder.Register<AnalyticsManager>(Lifetime.Singleton).AsSelf().As<IAnalyticsManager>().As<IDisposable>();
 
             #endregion
         }
