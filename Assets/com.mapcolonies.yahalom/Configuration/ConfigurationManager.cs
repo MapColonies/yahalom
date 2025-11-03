@@ -21,9 +21,9 @@ namespace com.mapcolonies.yahalom.Configuration
             AppSettingsState settings = _reduxStoreManager.Store.GetState<AppSettingsState>(AppSettingsReducer.SliceName);
 
             if (settings.OfflineMode)
-                configurationState = await JsonLoader.LoadStreamingAssetsJsonAsync<ConfigurationState>(settings.ConfigurationPath);
+                configurationState = await FileUtility.LoadStreamingAssetsJsonAsync<ConfigurationState>(settings.ConfigurationPath);
             else
-                configurationState = await JsonLoader.LoadRemoteJsonAsync<ConfigurationState>("settings.RemoteConfigurationUrl");
+                configurationState = await FileUtility.LoadRemoteJsonAsync<ConfigurationState>("settings.RemoteConfigurationUrl");
 
             _reduxStoreManager.Store.Dispatch(ConfigurationActions.LoadConfigurationAction(configurationState));
         }

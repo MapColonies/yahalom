@@ -18,7 +18,7 @@ namespace com.mapcolonies.yahalom.UserSettings
         public async UniTask Load()
         {
             AppSettingsState settings = _reduxStoreManager.Store.GetState<AppSettingsState>(AppSettingsReducer.SliceName);
-            UserSettingsState userSettingsState = await JsonLoader.LoadPersistentJsonAsync<UserSettingsState>(settings.UserSettingsPath);
+            UserSettingsState userSettingsState = await FileUtility.LoadPersistentJsonAsync<UserSettingsState>(settings.UserSettingsPath);
             _reduxStoreManager.Store.Dispatch(UserSettingsActions.LoadUserSettingsAction(userSettingsState));
         }
     }
