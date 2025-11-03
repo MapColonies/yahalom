@@ -13,7 +13,6 @@ namespace com.mapcolonies.yahalom.UserSettings
         public UserSettingsManager(IReduxStoreManager reduxStoreManager)
         {
             _reduxStoreManager = reduxStoreManager;
-
         }
 
         public async UniTask Load()

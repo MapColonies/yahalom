@@ -1,9 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using com.mapcolonies.yahalom.AppSettings;
 using com.mapcolonies.yahalom.Configuration;
-using System.Threading.Tasks;
-using com.mapcolonies.core.Services;
 using com.mapcolonies.core.Services.Analytics.Managers;
 using com.mapcolonies.yahalom.InitPipeline;
 using com.mapcolonies.yahalom.InitPipeline.InitSteps;
@@ -11,7 +10,6 @@ using com.mapcolonies.yahalom.InitPipeline.InitUnits;
 using com.mapcolonies.yahalom.ReduxStore;
 using com.mapcolonies.yahalom.UserSettings;
 using Cysharp.Threading.Tasks;
-using Unity.AppUI.Redux;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -72,7 +70,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
             };
         }
 
-        async UniTask IAsyncStartable.StartAsync(CancellationToken cancellation = new())
+        async UniTask IAsyncStartable.StartAsync(CancellationToken cancellation = new CancellationToken())
         {
             Debug.Log("Start initializing");
             await _pipeline.RunAsync(_initSteps);
