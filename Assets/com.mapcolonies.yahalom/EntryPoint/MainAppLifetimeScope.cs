@@ -30,7 +30,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
 
             #region Services
 
-            builder.Register<ReduxStoreManager>(Lifetime.Singleton).As<IReduxStoreManager>();
+            builder.Register<ReduxStoreManager>(Lifetime.Singleton).AsSelf().As<IReduxStoreManager>();
             builder.Register<AppSettingsManager>(Lifetime.Singleton);
             builder.Register<UserSettingsManager>(Lifetime.Singleton);
             builder.Register<ConfigurationManager>(Lifetime.Singleton);

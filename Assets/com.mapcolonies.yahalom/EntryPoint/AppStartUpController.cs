@@ -34,7 +34,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
                     new ActionUnit("Redux Store", 0.1f, InitPolicy.Fail,
                         () =>
                         {
-                            ReduxStoreManager reduxStore = scope.Container.Resolve<ReduxStoreManager>();
+                            IReduxStoreManager reduxStore = scope.Container.Resolve<ReduxStoreManager>();
                             return reduxStore.Create();
                         })
                 }),
