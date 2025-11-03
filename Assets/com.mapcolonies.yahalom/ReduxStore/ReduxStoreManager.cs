@@ -26,10 +26,7 @@ namespace com.mapcolonies.yahalom.ReduxStore
                 appSettingsSliceBuilder.AddCase(AppSettingsActions.LoadAppSettingsActionCreator(), AppSettingsReducer.Reduce);
             });
 
-            Slice<UserSettingsState, PartitionedState> userSettingsSlice = StoreFactory.CreateSlice(UserSettingsReducer.SliceName, new UserSettingsState(), (userSettingsSliceBuilder) =>
-            {
-                userSettingsSliceBuilder.AddCase(UserSettingsActions.LoadUserSettingsActionCreator(), UserSettingsReducer.Reduce);
-            });
+            Slice<UserSettingsState, PartitionedState> userSettingsSlice = StoreFactory.CreateSlice(UserSettingsReducer.SliceName, new UserSettingsState(), UserSettingsActions.AddActions);
 
             Store = StoreFactory.CreateStore(new ISlice<PartitionedState>[] { configurationSlice, appSettingsSlice, userSettingsSlice });
             return UniTask.CompletedTask;

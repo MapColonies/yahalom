@@ -6,6 +6,12 @@ namespace com.mapcolonies.yahalom.UserSettings
     {
         public const string LoadAction = "usersettings/load_usersettings_action";
 
+        public static void AddActions(SliceReducerSwitchBuilder<UserSettingsState> builder)
+        {
+            builder.AddCase(LoadUserSettingsActionCreator(), UserSettingsReducer.Reduce);
+            // builder.AddCase(LoadUserSettingsActionCreator(), UserSettingsReducer.Reduce);
+            // builder.AddCase(LoadUserSettingsActionCreator(), UserSettingsReducer.Reduce);
+        }
 
         public static IAction<UserSettingsState> LoadUserSettingsAction(UserSettingsState payload)
         {
