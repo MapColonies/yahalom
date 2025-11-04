@@ -17,7 +17,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
 
             builder.Register<PreloaderViewModel>(Lifetime.Scoped);
             builder.Register<InitializationPipeline>(Lifetime.Scoped);
-            builder.Register<ISceneController, SceneManagement.SceneController>(Lifetime.Singleton);
+            builder.Register<ISceneController, SceneController>(Lifetime.Singleton);
             builder.Register<AppStartUpController>(Lifetime.Singleton).As<IAsyncStartable>();
             builder.Register<AnalyticsManager>(Lifetime.Singleton).AsSelf().As<IAnalyticsManager>().As<IDisposable>();
 
