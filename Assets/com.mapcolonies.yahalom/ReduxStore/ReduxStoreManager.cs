@@ -16,16 +16,8 @@ namespace com.mapcolonies.yahalom.ReduxStore
 
         public UniTask Create()
         {
-            Slice<ConfigurationState, PartitionedState> configurationSlice = StoreFactory.CreateSlice(ConfigurationReducer.SliceName, new ConfigurationState(), (configurationSliceBuilder) =>
-            {
-                configurationSliceBuilder.AddCase(ConfigurationActions.LoadConfigurationActionCreator(), ConfigurationReducer.Reduce);
-            });
-
-            Slice<AppSettingsState, PartitionedState> appSettingsSlice = StoreFactory.CreateSlice(AppSettingsReducer.SliceName, new AppSettingsState(), (appSettingsSliceBuilder) =>
-            {
-                appSettingsSliceBuilder.AddCase(AppSettingsActions.LoadAppSettingsActionCreator(), AppSettingsReducer.Reduce);
-            });
-
+            Slice<ConfigurationState, PartitionedState> configurationSlice = StoreFactory.CreateSlice(ConfigurationReducer.SliceName, new ConfigurationState(), ConfigurationActions.AddActions);
+            Slice<AppSettingsState, PartitionedState> appSettingsSlice = StoreFactory.CreateSlice(AppSettingsReducer.SliceName, new AppSettingsState(), AppSettingsActions.AddActions);
             Slice<UserSettingsState, PartitionedState> userSettingsSlice = StoreFactory.CreateSlice(UserSettingsReducer.SliceName, new UserSettingsState(), UserSettingsActions.AddActions);
 
             Store = StoreFactory.CreateStore(new ISlice<PartitionedState>[] { configurationSlice, appSettingsSlice, userSettingsSlice });

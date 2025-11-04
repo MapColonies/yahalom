@@ -6,6 +6,11 @@ namespace com.mapcolonies.yahalom.AppSettings
     {
         public const string LoadAction = "appsettings/load_appsettings_action";
 
+        public static void AddActions(SliceReducerSwitchBuilder<AppSettingsState> builder)
+        {
+            builder.AddCase(LoadAppSettingsActionCreator(), AppSettingsReducer.Reduce);
+        }
+
         #region Actions
 
         public static IAction<AppSettingsState> LoadAppSettingsAction(AppSettingsState payload)

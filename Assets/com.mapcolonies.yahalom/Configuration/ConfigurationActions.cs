@@ -6,6 +6,11 @@ namespace com.mapcolonies.yahalom.Configuration
     {
         public const string LoadAction = "configuration/load_configuration_action";
 
+        public static void AddActions(SliceReducerSwitchBuilder<ConfigurationState> builder)
+        {
+            builder.AddCase(LoadConfigurationActionCreator(), ConfigurationReducer.Reduce);
+        }
+
         public static IAction<ConfigurationState> LoadConfigurationAction(ConfigurationState payload)
         {
             return new ActionCreator<ConfigurationState>(LoadAction).Invoke(payload);
