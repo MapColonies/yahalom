@@ -20,13 +20,11 @@ namespace com.mapcolonies.yahalom.Preloader
             private set;
         }
 
-        public event Action<string, float> ProgressUpdated;
-
         public virtual void ReportProgress(string name, float progress)
         {
             Name = name;
             Progress = progress;
-            ProgressUpdated?.Invoke(name, progress);
+
             Debug.Log($"Name: {name} Progress: {progress}");
         }
 

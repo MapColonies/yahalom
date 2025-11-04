@@ -8,7 +8,6 @@ namespace com.mapcolonies.core
     public abstract class BaseMvvmView<T> : MonoBehaviour where T : class
     {
         private T _viewModel;
-        protected T ViewModel => _viewModel;
         [SerializeField] private UIDocument _uiDocument;
 
         protected VisualElement RootVisualElement
@@ -25,20 +24,6 @@ namespace com.mapcolonies.core
             _viewModel = viewModel;
             RootVisualElement = _uiDocument.rootVisualElement;
             RootVisualElement.dataSource = _viewModel;
-            OnViewModelBound();
-        }
-
-        protected virtual void OnDestroy()
-        {
-            OnViewModelUnbound();
-        }
-
-        protected virtual void OnViewModelBound()
-        {
-        }
-
-        protected virtual void OnViewModelUnbound()
-        {
         }
     }
 }
