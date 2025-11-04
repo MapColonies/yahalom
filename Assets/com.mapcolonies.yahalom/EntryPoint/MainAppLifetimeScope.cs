@@ -2,7 +2,7 @@ using System;
 using com.mapcolonies.core.Services.Analytics.Managers;
 using com.mapcolonies.yahalom.InitPipeline;
 using com.mapcolonies.yahalom.Preloader;
-using com.mapcolonies.yahalom.SceneController;
+using com.mapcolonies.yahalom.SceneManagement;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -17,7 +17,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
 
             builder.Register<PreloaderViewModel>(Lifetime.Scoped);
             builder.Register<InitializationPipeline>(Lifetime.Scoped);
-            builder.Register<ISceneController, SceneController.SceneController>(Lifetime.Singleton);
+            builder.Register<ISceneController, SceneManagement.SceneController>(Lifetime.Singleton);
             builder.Register<AppStartUpController>(Lifetime.Singleton).As<IAsyncStartable>();
             builder.Register<AnalyticsManager>(Lifetime.Singleton).AsSelf().As<IAnalyticsManager>().As<IDisposable>();
 

@@ -1,4 +1,4 @@
-namespace com.mapcolonies.yahalom.SceneController.Enums
+namespace com.mapcolonies.yahalom.SceneManagement.Enums
 {
     public enum Scenes
     {

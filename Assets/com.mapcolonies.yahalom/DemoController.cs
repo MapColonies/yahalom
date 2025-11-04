@@ -1,5 +1,5 @@
-using com.mapcolonies.yahalom.SceneController;
-using com.mapcolonies.yahalom.SceneController.Enums;
+using com.mapcolonies.yahalom.SceneManagement;
+using com.mapcolonies.yahalom.SceneManagement.Enums;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using VContainer;

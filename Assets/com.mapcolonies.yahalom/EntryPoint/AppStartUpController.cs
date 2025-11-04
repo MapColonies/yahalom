@@ -7,8 +7,8 @@ using com.mapcolonies.core.Services.Analytics.Managers;
 using com.mapcolonies.yahalom.InitPipeline;
 using com.mapcolonies.yahalom.InitPipeline.InitSteps;
 using com.mapcolonies.yahalom.InitPipeline.InitUnits;
-using com.mapcolonies.yahalom.SceneController;
-using com.mapcolonies.yahalom.SceneController.Enums;
+using com.mapcolonies.yahalom.SceneManagement;
+using com.mapcolonies.yahalom.SceneManagement.Enums;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using VContainer;
@@ -50,11 +50,6 @@ namespace com.mapcolonies.yahalom.EntryPoint
                         {
                             Task.Run(resolver.Resolve<WmtsService>().Init);
                             return default;
-                        }),
-                    new RegisterScopeUnit("Scene Services", 0.05f, scope, InitPolicy.Fail,
-                        builder =>
-                        {
-                            builder.Register<ISceneController, SceneController.SceneController>(Lifetime.Singleton);
                         }),
                     new ActionUnit("Analytics Manager", 0.05f, InitPolicy.Fail,
                         () =>

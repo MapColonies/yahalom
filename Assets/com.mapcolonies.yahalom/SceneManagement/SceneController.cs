@@ -1,7 +1,7 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine.SceneManagement;
 
-namespace com.mapcolonies.yahalom.SceneController
+namespace com.mapcolonies.yahalom.SceneManagement
 {
     public interface ISceneController
     {
