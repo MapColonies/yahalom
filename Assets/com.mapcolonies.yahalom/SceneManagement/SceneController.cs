@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace com.mapcolonies.yahalom.SceneManagement
@@ -14,14 +15,20 @@ namespace com.mapcolonies.yahalom.SceneManagement
 
         public async UniTask SwitchSceneAsync(string newSceneName)
         {
+            if (string.IsNullOrEmpty(newSceneName))
+            {
+                Debug.LogWarning("Invalid Scene");
+                return;
+            }
+
             if (!string.IsNullOrEmpty(_currentLoadedScene))
             {
-                var unloadOp = SceneManager.UnloadSceneAsync(_currentLoadedScene);
+                AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(_currentLoadedScene);
                 while (!unloadOp.isDone)
                     await UniTask.Yield();
             }
 
-            var loadOp = SceneManager.LoadSceneAsync(newSceneName, LoadSceneMode.Additive);
+            AsyncOperation loadOp = SceneManager.LoadSceneAsync(newSceneName, LoadSceneMode.Additive);
             while (!loadOp.isDone)
                 await UniTask.Yield();
 

@@ -21,7 +21,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
             builder.Register<AppStartUpController>(Lifetime.Singleton).As<IAsyncStartable>();
             builder.Register<AnalyticsManager>(Lifetime.Singleton).AsSelf().As<IAnalyticsManager>().As<IDisposable>();
 
-            //This is a Demo script, will be deleted in the near future.
+            //TODO: This is a Demo script, will be deleted in the near future.
             builder.RegisterComponentInHierarchy<DemoController>();
 
             Debug.Log("End Configure Startup Registrations");
