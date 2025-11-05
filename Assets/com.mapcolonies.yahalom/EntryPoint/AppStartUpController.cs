@@ -7,6 +7,8 @@ using com.mapcolonies.core.Services.Analytics.Managers;
 using com.mapcolonies.yahalom.InitPipeline;
 using com.mapcolonies.yahalom.InitPipeline.InitSteps;
 using com.mapcolonies.yahalom.InitPipeline.InitUnits;
+using com.mapcolonies.yahalom.SceneManagement;
+using com.mapcolonies.yahalom.SceneManagement.Enums;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using VContainer;
@@ -64,6 +66,15 @@ namespace com.mapcolonies.yahalom.EntryPoint
                         () =>
                         {
                             return Cysharp.Threading.Tasks.UniTask.Delay(1000);
+                        })
+                }),
+                new InitStep("SwitchScene", StepMode.Sequential, new IInitUnit[]
+                {
+                    new ActionUnit("Load Target Scene", 0.10f, InitPolicy.Fail,
+                        () =>
+                        {
+                            var sceneController = scope.Container.Resolve<ISceneController>();
+                            return sceneController.SwitchSceneAsync(Scenes.PlanningScene);
                         })
                 })
             };
