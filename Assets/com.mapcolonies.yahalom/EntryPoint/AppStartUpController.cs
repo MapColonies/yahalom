@@ -10,6 +10,7 @@ using com.mapcolonies.yahalom.InitPipeline.InitUnits;
 using com.mapcolonies.yahalom.ReduxStore;
 using com.mapcolonies.yahalom.UserSettings;
 using Cysharp.Threading.Tasks;
+using Unity.AppUI.Redux;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -46,6 +47,12 @@ namespace com.mapcolonies.yahalom.EntryPoint
                             AppSettingsManager appSettings = scope.Container.Resolve<AppSettingsManager>();
                             return appSettings.Load();
                         }),
+                    new ActionUnit("User Settings", 0.1f, InitPolicy.Fail,
+                        () =>
+                        {
+                            UserSettingsManager userSettingsSettings = scope.Container.Resolve<UserSettingsManager>();
+                            return userSettingsSettings.Load();
+                        }),
                     new ActionUnit("Analytics Manager", 0.05f, InitPolicy.Fail,
                         () =>
                         {
@@ -54,12 +61,6 @@ namespace com.mapcolonies.yahalom.EntryPoint
                             return default;
                         }),
                     UsageAnalyticsServices(scope),
-                    new ActionUnit("User Settings", 0.1f, InitPolicy.Fail,
-                        () =>
-                        {
-                            UserSettingsManager userSettingsSettings = scope.Container.Resolve<UserSettingsManager>();
-                            return userSettingsSettings.Load();
-                        }),
                     new ActionUnit("Configuration", 0.1f, InitPolicy.Fail,
                         () =>
                         {
@@ -75,6 +76,12 @@ namespace com.mapcolonies.yahalom.EntryPoint
             Debug.Log("Start initializing");
             await _pipeline.RunAsync(_initSteps);
             Debug.Log("Initialized");
+
+            IReduxStoreManager reduxStoreManager = _scope.Container.Resolve<IReduxStoreManager>();
+            PartitionedState state = reduxStoreManager.Store.GetState();
+            Slice<UserSettingsState, PartitionedState> slice = state.Get<Slice<UserSettingsState, PartitionedState>>(UserSettingsReducer.SliceName);
+
+
         }
 
         private IInitUnit UsageAnalyticsServices(LifetimeScope scope)
