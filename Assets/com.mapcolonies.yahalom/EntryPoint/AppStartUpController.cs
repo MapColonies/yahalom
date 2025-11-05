@@ -76,10 +76,6 @@ namespace com.mapcolonies.yahalom.EntryPoint
             Debug.Log("Start initializing");
             await _pipeline.RunAsync(_initSteps);
             Debug.Log("Initialized");
-
-            IReduxStoreManager reduxStoreManager = _scope.Container.Resolve<IReduxStoreManager>();
-            PartitionedState state = reduxStoreManager.Store.GetState();
-            Slice<UserSettingsState, PartitionedState> slice = state.Get<Slice<UserSettingsState, PartitionedState>>(UserSettingsReducer.SliceName);
         }
 
         private IInitUnit UsageAnalyticsServices(LifetimeScope scope)
