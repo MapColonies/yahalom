@@ -22,9 +22,14 @@ namespace com.mapcolonies.yahalom.UserSettings
             _reduxStoreManager = reduxStoreManager;
             _userSettingsPath = _reduxStoreManager.Store.GetState(AppSettingsReducer.SliceName, AppSettingsSelectors.UserSettingsPath);
             _reduxStoreManager.Store.SelectWhere<UserSettingsState>(
-                UserSettingsReducer.SliceName,
-                state => !_exists,
-                state => Debug.Log("save file"));
+                    UserSettingsReducer.SliceName,
+                    s => !_exists,
+                    state =>
+                    {
+                        FileUtility.SavePersistentJsonAsync(_settings.UserSettingsPath, state).Forget();
+                        Debug.Log("save file");
+                    })
+                .AddTo(_disposables);
         }
 
         public async UniTask Load()
