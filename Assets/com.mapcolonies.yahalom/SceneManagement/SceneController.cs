@@ -1,3 +1,4 @@
+using System;
 using com.mapcolonies.yahalom.SceneManagement.Enums;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -12,30 +13,25 @@ namespace com.mapcolonies.yahalom.SceneManagement
 
     public class SceneController : ISceneController
     {
-        private string _currentLoadedScene;
+        private Scenes? _currentLoadedScene;
 
         public async UniTask SwitchSceneAsync(Scenes newScene)
         {
-            string newSceneName = newScene.ToString();
-
-            if (string.IsNullOrEmpty(newSceneName))
+            if (!Enum.IsDefined(typeof(Scenes), newScene))
             {
-                Debug.LogWarning("Invalid Scene");
+                Debug.LogWarning($"Invalid Scene.");
                 return;
             }
 
-            if (!string.IsNullOrEmpty(_currentLoadedScene))
+            if (_currentLoadedScene.HasValue)
             {
-                AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(_currentLoadedScene);
-                while (!unloadOp.isDone)
-                    await UniTask.Yield();
+                await SceneManager.UnloadSceneAsync(_currentLoadedScene.Value.ToString());
             }
 
-            AsyncOperation loadOp = SceneManager.LoadSceneAsync(newSceneName, LoadSceneMode.Additive);
-            while (!loadOp.isDone)
-                await UniTask.Yield();
+            string newSceneName = newScene.ToString();
+            await SceneManager.LoadSceneAsync(newSceneName, LoadSceneMode.Additive);
 
-            _currentLoadedScene = newSceneName;
+            _currentLoadedScene = newScene;
             SceneManager.SetActiveScene(SceneManager.GetSceneByName(newSceneName));
         }
     }
