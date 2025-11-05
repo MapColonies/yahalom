@@ -7,6 +7,8 @@ using com.mapcolonies.core.Services.Analytics.Managers;
 using com.mapcolonies.yahalom.InitPipeline;
 using com.mapcolonies.yahalom.InitPipeline.InitSteps;
 using com.mapcolonies.yahalom.InitPipeline.InitUnits;
+using com.mapcolonies.yahalom.SceneManagement;
+using com.mapcolonies.yahalom.SceneManagement.Enums;
 using com.mapcolonies.yahalom.ReduxStore;
 using com.mapcolonies.yahalom.UserSettings;
 using Cysharp.Threading.Tasks;
@@ -66,6 +68,15 @@ namespace com.mapcolonies.yahalom.EntryPoint
                         {
                             ConfigurationManager config = scope.Container.Resolve<ConfigurationManager>();
                             return config.Load();
+                        })
+                }),
+                new InitStep("SwitchScene", StepMode.Sequential, new IInitUnit[]
+                {
+                    new ActionUnit("Load Target Scene", 0.10f, InitPolicy.Fail,
+                        () =>
+                        {
+                            var sceneController = scope.Container.Resolve<ISceneController>();
+                            return sceneController.SwitchSceneAsync(Scenes.PlanningScene);
                         })
                 })
             };

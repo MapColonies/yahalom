@@ -4,6 +4,7 @@ using com.mapcolonies.yahalom.AppSettings;
 using com.mapcolonies.yahalom.Configuration;
 using com.mapcolonies.yahalom.InitPipeline;
 using com.mapcolonies.yahalom.Preloader;
+using com.mapcolonies.yahalom.SceneManagement;
 using com.mapcolonies.yahalom.ReduxStore;
 using com.mapcolonies.yahalom.UserSettings;
 using UnityEngine;
@@ -23,17 +24,19 @@ namespace com.mapcolonies.yahalom.EntryPoint
             builder.Register<PreloaderViewModel>(Lifetime.Scoped);
             builder.Register<InitializationPipeline>(Lifetime.Scoped);
             builder.Register<AppStartUpController>(Lifetime.Singleton).As<IAsyncStartable>();
-
             #endregion
 
-            Debug.Log("End Configure Startup Registrations");
+            //TODO: This is a Demo script, will be deleted in the near future.
+            builder.RegisterComponentInHierarchy<DemoController>();
 
+            Debug.Log("End Configure Startup Registrations");
             #region Services
 
             builder.Register<ReduxStoreManager>(Lifetime.Singleton).AsSelf().As<IReduxStoreManager>();
             builder.Register<AppSettingsManager>(Lifetime.Singleton);
             builder.Register<UserSettingsManager>(Lifetime.Singleton);
             builder.Register<ConfigurationManager>(Lifetime.Singleton);
+            builder.Register<ISceneController, SceneController>(Lifetime.Singleton);
             builder.Register<AnalyticsManager>(Lifetime.Singleton).AsSelf().As<IAnalyticsManager>().As<IDisposable>();
 
             #endregion
