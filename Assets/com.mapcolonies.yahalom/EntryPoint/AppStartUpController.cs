@@ -74,7 +74,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
                         () =>
                         {
                             var sceneController = scope.Container.Resolve<ISceneController>();
-                            return sceneController.SwitchSceneAsync(Scenes.PlanningScene.ToString());
+                            return sceneController.SwitchSceneAsync(Scenes.PlanningScene);
                         })
                 })
             };

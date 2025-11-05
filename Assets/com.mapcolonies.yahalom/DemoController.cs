@@ -16,16 +16,23 @@ public class DemoController : MonoBehaviour
 
     public void SwitchScene()
     {
-        string nextSceneName = string.Empty;
-        var currentSceneName = SceneManager.GetActiveScene().name;
+        Scenes nextScene;
+        string currentSceneName = SceneManager.GetActiveScene().name;
 
         if (currentSceneName.Equals(Scenes.SimulationScene.ToString()))
-            nextSceneName = Scenes.PlanningScene.ToString();
+        {
+            nextScene = Scenes.PlanningScene;
+        }
         else if (currentSceneName.Equals(Scenes.PlanningScene.ToString()))
-            nextSceneName = Scenes.SimulationScene.ToString();
+        {
+            nextScene = Scenes.SimulationScene;
+        }
         else
+        {
+            Debug.LogWarning($"Current scene '{currentSceneName}' is not part of the demo flow.");
             return;
+        }
 
-        _ = _sceneController.SwitchSceneAsync(nextSceneName);
+        _ = _sceneController.SwitchSceneAsync(nextScene);
     }
 }

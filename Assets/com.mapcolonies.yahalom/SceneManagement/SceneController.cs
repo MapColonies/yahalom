@@ -1,3 +1,4 @@
+using com.mapcolonies.yahalom.SceneManagement.Enums;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -6,15 +7,17 @@ namespace com.mapcolonies.yahalom.SceneManagement
 {
     public interface ISceneController
     {
-        UniTask SwitchSceneAsync(string sceneName);
+        UniTask SwitchSceneAsync(Scenes scene);
     }
 
     public class SceneController : ISceneController
     {
         private string _currentLoadedScene;
 
-        public async UniTask SwitchSceneAsync(string newSceneName)
+        public async UniTask SwitchSceneAsync(Scenes newScene)
         {
+            string newSceneName = newScene.ToString();
+
             if (string.IsNullOrEmpty(newSceneName))
             {
                 Debug.LogWarning("Invalid Scene");
