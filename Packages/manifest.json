@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.cesium.unity": "1.17.0",
+    "com.cesium.unity": "1.19.0",
     "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
     "com.mapcolonies.yahalom-ui": "https://github.com/MapColonies/yahalom-ui-components.git?path=/Assets/YahalomUIPackage",
     "com.unity.ide.rider": "3.0.36",
