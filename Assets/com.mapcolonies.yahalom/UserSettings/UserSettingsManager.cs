@@ -12,10 +12,9 @@ namespace com.mapcolonies.yahalom.UserSettings
     public class UserSettingsManager : IDisposable
     {
         private readonly IReduxStoreManager _reduxStoreManager;
-        private readonly AppSettingsState _settings;
-        private bool _exists;
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         private readonly string _userSettingsPath;
+        private bool _exists;
 
         public UserSettingsManager(IReduxStoreManager reduxStoreManager)
         {
@@ -26,7 +25,7 @@ namespace com.mapcolonies.yahalom.UserSettings
                     s => !_exists,
                     state =>
                     {
-                        FileUtility.SavePersistentJsonAsync(_settings.UserSettingsPath, state).Forget();
+                        FileUtility.SavePersistentJsonAsync(_userSettingsPath, state).Forget();
                         Debug.Log("save file");
                     })
                 .AddTo(_disposables);
