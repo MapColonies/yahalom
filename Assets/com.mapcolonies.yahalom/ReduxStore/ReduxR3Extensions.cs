@@ -19,11 +19,27 @@ namespace com.mapcolonies.yahalom.ReduxStore
                 .DistinctUntilChanged();
         }
 
+        public static Observable<TState> Select<TState>(this IStore<PartitionedState> store, string sliceName)
+        {
+            return Observable.Create<TState>(observer =>
+                {
+                    IDisposableSubscription subscription = store.Subscribe(s => s.Get<TState>(sliceName), observer.OnNext);
+                    return Disposable.Create(subscription.Dispose);
+                })
+                .DistinctUntilChanged();
+        }
+
         public static IDisposable Select<TState, TSelected>(
             this IStore<PartitionedState> store, string sliceName,
             Selector<TState, TSelected> selector, System.Action<TSelected> onNext)
         {
             return store.Select(sliceName, selector).Subscribe(onNext);
+        }
+
+        public static IDisposable Select<TState>(
+            this IStore<PartitionedState> store, string sliceName, System.Action<TState> onNext)
+        {
+            return store.Select<TState>(sliceName).Subscribe(onNext);
         }
 
         public static IDisposable SelectWhere<TState, TSelected>(
@@ -32,6 +48,25 @@ namespace com.mapcolonies.yahalom.ReduxStore
         {
             return store.Select(sliceName, selector)
                 .Where(predicate)
+                .Subscribe(onNext);
+        }
+
+        public static IDisposable SelectWhere<TState>(
+            this IStore<PartitionedState> store, string sliceName,
+            Func<TState, bool> predicate, System.Action<TState> onNext)
+        {
+            return store.Select<TState>(sliceName)
+                .Where(predicate)
+                .Subscribe(onNext);
+        }
+
+        public static IDisposable SelectDebounce<TState, TSelected>(
+            this IStore<PartitionedState> store,
+            string sliceName,
+            TimeSpan dueTime, System.Action<TState> onNext)
+        {
+            return store.Select<TState>(sliceName)
+                .Debounce(dueTime)
                 .Subscribe(onNext);
         }
 
