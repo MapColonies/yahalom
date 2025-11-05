@@ -80,8 +80,6 @@ namespace com.mapcolonies.yahalom.EntryPoint
             IReduxStoreManager reduxStoreManager = _scope.Container.Resolve<IReduxStoreManager>();
             PartitionedState state = reduxStoreManager.Store.GetState();
             Slice<UserSettingsState, PartitionedState> slice = state.Get<Slice<UserSettingsState, PartitionedState>>(UserSettingsReducer.SliceName);
-
-
         }
 
         private IInitUnit UsageAnalyticsServices(LifetimeScope scope)

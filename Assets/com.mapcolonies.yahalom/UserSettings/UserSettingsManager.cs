@@ -19,20 +19,12 @@ namespace com.mapcolonies.yahalom.UserSettings
         {
             _reduxStoreManager = reduxStoreManager;
             _userSettingsPath = _reduxStoreManager.Store.GetState(AppSettingsReducer.SliceName, AppSettingsSelectors.UserSettingsPath);
-
-            _unsubscribe = _reduxStoreManager.Store.Subscribe(s => s.Get<UserSettingsState>(UserSettingsReducer.SliceName), state =>
-            {
-                if(!_exists)
-                {
-                    FileUtility.SavePersistentJsonAsync(_settings.UserSettingsPath, state).Forget();
-                }
-            });
         }
 
         public async UniTask Load()
         {
             UserSettingsState userSettingsState;
-           _exists = await FileUtility.DoesPersistentJsonExistAsync(_userSettingsPath);
+            _exists = await FileUtility.DoesPersistentJsonExistAsync(_userSettingsPath);
             if (_exists)
             {
                 userSettingsState = await FileUtility.LoadPersistentJsonAsync<UserSettingsState>(_userSettingsPath);
@@ -40,8 +32,8 @@ namespace com.mapcolonies.yahalom.UserSettings
             else
             {
                 userSettingsState = new UserSettingsState();
-
             }
+
             _reduxStoreManager.Store.Dispatch(UserSettingsActions.LoadUserSettingsAction(userSettingsState));
         }
 
