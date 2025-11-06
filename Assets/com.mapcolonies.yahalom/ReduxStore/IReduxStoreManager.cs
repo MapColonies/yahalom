@@ -1,11 +1,12 @@
 using Cysharp.Threading.Tasks;
 using Unity.AppUI.Redux;
+using VContainer;
 
 namespace com.mapcolonies.yahalom.ReduxStore
 {
     public interface IReduxStoreManager
     {
-        UniTask Create();
+        UniTask Create(IObjectResolver resolver);
 
         IStore<PartitionedState> Store
         {
