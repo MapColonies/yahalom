@@ -15,14 +15,20 @@ namespace com.mapcolonies.yahalom.ReduxStore
             private set;
         }
 
+        public EpicMiddlewareCreator Epics
+        {
+            get;
+            private set;
+        }
+
         public UniTask Create(IObjectResolver resolver)
         {
             Slice<ConfigurationState, PartitionedState> configurationSlice = StoreFactory.CreateSlice(ConfigurationReducer.SliceName, new ConfigurationState(), ConfigurationActions.AddActions);
             Slice<AppSettingsState, PartitionedState> appSettingsSlice = StoreFactory.CreateSlice(AppSettingsReducer.SliceName, new AppSettingsState(), AppSettingsActions.AddActions);
             Slice<UserSettingsState, PartitionedState> userSettingsSlice = StoreFactory.CreateSlice(UserSettingsReducer.SliceName, new UserSettingsState(), UserSettingsActions.AddActions);
 
-            EpicMiddlewareCreator epicMiddlewareCreator = resolver.Resolve<EpicMiddlewareCreator>();
-            Middleware<PartitionedState> epicMiddleware = epicMiddlewareCreator.Create();
+            Epics = resolver.Resolve<EpicMiddlewareCreator>();
+            Middleware<PartitionedState> epicMiddleware = Epics.CreateMiddleware();
 
             Store = StoreFactory.CreateStore(
                 new ISlice<PartitionedState>[]
