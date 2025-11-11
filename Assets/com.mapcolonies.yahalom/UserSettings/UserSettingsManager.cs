@@ -19,8 +19,8 @@ namespace com.mapcolonies.yahalom.UserSettings
         public UserSettingsManager(IReduxStoreManager reduxStoreManager)
         {
             _reduxStoreManager = reduxStoreManager;
-            _userSettingsPath = _reduxStoreManager.Store.GetState(AppSettingsReducer.SliceName, AppSettingsSelectors.UserSettingsPath);
-            _reduxStoreManager.Store.SelectWhere<UserSettingsState>(
+            _userSettingsPath = _reduxStoreManager.GetState(AppSettingsReducer.SliceName, AppSettingsSelectors.UserSettingsPath);
+            _reduxStoreManager.SelectWhere<UserSettingsState>(
                     UserSettingsReducer.SliceName,
                     s => !_exists,
                     state =>
@@ -44,7 +44,7 @@ namespace com.mapcolonies.yahalom.UserSettings
                 userSettingsState = new UserSettingsState();
             }
 
-            _reduxStoreManager.Store.Dispatch(UserSettingsActions.LoadUserSettingsAction(userSettingsState));
+            _reduxStoreManager.Dispatch(UserSettingsActions.LoadUserSettingsAction(userSettingsState));
         }
 
         public void Dispose()
