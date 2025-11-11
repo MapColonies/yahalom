@@ -29,7 +29,15 @@ namespace com.mapcolonies.yahalom.UserSettings
                         Debug.Log("save file");
                     })
                 .AddTo(_disposables);
+
+            // _reduxStoreManager.Epics.RunEpic(TestEpic, _reduxStoreManager.Store).AddTo(_disposables);
         }
+
+        /*private Observable<UserSettingsStateAction> TestEpic(Observable<UserSettingsStateAction> actions)
+        {
+            return actions.OfType<UserSettingsStateAction.>()
+                .Do(_ => Debug.Log("player jumped"));
+        }*/
 
         public async UniTask Load()
         {
