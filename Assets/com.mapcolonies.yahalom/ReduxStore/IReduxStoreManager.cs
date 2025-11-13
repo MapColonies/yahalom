@@ -8,11 +8,6 @@ namespace com.mapcolonies.yahalom.ReduxStore
     {
         UniTask Create(IObjectResolver resolver);
 
-        public EpicMiddlewareCreator Epics
-        {
-            get;
-        }
-
         IStore<PartitionedState> Store
         {
             get;
