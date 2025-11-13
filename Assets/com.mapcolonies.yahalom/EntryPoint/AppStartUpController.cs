@@ -12,6 +12,7 @@ using com.mapcolonies.yahalom.SceneManagement.Enums;
 using com.mapcolonies.yahalom.ReduxStore;
 using com.mapcolonies.yahalom.UserSettings;
 using Cysharp.Threading.Tasks;
+using Unity.AppUI.Redux;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -33,16 +34,12 @@ namespace com.mapcolonies.yahalom.EntryPoint
             {
                 new InitStep("PreInit", StepMode.Sequential, new IInitUnit[]
                 {
-                    new RegisterScopeUnit("Redux Store", 0.1f, scope, InitPolicy.Fail,
-                        builder =>
-                        {
-                            builder.Register<EpicMiddlewareCreator>(Lifetime.Singleton);
-                        },
-                        resolver =>
+                    new ActionUnit("Redux Store", 0.1f, InitPolicy.Fail,
+                        () =>
                         {
                             IReduxStoreManager reduxStore = scope.Container.Resolve<ReduxStoreManager>();
-                            return reduxStore.Create(resolver);
-                        }),
+                            return reduxStore.Create();
+                        })
                 }),
                 new InitStep("ServicesInit", StepMode.Sequential, new IInitUnit[]
                 {
