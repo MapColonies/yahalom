@@ -1,0 +1,5 @@
+{
+  "userSettingsPath": "user_settings.json",
+  "offlineConfigurationPath": "config.json",
+  "remoteConfigurationUrl": "https://example.com/config/getConfig?v=10"
+}

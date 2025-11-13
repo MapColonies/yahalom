@@ -1,15 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
-using com.mapcolonies.core.Services;
+using com.mapcolonies.yahalom.AppSettings;
+using com.mapcolonies.yahalom.Configuration;
 using com.mapcolonies.core.Services.Analytics.Managers;
 using com.mapcolonies.yahalom.InitPipeline;
 using com.mapcolonies.yahalom.InitPipeline.InitSteps;
 using com.mapcolonies.yahalom.InitPipeline.InitUnits;
 using com.mapcolonies.yahalom.SceneManagement;
 using com.mapcolonies.yahalom.SceneManagement.Enums;
+using com.mapcolonies.yahalom.ReduxStore;
+using com.mapcolonies.yahalom.UserSettings;
+using com.mapcolonies.yahalom.Workspaces;
 using Cysharp.Threading.Tasks;
+using Unity.AppUI.Redux;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -21,35 +25,42 @@ namespace com.mapcolonies.yahalom.EntryPoint
         private readonly LifetimeScope _parentLifetimeScope;
         private readonly InitializationPipeline _pipeline;
         private readonly List<InitStep> _initSteps;
+        private readonly LifetimeScope _scope;
 
         public AppStartUpController(InitializationPipeline initializationPipeline, LifetimeScope scope)
         {
+            _scope = scope;
             _pipeline = initializationPipeline;
             _initSteps = new List<InitStep>
             {
                 new InitStep("PreInit", StepMode.Sequential, new IInitUnit[]
                 {
-                    new ActionUnit("Logging Init", 0.05f, InitPolicy.Fail,
+                    new ActionUnit("Redux Store", 0.1f, InitPolicy.Fail,
                         () =>
                         {
-                            return Cysharp.Threading.Tasks.UniTask.Delay(1000);
-                        }),
-                    new ActionUnit("Local Settings", 0.05f, InitPolicy.Fail,
-                        () =>
-                        {
-                            return Cysharp.Threading.Tasks.UniTask.Delay(1000);
+                            IReduxStoreManager reduxStore = scope.Container.Resolve<ReduxStoreManager>();
+                            return reduxStore.Create();
                         })
                 }),
                 new InitStep("ServicesInit", StepMode.Sequential, new IInitUnit[]
                 {
-                    new RegisterScopeUnit("WMTS", 0.1f, scope, InitPolicy.Retry,
-                        builder =>
+                    new ActionUnit("App Settings", 0.1f, InitPolicy.Fail,
+                        () =>
                         {
-                            builder.Register<WmtsService>(Lifetime.Singleton);
-                        }, resolver =>
+                            AppSettingsManager appSettings = scope.Container.Resolve<AppSettingsManager>();
+                            return appSettings.Load();
+                        }),
+                    new ActionUnit("User Settings", 0.1f, InitPolicy.Fail,
+                        () =>
                         {
-                            Task.Run(resolver.Resolve<WmtsService>().Init);
-                            return default;
+                            UserSettingsManager userSettingsSettings = scope.Container.Resolve<UserSettingsManager>();
+                            return userSettingsSettings.Load();
+                        }),
+                    new ActionUnit("Workspaces", 0.05f, InitPolicy.Fail,
+                        () =>
+                        {
+                            WorkspacesManager workspacesManager = scope.Container.Resolve<WorkspacesManager>();
+                            return workspacesManager.Load();
                         }),
                     new ActionUnit("Analytics Manager", 0.05f, InitPolicy.Fail,
                         () =>
@@ -59,13 +70,11 @@ namespace com.mapcolonies.yahalom.EntryPoint
                             return default;
                         }),
                     UsageAnalyticsServices(scope),
-                }),
-                new InitStep("FeaturesInit", StepMode.Sequential, new IInitUnit[]
-                {
-                    new ActionUnit("Maps Feature", 0.25f, InitPolicy.Fail,
+                    new ActionUnit("Configuration", 0.1f, InitPolicy.Fail,
                         () =>
                         {
-                            return Cysharp.Threading.Tasks.UniTask.Delay(1000);
+                            ConfigurationManager config = scope.Container.Resolve<ConfigurationManager>();
+                            return config.Load();
                         })
                 }),
                 new InitStep("SwitchScene", StepMode.Sequential, new IInitUnit[]
@@ -80,7 +89,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
             };
         }
 
-        async UniTask IAsyncStartable.StartAsync(CancellationToken cancellation = new())
+        async UniTask IAsyncStartable.StartAsync(CancellationToken cancellation = new CancellationToken())
         {
             Debug.Log("Start initializing");
             await _pipeline.RunAsync(_initSteps);

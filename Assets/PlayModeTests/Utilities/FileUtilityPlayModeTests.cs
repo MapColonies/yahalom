@@ -1,8 +1,8 @@
 using System;
 using System.Collections;
 using System.IO;
-using System.Threading.Tasks;
 using com.mapcolonies.core.Utilities;
+using Cysharp.Threading.Tasks;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -11,10 +11,9 @@ namespace PlayModeTests.Utilities
 {
     public class FileUtilityPlayModeTests
     {
-        private static IEnumerator Await(Task t)
+        private static async UniTask Await(UniTask t)
         {
-            while (!t.IsCompleted) yield return null;
-            if (t.IsFaulted) throw t.Exception;
+            await t;
         }
 
         [UnityTest]
