@@ -11,6 +11,7 @@ using com.mapcolonies.yahalom.SceneManagement;
 using com.mapcolonies.yahalom.SceneManagement.Enums;
 using com.mapcolonies.yahalom.ReduxStore;
 using com.mapcolonies.yahalom.UserSettings;
+using com.mapcolonies.yahalom.Workspaces;
 using Cysharp.Threading.Tasks;
 using Unity.AppUI.Redux;
 using UnityEngine;
@@ -54,6 +55,12 @@ namespace com.mapcolonies.yahalom.EntryPoint
                         {
                             UserSettingsManager userSettingsSettings = scope.Container.Resolve<UserSettingsManager>();
                             return userSettingsSettings.Load();
+                        }),
+                    new ActionUnit("Workspaces", 0.05f, InitPolicy.Fail,
+                        () =>
+                        {
+                            WorkspacesManager workspacesManager = scope.Container.Resolve<WorkspacesManager>();
+                            return workspacesManager.Load();
                         }),
                     new ActionUnit("Analytics Manager", 0.05f, InitPolicy.Fail,
                         () =>
