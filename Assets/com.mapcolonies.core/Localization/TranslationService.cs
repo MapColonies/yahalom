@@ -26,7 +26,12 @@ namespace com.mapcolonies.core.Localization
         private string _remoteConfigUrl;
         private bool _showTranslationWarnings;
 
-        private const string LocalFilePath = "Translations/" + LocalizationConstants.TranslationsFileName + ".json";
+        private static readonly string LocalFilePath =
+            Path.ChangeExtension(
+                Path.Combine("Translations", LocalizationConstants.TranslationsFileName),
+                ".json"
+            );
+
         private const string TargetStringTableName = "Yahalom_HardCoded_Translations";
 
         private Dictionary<string, TranslationEntry> _translations = new Dictionary<string, TranslationEntry>();
@@ -73,7 +78,7 @@ namespace com.mapcolonies.core.Localization
 
         private async UniTask<Dictionary<string, TranslationEntry>> LoadHardCodedTranslations()
         {
-            var hardCodedTranslations = new Dictionary<string, TranslationEntry>();
+            Dictionary<string, TranslationEntry> hardCodedTranslations = new Dictionary<string, TranslationEntry>();
             await LocalizationSettings.InitializationOperation.Task;
 
             Locale enLocale = LocalizationSettings.AvailableLocales.GetLocale(LocalizationConstants.EnglishLocaleIdentifier);
@@ -187,9 +192,9 @@ namespace com.mapcolonies.core.Localization
 
         private async UniTask SetTranslations()
         {
-            var hardCodedTranslations = await LoadHardCodedTranslations();
+            Dictionary<string, TranslationEntry> hardCodedTranslations = await LoadHardCodedTranslations();
 
-            var fileTranslations = new Dictionary<string, TranslationEntry>();
+            Dictionary<string, TranslationEntry> fileTranslations = new Dictionary<string, TranslationEntry>();
             TranslationConfig fileConfig = await LoadFromFileAsync();
 
             if (fileConfig != null)
@@ -198,7 +203,7 @@ namespace com.mapcolonies.core.Localization
                 _showTranslationWarnings = fileConfig.ShowTranslationWarnings;
             }
 
-            var remoteTranslations = new Dictionary<string, TranslationEntry>();
+            Dictionary<string, TranslationEntry> remoteTranslations = new Dictionary<string, TranslationEntry>();
             TranslationConfig remoteConfig = await LoadFromRemoteAsync();
 
             if (remoteConfig != null)
