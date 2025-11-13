@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 using com.mapcolonies.core.Services.Analytics.Model;
 using NUnit.Framework;
 
-namespace EditorTests.Analytics.SerializationTests
+namespace EditorTests.SerializationTests.Analytics
 {
     public class ApplicationUsageDataSerializationTests
     {

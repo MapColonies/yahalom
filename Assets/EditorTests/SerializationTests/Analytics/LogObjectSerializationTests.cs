@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using UnityEngine;
 
-namespace EditorTests.Analytics.SerializationTests
+namespace EditorTests.SerializationTests.Analytics
 {
     public class LogObjectSerializationTests
     {

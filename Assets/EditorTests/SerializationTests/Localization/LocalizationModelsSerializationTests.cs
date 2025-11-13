@@ -3,7 +3,7 @@ using com.mapcolonies.core.Localization.Models;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
-namespace EditorTests.Localization.SerializationTests
+namespace EditorTests.SerializationTests.Localization
 {
     public class SimpleLocalizationModelsSerializationTests
     {
