@@ -8,6 +8,8 @@ using com.mapcolonies.yahalom.UserSettings;
 using Cysharp.Threading.Tasks;
 using R3;
 using Unity.AppUI.Redux;
+using VContainer;
+using Action = Unity.AppUI.Redux.Action;
 
 namespace com.mapcolonies.yahalom.ReduxStore
 {
@@ -19,8 +21,6 @@ namespace com.mapcolonies.yahalom.ReduxStore
         private IStore<PartitionedState> _store;
         private SimpleListCore<Func<DispatchDelegate, DispatchDelegate>> _middlewares;
         private readonly SynchronizationContext _mainThreadContext = SynchronizationContext.Current;
-        public  EpicMiddleware<PartitionedState, NoDependencies> Epics => _epicMiddleware;
-        private EpicMiddleware<PartitionedState, NoDependencies> _epicMiddleware;
 
         public UniTask Create()
         {
@@ -28,7 +28,8 @@ namespace com.mapcolonies.yahalom.ReduxStore
             Slice<AppSettingsState, PartitionedState> appSettingsSlice = StoreFactory.CreateSlice(AppSettingsReducer.SliceName, new AppSettingsState(), AppSettingsActions.AddActions);
             Slice<UserSettingsState, PartitionedState> userSettingsSlice = StoreFactory.CreateSlice(UserSettingsReducer.SliceName, new UserSettingsState(), UserSettingsActions.AddActions);
 
-            _epicMiddleware = EpicMiddleware.Default<PartitionedState>();
+            EpicMiddleware<ConfigurationState, NoDependencies> epicMiddleware1 = EpicMiddleware.Default<ConfigurationState>();
+
 
             _store = StoreFactory.CreateStore(
                 new ISlice<PartitionedState>[]
@@ -38,7 +39,7 @@ namespace com.mapcolonies.yahalom.ReduxStore
                     userSettingsSlice
                 });
 
-            AddMiddleware(_epicMiddleware.CreateMiddleware());
+            AddMiddleware(epicMiddleware1.Create());
 
             return UniTask.CompletedTask;
         }
@@ -120,6 +121,11 @@ namespace com.mapcolonies.yahalom.ReduxStore
             }
 
             next(action);
+        }
+
+        public void Dispatch(Action action)
+        {
+
         }
 
         private void AddMiddleware(MiddlewareDelegate middleware)

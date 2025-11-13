@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using com.mapcolonies.yahalom.Configuration;
 using Cysharp.Threading.Tasks;
 using R3;
 using Unity.AppUI.Redux;
@@ -12,10 +11,6 @@ namespace com.mapcolonies.yahalom.ReduxStore
 {
     public interface IReduxStoreManager
     {
-        EpicMiddleware<PartitionedState, NoDependencies> Epics
-        {
-            get;
-        }
         UniTask Create();
         Dictionary<string, object> GetState();
         TState GetState<TState>(string name);

@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using com.mapcolonies.yahalom.AppSettings;
 using R3;
 using Unity.AppUI.Redux;
 
@@ -38,7 +37,7 @@ namespace com.mapcolonies.yahalom.ReduxStore
             _dependencies = dependencies;
         }
 
-        public MiddlewareDelegate CreateMiddleware()
+        public MiddlewareDelegate Create()
         {
             return store =>
             {

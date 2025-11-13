@@ -20,8 +20,7 @@ namespace com.mapcolonies.yahalom.UserSettings
         {
             _reduxStoreManager = reduxStoreManager;
             _userSettingsPath = _reduxStoreManager.GetState(AppSettingsReducer.SliceName, AppSettingsSelectors.UserSettingsPath);
-
-            /*_reduxStoreManager.SelectWhere<UserSettingsState>(
+            _reduxStoreManager.SelectWhere<UserSettingsState>(
                     UserSettingsReducer.SliceName,
                     s => !_exists,
                     state =>
@@ -29,7 +28,7 @@ namespace com.mapcolonies.yahalom.UserSettings
                         FileUtility.SavePersistentJsonAsync(_userSettingsPath, state).Forget();
                         Debug.Log("save file");
                     })
-                .AddTo(_disposables);*/
+                .AddTo(_disposables);
         }
 
         public async UniTask Load()

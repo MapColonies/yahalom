@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNITYREDUXMIDDLEWARE_R3_INTEGRATION
+using System;
 using System.Linq;
 using R3;
 using Unity.AppUI.Redux;
@@ -90,3 +91,4 @@ namespace com.mapcolonies.yahalom.ReduxStore
         }
     }
 }
+#endif
