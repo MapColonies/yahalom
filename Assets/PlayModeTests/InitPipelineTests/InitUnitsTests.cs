@@ -116,10 +116,9 @@ namespace PlayModeTests.InitPipelineTests
         }
 
         [Test(Description = "Ensures that actions are retried once when InitPolicy is Retry and two attempts fails.")]
-        public async Task Test_RunAsync_RetryPolicy_ShouldRetryAndFail()
+        public void Test_RunAsync_RetryPolicy_ShouldRetryAndFail()
         {
             // Arrange
-            int callCount = 0;
             Func<UniTask> action = () =>
             {
                 throw new InvalidOperationException("First call fails");
