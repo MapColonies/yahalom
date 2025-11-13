@@ -36,7 +36,7 @@ namespace PlayModeTests.Localization
         {
             return UniTask.ToCoroutine(async () =>
             {
-                var svc = new TranslationService();
+                TranslationService svc = new TranslationService();
 
                 try
                 {
@@ -60,7 +60,6 @@ namespace PlayModeTests.Localization
         {
             return UniTask.ToCoroutine(async () =>
             {
-                // Updated JSON to use the new 'localizedValues' format
                 string json = $@"
 {{
   ""ShowTranslationWarnings"": true,
@@ -83,7 +82,7 @@ namespace PlayModeTests.Localization
 }}";
                 TranslationTestHelper.WriteJson(_jsonPath, json);
 
-                var svc = new TranslationService();
+                TranslationService svc = new TranslationService();
 
                 try
                 {

@@ -9,7 +9,6 @@ using UnityEngine.TestTools;
 
 namespace EditorTests.Localization
 {
-    // Renamed class to match file
     public class TranslationServiceEditorTests
     {
         private string _jsonPath;
@@ -37,7 +36,7 @@ namespace EditorTests.Localization
         {
             return UniTask.ToCoroutine(async () =>
             {
-                var svc = new TranslationService();
+                TranslationService svc = new TranslationService();
 
                 try
                 {
@@ -60,7 +59,6 @@ namespace EditorTests.Localization
         {
             return UniTask.ToCoroutine(async () =>
             {
-                // Updated JSON to use the new 'localizedValues' format
                 string json = $@"
 {{
   ""ShowTranslationWarnings"": true,
@@ -83,7 +81,7 @@ namespace EditorTests.Localization
 }}";
                 TranslationTestHelper.WriteJson(_jsonPath, json);
 
-                var svc = new TranslationService();
+                TranslationService svc = new TranslationService();
 
                 try
                 {

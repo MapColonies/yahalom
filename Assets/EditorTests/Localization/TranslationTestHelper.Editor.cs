@@ -21,9 +21,9 @@ namespace EditorTests.Localization
         {
             yield return LocalizationSettings.InitializationOperation;
 
-            var available = LocalizationSettings.AvailableLocales;
+            ILocalesProvider available = LocalizationSettings.AvailableLocales;
 
-            var en = available.GetLocale("en");
+            Locale en = available.GetLocale("en");
 
             if (en == null)
             {
@@ -31,7 +31,7 @@ namespace EditorTests.Localization
                 available.AddLocale(en);
             }
 
-            var he = available.GetLocale("he-IL");
+            Locale he = available.GetLocale("he-IL");
 
             if (he == null)
             {

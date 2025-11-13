@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using com.mapcolonies.core.Localization.Constants; // Added
+using com.mapcolonies.core.Localization.Constants;
 using com.mapcolonies.core.Localization.Models;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -11,7 +11,7 @@ namespace EditorTests.SerializationTests.Localization
         [Test]
         public void Serialize_And_Deserialize_RoundTrip_Works()
         {
-            var cfg = new TranslationConfig
+            TranslationConfig cfg = new TranslationConfig
             {
                 ShowTranslationWarnings = true,
                 Words = new List<TranslationEntry>
@@ -28,8 +28,8 @@ namespace EditorTests.SerializationTests.Localization
                 }
             };
 
-            var json = JsonConvert.SerializeObject(cfg, Formatting.Indented);
-            var back = JsonConvert.DeserializeObject<TranslationConfig>(json);
+            string json = JsonConvert.SerializeObject(cfg, Formatting.Indented);
+            TranslationConfig back = JsonConvert.DeserializeObject<TranslationConfig>(json);
 
             Assert.NotNull(back);
             Assert.True(back.ShowTranslationWarnings);
@@ -42,8 +42,7 @@ namespace EditorTests.SerializationTests.Localization
         [Test]
         public void Deserialize_Works_With_CamelCase_Keys()
         {
-            // Updated JSON to use the new 'localizedValues' object
-            var json = $@"{{
+            string json = $@"{{
   ""showTranslationWarnings"": false,
   ""words"": [
     {{
@@ -55,7 +54,7 @@ namespace EditorTests.SerializationTests.Localization
     }}
   ]
 }}";
-            var cfg = JsonConvert.DeserializeObject<TranslationConfig>(json);
+            TranslationConfig cfg = JsonConvert.DeserializeObject<TranslationConfig>(json);
 
             Assert.NotNull(cfg);
             Assert.False(cfg.ShowTranslationWarnings);

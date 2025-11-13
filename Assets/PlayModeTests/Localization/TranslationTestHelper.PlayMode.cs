@@ -21,9 +21,9 @@ namespace PlayModeTests.Localization
         {
             yield return LocalizationSettings.InitializationOperation;
 
-            var available = LocalizationSettings.AvailableLocales;
+            ILocalesProvider available = LocalizationSettings.AvailableLocales;
 
-            var en = available.GetLocale(LocalizationConstants.EnglishLocaleIdentifier);
+            Locale en = available.GetLocale(LocalizationConstants.EnglishLocaleIdentifier);
 
             if (en == null)
             {
@@ -31,7 +31,7 @@ namespace PlayModeTests.Localization
                 available.AddLocale(en);
             }
 
-            var he = available.GetLocale(LocalizationConstants.HebrewLocaleIdentifier);
+            Locale he = available.GetLocale(LocalizationConstants.HebrewLocaleIdentifier);
 
             if (he == null)
             {
