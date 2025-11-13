@@ -27,7 +27,8 @@ namespace PlayModeTests.Localization
         public IEnumerator UnityTearDown()
         {
             LocalizationSettings.SelectedLocale = null;
-            if (File.Exists(_jsonPath)) File.Delete(_jsonPath);
+            TranslationTestHelper.TearDownTranslationsDir();
+
             yield return null;
         }
 
@@ -36,6 +37,7 @@ namespace PlayModeTests.Localization
         {
             return UniTask.ToCoroutine(async () =>
             {
+                TranslationTestHelper.SetTestFilePath(TranslationTestHelper.TestTranslationsDirectory);
                 TranslationService svc = new TranslationService();
 
                 try
@@ -82,6 +84,7 @@ namespace PlayModeTests.Localization
 }}";
                 TranslationTestHelper.WriteJson(_jsonPath, json);
 
+                TranslationTestHelper.SetTestFilePath(TranslationTestHelper.TestTranslationsDirectory);
                 TranslationService svc = new TranslationService();
 
                 try
