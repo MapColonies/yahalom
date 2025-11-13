@@ -23,7 +23,7 @@ namespace EditorTests.Localization
 
             ILocalesProvider available = LocalizationSettings.AvailableLocales;
 
-            Locale en = available.GetLocale("en");
+            Locale en = available.GetLocale(LocalizationConstants.EnglishLocaleIdentifier);
 
             if (en == null)
             {
@@ -31,11 +31,11 @@ namespace EditorTests.Localization
                 available.AddLocale(en);
             }
 
-            Locale he = available.GetLocale("he-IL");
+            Locale he = available.GetLocale(LocalizationConstants.HebrewLocaleIdentifier);
 
             if (he == null)
             {
-                he = Locale.CreateLocale("he-IL");
+                he = Locale.CreateLocale(LocalizationConstants.HebrewLocaleIdentifier);
                 available.AddLocale(he);
             }
 
