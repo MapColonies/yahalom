@@ -33,12 +33,16 @@ namespace com.mapcolonies.yahalom.EntryPoint
             {
                 new InitStep("PreInit", StepMode.Sequential, new IInitUnit[]
                 {
-                    new ActionUnit("Redux Store", 0.1f, InitPolicy.Fail,
-                        () =>
+                    new RegisterScopeUnit("Redux Store", 0.1f, scope, InitPolicy.Fail,
+                        builder =>
+                        {
+                            builder.Register<EpicMiddlewareCreator>(Lifetime.Singleton);
+                        },
+                        resolver =>
                         {
                             IReduxStoreManager reduxStore = scope.Container.Resolve<ReduxStoreManager>();
-                            return reduxStore.Create();
-                        })
+                            return reduxStore.Create(resolver);
+                        }),
                 }),
                 new InitStep("ServicesInit", StepMode.Sequential, new IInitUnit[]
                 {
