@@ -10,8 +10,8 @@ using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
 using UnityEngine.Networking;
-using UnityEngine.ResourceManagement.AsyncOperations;
 using Cysharp.Threading.Tasks;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace com.mapcolonies.core.Localization
 {
@@ -81,57 +81,50 @@ namespace com.mapcolonies.core.Localization
             Dictionary<string, TranslationEntry> hardCodedTranslations = new Dictionary<string, TranslationEntry>();
             await LocalizationSettings.InitializationOperation.Task;
 
-            Locale enLocale = LocalizationSettings.AvailableLocales.GetLocale(LocalizationConstants.EnglishLocaleIdentifier);
-            Locale heLocale = LocalizationSettings.AvailableLocales.GetLocale(LocalizationConstants.HebrewLocaleIdentifier);
-
-            if (enLocale == null && heLocale == null)
-            {
-                Debug.LogWarning($"TranslationService: No matching locales found for '{LocalizationConstants.EnglishLocaleIdentifier}' or '{LocalizationConstants.HebrewLocaleIdentifier}'.");
-                return null;
-            }
-
-            StringTable enTable = null;
-            StringTable heTable = null;
-
-            if (enLocale != null)
-            {
-                enTable = await LocalizationSettings.StringDatabase.GetTableAsync(TargetStringTableName, enLocale).Task;
-            }
-
-            if (heLocale != null)
-            {
-                heTable = await LocalizationSettings.StringDatabase.GetTableAsync(TargetStringTableName, heLocale).Task;
-            }
-
-            if (enTable == null && heTable == null)
-            {
-                Debug.LogWarning($"TranslationService: StringTable '{TargetStringTableName}' not found for EN or HE at runtime.");
-                return null;
-            }
-
             HashSet<string> allKeys = new HashSet<string>();
+            Dictionary<Locale, StringTable> loadedTables = new Dictionary<Locale, StringTable>();
 
-            if (enTable != null)
+            foreach (Locale locale in LocalizationSettings.AvailableLocales.Locales)
             {
-                foreach (StringTableEntry entry in enTable.Values) allKeys.Add(entry.Key);
+                AsyncOperationHandle<StringTable> tableHandle = LocalizationSettings.StringDatabase.GetTableAsync(TargetStringTableName, locale);
+                StringTable table = await tableHandle.Task;
+
+                if (table != null)
+                {
+                    loadedTables.Add(locale, table);
+
+                    foreach (StringTableEntry entry in table.Values)
+                    {
+                        allKeys.Add(entry.Key);
+                    }
+                }
             }
 
-            if (heTable != null)
+            if (loadedTables.Count == 0)
             {
-                foreach (StringTableEntry entry in heTable.Values) allKeys.Add(entry.Key);
+                Debug.LogWarning($"TranslationService: StringTable '{TargetStringTableName}' not found for ANY locale at runtime.");
+                return hardCodedTranslations;
             }
 
             foreach (string key in allKeys)
             {
-                string enVal = enTable?.GetEntry(key)?.LocalizedValue;
-                string heVal = heTable?.GetEntry(key)?.LocalizedValue;
+                TranslationEntry newEntry = new TranslationEntry { Key = key };
 
-                hardCodedTranslations[key] = new TranslationEntry
+                foreach (KeyValuePair<Locale, StringTable> tablePair in loadedTables)
                 {
-                    Key = key,
-                    English = enVal,
-                    Hebrew = heVal
-                };
+                    Locale locale = tablePair.Key;
+                    StringTable table = tablePair.Value;
+
+                    string localeCode = locale.Identifier.Code;
+                    string localizedValue = table.GetEntry(key)?.LocalizedValue;
+
+                    if (!string.IsNullOrEmpty(localizedValue))
+                    {
+                        newEntry.LocalizedValues[localeCode] = localizedValue;
+                    }
+                }
+
+                hardCodedTranslations[key] = newEntry;
             }
 
             return hardCodedTranslations;
@@ -222,34 +215,44 @@ namespace com.mapcolonies.core.Localization
         private async UniTask ApplyToUnityLocalization()
         {
             await LocalizationSettings.InitializationOperation.Task;
-            Locale hebrewLocale = LocalizationSettings.AvailableLocales.GetLocale(LocalizationConstants.HebrewLocaleIdentifier);
-            Locale englishLocale = LocalizationSettings.AvailableLocales.GetLocale(LocalizationConstants.EnglishLocaleIdentifier);
+            Dictionary<string, StringTable> loadedStringTables = new Dictionary<string, StringTable>();
 
-            if (hebrewLocale == null || englishLocale == null)
+            foreach (KeyValuePair<string, TranslationEntry> entryPair in _translations)
             {
-                Debug.LogError($"TranslationService: One or both locales not found. HE: '{LocalizationConstants.HebrewLocaleIdentifier}', EN: '{LocalizationConstants.EnglishLocaleIdentifier}'. Make sure they are in Localization Settings.");
-                return;
-            }
+                string key = entryPair.Key;
+                TranslationEntry entry = entryPair.Value;
 
-            AsyncOperationHandle<StringTable> hebrewTableOperation = LocalizationSettings.StringDatabase.GetTableAsync(TargetStringTableName, hebrewLocale);
-            AsyncOperationHandle<StringTable> englishTableOperation = LocalizationSettings.StringDatabase.GetTableAsync(TargetStringTableName, englishLocale);
+                foreach (KeyValuePair<string, string> localizedPair in entry.LocalizedValues)
+                {
+                    string localeCode = localizedPair.Key;
+                    string localizedValue = localizedPair.Value;
 
-            await hebrewTableOperation.Task;
-            await englishTableOperation.Task;
+                    if (string.IsNullOrEmpty(localizedValue)) continue;
 
-            if (hebrewTableOperation.Status != AsyncOperationStatus.Succeeded || englishTableOperation.Status != AsyncOperationStatus.Succeeded)
-            {
-                Debug.LogError($"TranslationService: Could not load String Tables. HE Error: {hebrewTableOperation.OperationException} | EN Error: {englishTableOperation.OperationException}");
-                return;
-            }
+                    if (!loadedStringTables.TryGetValue(localeCode, out StringTable targetTable))
+                    {
+                        Locale locale = LocalizationSettings.AvailableLocales.GetLocale(localeCode);
 
-            StringTable hebrewStringTable = hebrewTableOperation.Result;
-            StringTable englishStringTable = englishTableOperation.Result;
+                        if (locale == null)
+                        {
+                            Debug.LogWarning($"TranslationService: Cannot apply translation for key '{key}'. Locale '{localeCode}' not found in Localization Settings.");
+                            continue;
+                        }
 
-            foreach (KeyValuePair<string, TranslationEntry> entry in _translations)
-            {
-                hebrewStringTable.AddEntry(entry.Key, entry.Value.Hebrew);
-                englishStringTable.AddEntry(entry.Key, entry.Value.English);
+                        AsyncOperationHandle<StringTable> tableHandle = LocalizationSettings.StringDatabase.GetTableAsync(TargetStringTableName, locale);
+                        targetTable = await tableHandle.Task;
+
+                        if (targetTable == null)
+                        {
+                            Debug.LogError($"TranslationService: Could not load String Table '{TargetStringTableName}' for locale '{localeCode}'.");
+                            continue;
+                        }
+
+                        loadedStringTables[localeCode] = targetTable;
+                    }
+
+                    targetTable.AddEntry(key, localizedValue);
+                }
             }
         }
 
@@ -258,7 +261,7 @@ namespace com.mapcolonies.core.Localization
             if (!_isInitialized)
             {
                 Debug.LogWarning($"TranslationService: GetTranslationEntry called before service is initialized.");
-                return new TranslationEntry { Key = key, English = key, Hebrew = key };
+                return null;
             }
 
             if (_translations.TryGetValue(key, out TranslationEntry entry))
@@ -267,23 +270,6 @@ namespace com.mapcolonies.core.Localization
             }
 
             return null;
-        }
-
-        private static bool IsLocale(string targetCode)
-        {
-            Locale selected = LocalizationSettings.SelectedLocale;
-
-            if (selected == null)
-            {
-                Debug.LogWarning("IsLocale: LocalizationSettings.SelectedLocale is null.");
-                return false;
-            }
-
-            string code = selected.Identifier.Code;
-            if (string.IsNullOrEmpty(code) || string.IsNullOrEmpty(targetCode))
-                return false;
-
-            return code == targetCode;
         }
 
         public string Translate(string key)
@@ -302,16 +288,45 @@ namespace com.mapcolonies.core.Localization
                 return key;
             }
 
-            if (IsLocale(LocalizationConstants.HebrewLocaleIdentifier))
+            Locale selectedLocale = LocalizationSettings.SelectedLocale;
+
+            if (selectedLocale == null)
             {
-                if (!string.IsNullOrEmpty(entry.Hebrew)) return entry.Hebrew;
+                Debug.LogWarning("TranslationService.Translate: SelectedLocale is null.");
                 return key;
             }
 
-            if (IsLocale(LocalizationConstants.EnglishLocaleIdentifier))
+            string currentLocaleCode = selectedLocale.Identifier.Code;
+
+            if (entry.LocalizedValues.TryGetValue(currentLocaleCode, out string translatedValue))
             {
-                if (!string.IsNullOrEmpty(entry.English)) return entry.English;
-                return key;
+                if (!string.IsNullOrEmpty(translatedValue))
+                {
+                    return translatedValue;
+                }
+            }
+
+            if (entry.LocalizedValues.TryGetValue(LocalizationConstants.EnglishLocaleIdentifier, out string englishValue))
+            {
+                if (!string.IsNullOrEmpty(englishValue))
+                {
+                    return englishValue;
+                }
+            }
+
+            if (entry.LocalizedValues.Count > 0)
+            {
+                string anyValue = entry.LocalizedValues.Values.FirstOrDefault(v => !string.IsNullOrEmpty(v));
+
+                if (anyValue != null)
+                {
+                    return anyValue;
+                }
+            }
+
+            if (_showTranslationWarnings)
+            {
+                Debug.LogWarning($"TranslationService: Translation found for key '{key}', but no value exists for current locale '{currentLocaleCode}' or fallback 'en'.");
             }
 
             return key;

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace com.mapcolonies.core.Localization.Models
 {
@@ -12,8 +13,8 @@ namespace com.mapcolonies.core.Localization.Models
     [System.Serializable]
     public class TranslationEntry
     {
-        public string Key;
-        public string English;
-        public string Hebrew;
+        [JsonProperty("key")] public string Key;
+
+        [JsonProperty("localizedValues")] public Dictionary<string, string> LocalizedValues = new Dictionary<string, string>();
     }
 }

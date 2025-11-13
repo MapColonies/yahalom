@@ -3,53 +3,73 @@
     "words": [
         {
             "key": "yahalom.example",
-            "english": "example",
-            "hebrew": "דוגמה"
+            "localizedValues": {
+                "en": "example",
+                "he-IL": "דוגמה"
+            }
         },
         {
             "key": "yahalom.home",
-            "english": "home",
-            "hebrew": "בית"
+            "localizedValues": {
+                "en": "home",
+                "he-IL": "בית"
+            }
         },
         {
             "key": "yahalom.hello",
-            "english": "hello",
-            "hebrew": "שלום"
+            "localizedValues": {
+                "en": "hello",
+                "he-IL": "שלום"
+            }
         },
         {
             "key": "yahalom.welcome",
-            "english": "welcome",
-            "hebrew": "ברוך הבא"
+            "localizedValues": {
+                "en": "welcome",
+                "he-IL": "ברוך הבא"
+            }
         },
         {
             "key": "yahalom.exit",
-            "english": "exit",
-            "hebrew": "יציאה"
+            "localizedValues": {
+                "en": "exit",
+                "he-IL": "יציאה"
+            }
         },
         {
             "key": "yahalom.settings",
-            "english": "settings",
-            "hebrew": "הגדרות"
+            "localizedValues": {
+                "en": "settings",
+                "he-IL": "הגדרות"
+            }
         },
         {
             "key": "yahalom.language",
-            "english": "language",
-            "hebrew": "שפה"
+            "localizedValues": {
+                "en": "language",
+                "he-IL": "שפה"
+            }
         },
         {
             "key": "yahalom.confirm",
-            "english": "confirm",
-            "hebrew": "אישור"
+            "localizedValues": {
+                "en": "confirm",
+                "he-IL": "אישור"
+            }
         },
         {
             "key": "yahalom.cancel",
-            "english": "cancel",
-            "hebrew": "ביטול"
+            "localizedValues": {
+                "en": "cancel",
+                "he-IL": "ביטול"
+            }
         },
         {
             "key": "yahalom.error",
-            "english": "error",
-            "hebrew": "שגיאה"
+            "localizedValues": {
+                "en": "error",
+                "he-IL": "שגיאה"
+            }
         }
     ]
 }

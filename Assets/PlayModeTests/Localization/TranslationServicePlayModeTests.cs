@@ -60,14 +60,27 @@ namespace PlayModeTests.Localization
         {
             return UniTask.ToCoroutine(async () =>
             {
-                string json = @"
-{
+                // Updated JSON to use the new 'localizedValues' format
+                string json = $@"
+{{
   ""ShowTranslationWarnings"": true,
   ""Words"": [
-    { ""Key"": ""start"", ""English"": ""Start"", ""Hebrew"": ""התחלה"" },
-    { ""Key"": ""exit"",  ""English"": ""Exit"",  ""Hebrew"": ""יציאה"" }
+    {{
+      ""Key"": ""start"",
+      ""localizedValues"": {{
+        ""{LocalizationConstants.EnglishLocaleIdentifier}"": ""Start"",
+        ""{LocalizationConstants.HebrewLocaleIdentifier}"": ""התחלה""
+      }}
+    }},
+    {{
+      ""Key"": ""exit"",
+      ""localizedValues"": {{
+        ""{LocalizationConstants.EnglishLocaleIdentifier}"": ""Exit"",
+        ""{LocalizationConstants.HebrewLocaleIdentifier}"": ""יציאה""
+      }}
+    }}
   ]
-}";
+}}";
                 TranslationTestHelper.WriteJson(_jsonPath, json);
 
                 var svc = new TranslationService();

@@ -9,7 +9,8 @@ using UnityEngine.TestTools;
 
 namespace EditorTests.Localization
 {
-    public class TranslationServicePlayModeTests
+    // Renamed class to match file
+    public class TranslationServiceEditorTests
     {
         private string _jsonPath;
 
@@ -59,14 +60,27 @@ namespace EditorTests.Localization
         {
             return UniTask.ToCoroutine(async () =>
             {
-                string json = @"
-{
+                // Updated JSON to use the new 'localizedValues' format
+                string json = $@"
+{{
   ""ShowTranslationWarnings"": true,
   ""Words"": [
-    { ""Key"": ""start"", ""English"": ""Start"", ""Hebrew"": ""התחלה"" },
-    { ""Key"": ""exit"",  ""English"": ""Exit"",  ""Hebrew"": ""יציאה"" }
+    {{
+      ""Key"": ""start"",
+      ""localizedValues"": {{
+        ""{LocalizationConstants.EnglishLocaleIdentifier}"": ""Start"",
+        ""{LocalizationConstants.HebrewLocaleIdentifier}"": ""התחלה""
+      }}
+    }},
+    {{
+      ""Key"": ""exit"",
+      ""localizedValues"": {{
+        ""{LocalizationConstants.EnglishLocaleIdentifier}"": ""Exit"",
+        ""{LocalizationConstants.HebrewLocaleIdentifier}"": ""יציאה""
+      }}
+    }}
   ]
-}";
+}}";
                 TranslationTestHelper.WriteJson(_jsonPath, json);
 
                 var svc = new TranslationService();

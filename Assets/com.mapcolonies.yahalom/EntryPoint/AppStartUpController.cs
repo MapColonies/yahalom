@@ -13,6 +13,8 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
+using com.mapcolonies.core.Localization;
+using com.mapcolonies.core.Localization.Constants;
 
 namespace com.mapcolonies.yahalom.EntryPoint
 {
@@ -57,6 +59,13 @@ namespace com.mapcolonies.yahalom.EntryPoint
                             AnalyticsManager analyticsManager = scope.Container.Resolve<AnalyticsManager>();
                             analyticsManager.Initialize();
                             return default;
+                        }),
+                    new ActionUnit("Translation Service", 0.1f, InitPolicy.Fail,
+                        () =>
+                        {
+                            var translationService = scope.Container.Resolve<ITranslationService>();
+                            //TODO: Get start-up language from config
+                            return translationService.InitializeService(LocalizationConstants.HebrewLocaleIdentifier);
                         }),
                     UsageAnalyticsServices(scope),
                 }),
