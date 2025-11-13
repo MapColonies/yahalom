@@ -1,0 +1,44 @@
+using System.Runtime.Serialization;
+
+namespace com.mapcolonies.core.Services.Analytics.Model
+{
+    public class UserDetailsData : IAnalyticLogParameter
+    {
+        public string UserName
+        {
+            get;
+            private set;
+        }
+
+        public string UserDomainName
+        {
+            get;
+            private set;
+        }
+
+        public string MachineName
+        {
+            get;
+            private set;
+        }
+
+        private UserDetailsData(string userName, string userDomainName, string machineName)
+        {
+            UserName = userName;
+            UserDomainName = userDomainName;
+            MachineName = machineName;
+        }
+
+        public static UserDetailsData Create(string userName, string userDomainName, string machineName)
+        {
+            return new UserDetailsData(userName, userDomainName, machineName);
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue(nameof(UserName), UserName);
+            info.AddValue(nameof(UserDomainName), UserDomainName);
+            info.AddValue(nameof(MachineName), MachineName);
+        }
+    }
+}
