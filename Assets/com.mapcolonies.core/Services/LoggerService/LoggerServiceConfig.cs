@@ -5,7 +5,7 @@ namespace com.mapcolonies.core.Services.LoggerService
 {
     public class LoggerServiceConfig
     {
-        private const string JsonFileName = "LoggerConfig.json";
+        private const string JsonFileName = "Logger/LoggerConfig.json";
 
         private Config _config;
 
