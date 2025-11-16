@@ -4,7 +4,9 @@
   "references": [
     "VContainer",
     "UniTask",
-    "Unity.AppUI.Redux"
+    "Unity.AppUI.Redux",
+    "Unity.Localization",
+    "Unity.ResourceManager"
   ],
   "includePlatforms": [
     "Editor",

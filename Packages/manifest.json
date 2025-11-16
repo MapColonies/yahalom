@@ -7,6 +7,7 @@
     "com.mapcolonies.yahalom-ui": "https://github.com/MapColonies/yahalom-ui-components.git?path=/Assets/YahalomUIPackage",
     "com.unity.dt.app-ui": "2.1.1",
     "com.unity.ide.rider": "3.0.38",
+    "com.unity.localization": "1.5.8",
     "com.unity.multiplayer.center": "1.0.0",
     "com.unity.nuget.newtonsoft-json": "3.2.1",
     "jp.hadashikick.vcontainer": "https://github.com/hadashiA/VContainer.git?path=VContainer/Assets/VContainer#1.17.0",

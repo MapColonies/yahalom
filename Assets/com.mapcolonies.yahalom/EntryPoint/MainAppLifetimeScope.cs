@@ -11,6 +11,7 @@ using com.mapcolonies.yahalom.ReduxStore;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
+using com.mapcolonies.core.Localization;
 
 namespace com.mapcolonies.yahalom.EntryPoint
 {
@@ -39,7 +40,9 @@ namespace com.mapcolonies.yahalom.EntryPoint
             builder.Register<ConfigurationManager>(Lifetime.Singleton);
             builder.Register<WorkspacesManager>(Lifetime.Singleton);
             builder.Register<ISceneController, SceneController>(Lifetime.Singleton);
+            builder.Register<TranslationService>(Lifetime.Singleton).As<ITranslationService>().As<IDisposable>();
             builder.Register<AnalyticsManager>(Lifetime.Singleton).AsSelf().As<IAnalyticsManager>().As<IDisposable>();
+
 
             #endregion
         }
