@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using UnityEngine;
 
-namespace com.mapcolonies.core.Services.LoggerService.Extentions
+namespace com.mapcolonies.core.Services.LoggerService.Extensions
 {
     public static class ExceptionExt
     {

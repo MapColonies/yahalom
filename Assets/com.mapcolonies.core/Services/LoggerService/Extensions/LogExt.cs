@@ -1,6 +1,6 @@
 using log4net;
 
-namespace com.mapcolonies.core.Services.LoggerService.Extentions
+namespace com.mapcolonies.core.Services.LoggerService.Extensions
 {
     public static class LogExt
     {

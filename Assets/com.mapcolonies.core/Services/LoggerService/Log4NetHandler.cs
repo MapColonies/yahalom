@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using com.mapcolonies.core.Services.LoggerService.Extentions;
+using com.mapcolonies.core.Services.LoggerService.Extensions;
 using log4net;
 using UnityEngine;
 using Object = UnityEngine.Object;

@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 using com.mapcolonies.core.Services.LoggerService.CustomAppenders;
-using com.mapcolonies.core.Services.LoggerService.Extentions;
+using com.mapcolonies.core.Services.LoggerService.Extensions;
 using log4net;
 using log4net.Core;
 using log4net.Util;
