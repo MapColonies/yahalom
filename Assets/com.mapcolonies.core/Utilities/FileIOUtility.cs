@@ -7,7 +7,7 @@ using UnityEngine.Networking;
 
 namespace com.mapcolonies.core.Utilities
 {
-    public class FileUtility
+    public class FileIOUtility
     {
         public static string GetFullPath(string folderName, string fileName = null)
         {
@@ -23,7 +23,6 @@ namespace com.mapcolonies.core.Utilities
 
                 if (string.IsNullOrEmpty(fileName))
                 {
-                    Debug.Log($"Directory ready: {directoryPath}");
                     return directoryPath;
                 }
 
@@ -49,64 +48,27 @@ namespace com.mapcolonies.core.Utilities
             await File.AppendAllTextAsync(filePath, line + Environment.NewLine);
         }
 
-        public static async UniTask<T> LoadStreamingAssetsJsonAsync<T>(string relativePath)
-        {
-            string path = Path.Combine(Application.streamingAssetsPath, relativePath);
-            return await LoadLocalJsonAsync<T>(path);
-        }
-
-        public static async UniTask<T> LoadPersistentJsonAsync<T>(string relativePath)
-        {
-            string path = Path.Combine(Application.persistentDataPath, relativePath);
-            return await LoadLocalJsonAsync<T>(path);
-        }
-
-        public static async UniTask<T> LoadLocalJsonAsync<T>(string path)
+        public static async UniTask<string> ReadTextFileAsync(string path)
         {
             if (!File.Exists(path))
                 throw new FileNotFoundException($"File not found: {path}");
 
             using StreamReader reader = new StreamReader(path);
-            string json = await reader.ReadToEndAsync();
-            return JsonConvert.DeserializeObject<T>(json);
+            return await reader.ReadToEndAsync();
         }
 
-        public static async UniTask<T> LoadRemoteJsonAsync<T>(string url)
-        {
-            if (string.IsNullOrEmpty(url))
-                throw new ArgumentException("URL cannot be null or empty.", nameof(url));
-
-            using UnityWebRequest request = UnityWebRequest.Get(url);
-            await request.SendWebRequest();
-
-            if (request.result != UnityWebRequest.Result.Success)
-                throw new IOException($"Failed to load remote JSON from {url}: {request.error}");
-
-            return JsonConvert.DeserializeObject<T>(request.downloadHandler.text);
-        }
-
-        public static async UniTask SavePersistentJsonAsync<T>(string relativePath, T data)
-        {
-            string path = Path.Combine(Application.persistentDataPath, relativePath);
-            await SaveLocalJsonAsync(path, data);
-        }
-
-        public static async UniTask SaveLocalJsonAsync<T>(string path, T data)
+        public static async UniTask WriteTextFileAsync(string path, string text)
         {
             string? directory = Path.GetDirectoryName(path);
             if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-            {
                 Directory.CreateDirectory(directory);
-            }
 
-            string json = JsonConvert.SerializeObject(data, Formatting.Indented);
             await using StreamWriter writer = new StreamWriter(path, false);
-            await writer.WriteAsync(json);
+            await writer.WriteAsync(text);
         }
 
-        public static async UniTask<bool> DoesPersistentJsonExistAsync(string relativePath)
+        public static async UniTask<bool> FileExistsAsync(string path)
         {
-            string path = Path.Combine(Application.persistentDataPath, relativePath);
             return await UniTask.RunOnThreadPool(() => File.Exists(path));
         }
     }

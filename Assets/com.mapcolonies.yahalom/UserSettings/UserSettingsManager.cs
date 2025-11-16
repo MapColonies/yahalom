@@ -39,15 +39,15 @@ namespace com.mapcolonies.yahalom.UserSettings
         public async UniTask Load()
         {
             UserSettingsState userSettingsState;
-            _exists = await FileUtility.DoesPersistentJsonExistAsync(_userSettingsPath);
+            _exists = await JsonUtilityEx.DoesPersistentJsonExistAsync(_userSettingsPath);
             if (_exists)
             {
-                userSettingsState = await FileUtility.LoadPersistentJsonAsync<UserSettingsState>(_userSettingsPath);
+                userSettingsState = await JsonUtilityEx.LoadPersistentJsonAsync<UserSettingsState>(_userSettingsPath);
             }
             else
             {
                 userSettingsState = new UserSettingsState();
-                await FileUtility.SavePersistentJsonAsync(_userSettingsPath, userSettingsState);
+                await JsonUtilityEx.SavePersistentJsonAsync(_userSettingsPath, userSettingsState);
             }
 
             _reduxStoreManager.Store.Dispatch(UserSettingsActions.LoadUserSettingsAction(userSettingsState));

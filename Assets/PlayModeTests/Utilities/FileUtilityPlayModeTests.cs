@@ -20,7 +20,7 @@ namespace PlayModeTests.Utilities
         public IEnumerator SetupFilePath_Creates_Directory_And_FilePath()
         {
             var dirName = "FileUtility_Setup";
-            var path = FileUtility.GetFullPath(dirName, "minimal.log");
+            var path = FileIOUtility.GetFullPath(dirName, "minimal.log");
 
             Assert.IsNotNull(path);
             Assert.IsTrue(Directory.Exists(Path.Combine(Application.persistentDataPath, dirName)), "Directory should be created");
@@ -31,10 +31,10 @@ namespace PlayModeTests.Utilities
         [UnityTest]
         public IEnumerator Append_Writes_Single_Line()
         {
-            var dir = FileUtility.GetFullPath("FileUtility_Append");
+            var dir = FileIOUtility.GetFullPath("FileUtility_Append");
             var file = Path.Combine(dir, $"session-{Guid.NewGuid():N}.log");
 
-            yield return Await(FileUtility.AppendLineToFileAsync("hello", file));
+            yield return Await(FileIOUtility.AppendLineToFileAsync("hello", file));
 
             Assert.IsTrue(File.Exists(file), "File should be created");
             StringAssert.Contains("hello", File.ReadAllText(file));
@@ -53,7 +53,7 @@ namespace PlayModeTests.Utilities
             }
 
             string nullPath = null;
-            yield return Await(FileUtility.AppendLineToFileAsync("ignored", nullPath));
+            yield return Await(FileIOUtility.AppendLineToFileAsync("ignored", nullPath));
 
             Assert.IsFalse(Directory.Exists(dir), "Directory should not be created when path is null");
             yield return null;

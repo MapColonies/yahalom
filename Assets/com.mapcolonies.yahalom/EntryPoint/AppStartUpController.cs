@@ -13,7 +13,6 @@ using com.mapcolonies.yahalom.ReduxStore;
 using com.mapcolonies.yahalom.UserSettings;
 using com.mapcolonies.yahalom.Workspaces;
 using Cysharp.Threading.Tasks;
-using Unity.AppUI.Redux;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;

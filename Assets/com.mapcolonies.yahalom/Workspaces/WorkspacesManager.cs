@@ -15,7 +15,7 @@ namespace com.mapcolonies.yahalom.Workspaces
 
         public async UniTask Load()
         {
-            WorkspacesState workspacesState = await FileUtility.LoadPersistentJsonAsync<WorkspacesState>("workspaces.json");
+            WorkspacesState workspacesState = await JsonUtilityEx.LoadPersistentJsonAsync<WorkspacesState>("workspaces.json");
             _reduxStoreManager.Store.Dispatch(WorkspacesActions.LoadWorkspacesAction(workspacesState));
         }
     }

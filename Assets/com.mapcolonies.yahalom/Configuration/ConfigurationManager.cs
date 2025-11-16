@@ -34,11 +34,11 @@ namespace com.mapcolonies.yahalom.Configuration
 
             if (offline)
             {
-                configurationState = await FileUtility.LoadStreamingAssetsJsonAsync<ConfigurationState>(offlineConfigurationPath);
+                configurationState = await JsonUtilityEx.LoadStreamingAssetsJsonAsync<ConfigurationState>(offlineConfigurationPath);
             }
             else
             {
-                configurationState = await FileUtility.LoadRemoteJsonAsync<ConfigurationState>(remoteConfigurationUrl);
+                configurationState = await JsonUtilityEx.LoadRemoteJsonAsync<ConfigurationState>(remoteConfigurationUrl);
             }
 
             _reduxStoreManager.Store.Dispatch(ConfigurationActions.LoadConfigurationAction(configurationState));
