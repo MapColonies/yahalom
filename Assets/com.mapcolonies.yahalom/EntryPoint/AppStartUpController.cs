@@ -7,10 +7,14 @@ using com.mapcolonies.core.Services.Analytics.Managers;
 using com.mapcolonies.yahalom.InitPipeline;
 using com.mapcolonies.yahalom.InitPipeline.InitSteps;
 using com.mapcolonies.yahalom.InitPipeline.InitUnits;
+using com.mapcolonies.yahalom.SceneManagement;
+using com.mapcolonies.yahalom.SceneManagement.Enums;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
+using com.mapcolonies.core.Localization;
+using com.mapcolonies.core.Localization.Constants;
 
 namespace com.mapcolonies.yahalom.EntryPoint
 {
@@ -56,6 +60,13 @@ namespace com.mapcolonies.yahalom.EntryPoint
                             analyticsManager.Initialize();
                             return default;
                         }),
+                    new ActionUnit("Translation Service", 0.1f, InitPolicy.Fail,
+                        () =>
+                        {
+                            var translationService = scope.Container.Resolve<ITranslationService>();
+                            //TODO: Get start-up language from config
+                            return translationService.InitializeService(LocalizationConstants.HebrewLocaleIdentifier);
+                        }),
                     UsageAnalyticsServices(scope),
                 }),
                 new InitStep("FeaturesInit", StepMode.Sequential, new IInitUnit[]
@@ -64,6 +75,15 @@ namespace com.mapcolonies.yahalom.EntryPoint
                         () =>
                         {
                             return Cysharp.Threading.Tasks.UniTask.Delay(1000);
+                        })
+                }),
+                new InitStep("SwitchScene", StepMode.Sequential, new IInitUnit[]
+                {
+                    new ActionUnit("Load Target Scene", 0.10f, InitPolicy.Fail,
+                        () =>
+                        {
+                            var sceneController = scope.Container.Resolve<ISceneController>();
+                            return sceneController.SwitchSceneAsync(Scenes.PlanningScene);
                         })
                 })
             };

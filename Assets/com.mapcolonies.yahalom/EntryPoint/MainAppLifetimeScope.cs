@@ -2,9 +2,11 @@ using System;
 using com.mapcolonies.core.Services.Analytics.Managers;
 using com.mapcolonies.yahalom.InitPipeline;
 using com.mapcolonies.yahalom.Preloader;
+using com.mapcolonies.yahalom.SceneManagement;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
+using com.mapcolonies.core.Localization;
 
 namespace com.mapcolonies.yahalom.EntryPoint
 {
@@ -16,8 +18,13 @@ namespace com.mapcolonies.yahalom.EntryPoint
 
             builder.Register<PreloaderViewModel>(Lifetime.Scoped);
             builder.Register<InitializationPipeline>(Lifetime.Scoped);
+            builder.Register<ISceneController, SceneController>(Lifetime.Singleton);
             builder.Register<AppStartUpController>(Lifetime.Singleton).As<IAsyncStartable>();
             builder.Register<AnalyticsManager>(Lifetime.Singleton).AsSelf().As<IAnalyticsManager>().As<IDisposable>();
+            builder.Register<TranslationService>(Lifetime.Singleton).As<ITranslationService>().As<IDisposable>();
+
+            //TODO: This is a Demo script, will be deleted in the near future.
+            builder.RegisterComponentInHierarchy<DemoController>();
 
             Debug.Log("End Configure Startup Registrations");
         }

@@ -9,8 +9,16 @@ EditorBuildSettings:
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
-    path: Assets/Scenes/CesiumTemplate.unity
+    path: Assets/Scenes/MainAppScene.unity
+    guid: 04df7067b0bd47a4b958ca8e1cd633b5
+  - enabled: 1
+    path: Assets/Scenes/PlanningScene.unity
     guid: 272d85bc35e7cc74c8ff2798aebf4fcb
+  - enabled: 1
+    path: Assets/Scenes/SimulationScene.unity
+    guid: f95f9abe249722d4b97df9def099401b
   m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: a6f46f20b09442f44950a6a03205054b, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    com.unity.localization.settings: {fileID: 11400000, guid: fd57eb9adbedbc14dbe0c49c93cf2c41, type: 2}
   m_UseUCBPForAssetBundles: 0
