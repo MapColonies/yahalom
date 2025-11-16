@@ -10,7 +10,7 @@ namespace com.mapcolonies.yahalom.DataManagement.Workspaces
         public static void AddActions(SliceReducerSwitchBuilder<WorkspacesState> builder)
         {
             builder.AddCase(LoadWorkspacesActionCreator(), WorkspacesReducer.Reduce);
-            builder.AddCase(LoadWorkspacesActionCreator(), WorkspacesReducer.Reduce);
+            builder.AddCase(AddWorkspaceActionCreator(), WorkspacesReducer.Reduce);
         }
 
         #region Actions
