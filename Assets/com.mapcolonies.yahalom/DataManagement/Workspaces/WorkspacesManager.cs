@@ -46,5 +46,7 @@ namespace com.mapcolonies.yahalom.DataManagement.Workspaces
 
             ReduxStoreManager.Store.Dispatch(WorkspacesActions.LoadWorkspacesAction(workspacesState));
         }
+
+
     }
 }
