@@ -7,5 +7,6 @@ namespace com.mapcolonies.core.Services.LoggerService
         public int StackTraceRowLimit;
         public bool Enabled;
         public bool ConsoleEnabled;
+        public string MinLogLevel;
     }
 }

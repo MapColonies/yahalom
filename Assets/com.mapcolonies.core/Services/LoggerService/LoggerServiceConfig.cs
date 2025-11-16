@@ -27,6 +27,12 @@ namespace com.mapcolonies.core.Services.LoggerService
             private set;
         }
 
+        public string MinLogLevel
+        {
+            get;
+            private set;
+        }
+
         public void Init()
         {
             string filePath = Path.Combine(Application.streamingAssetsPath, JsonFileName);
@@ -51,6 +57,7 @@ namespace com.mapcolonies.core.Services.LoggerService
                 Log4NetConfigXml = _config.Log4NetConfigXml;
                 ServiceEnabled = _config.Enabled;
                 EnableConsole = _config.ConsoleEnabled;
+                MinLogLevel = _config.MinLogLevel;
             }
             catch (System.Exception ex)
             {
