@@ -10,7 +10,6 @@ namespace com.mapcolonies.yahalom.DataManagement.Workspaces
         public static void AddActions(SliceReducerSwitchBuilder<WorkspacesState> builder)
         {
             builder.AddCase(LoadWorkspacesActionCreator(), WorkspacesReducer.Reduce);
-            builder.AddCase(AddWorkspaceActionCreator(), WorkspacesReducer.Reduce);
         }
 
         #region Actions
@@ -20,9 +19,9 @@ namespace com.mapcolonies.yahalom.DataManagement.Workspaces
             return new ActionCreator<WorkspacesState>(LoadAction).Invoke(payload);
         }
 
-        public static IAction<WorkspacesState> AddWorkspaceAction(WorkspacesState payload)
+        public static IAction<string> AddWorkspaceAction(string workspaceName)
         {
-            return new ActionCreator<WorkspacesState>(AddWorkspace).Invoke(payload);
+            return new ActionCreator<string>(AddWorkspace).Invoke(workspaceName);
         }
 
         #endregion
@@ -34,9 +33,9 @@ namespace com.mapcolonies.yahalom.DataManagement.Workspaces
             return new ActionCreator<WorkspacesState>(LoadAction);
         }
 
-        public static IActionCreator<WorkspacesState> AddWorkspaceActionCreator()
+        public static IActionCreator<string> AddWorkspaceActionCreator()
         {
-            return new ActionCreator<WorkspacesState>(AddWorkspace);
+            return new ActionCreator<string>(AddWorkspace);
         }
         #endregion
     }

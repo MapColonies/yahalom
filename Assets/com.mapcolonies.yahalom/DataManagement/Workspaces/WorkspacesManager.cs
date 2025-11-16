@@ -5,6 +5,7 @@ using com.mapcolonies.yahalom.ReduxStore;
 using Cysharp.Threading.Tasks;
 using R3;
 using Unity.AppUI.Redux;
+using UnityEngine;
 
 namespace com.mapcolonies.yahalom.DataManagement.Workspaces
 {
@@ -14,7 +15,7 @@ namespace com.mapcolonies.yahalom.DataManagement.Workspaces
         private bool _exists;
         private string _workspacesFullPath;
 
-        public WorkspacesManager(IReduxStoreManager reduxStoreManager) : base(reduxStoreManager)
+        public WorkspacesManager(IReduxStoreManager reduxStoreManager, ActionsMiddleware actionsMiddleware) : base(reduxStoreManager)
         {
             ReduxStoreManager.Store.Select<WorkspacesState>(WorkspacesReducer.SliceName)
                 .DistinctUntilChanged()
@@ -24,6 +25,14 @@ namespace com.mapcolonies.yahalom.DataManagement.Workspaces
                 {
                     await JsonUtilityEx.SavePersistentJsonAsync(_workspacesFullPath, state);
                 })
+                .AddTo(Disposables);
+
+            actionsMiddleware.Actions.OfActionType(WorkspacesActions.AddWorkspace)
+                .Do(_ =>
+                {
+                    Debug.Log("Start adding workspaces");
+                })
+                .Subscribe()
                 .AddTo(Disposables);
         }
 
@@ -45,6 +54,7 @@ namespace com.mapcolonies.yahalom.DataManagement.Workspaces
             }
 
             ReduxStoreManager.Store.Dispatch(WorkspacesActions.LoadWorkspacesAction(workspacesState));
+            ReduxStoreManager.Store.Dispatch(WorkspacesActions.AddWorkspaceAction("MySuperWorkspace"));
         }
 
 

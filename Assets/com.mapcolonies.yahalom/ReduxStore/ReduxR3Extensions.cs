@@ -80,5 +80,10 @@ namespace com.mapcolonies.yahalom.ReduxStore
                 .Debounce(dueTime)
                 .Subscribe(onNext);
         }
+
+        public static Observable<IAction> OfActionType(this Subject<IAction> actions,string type)
+        {
+            return actions.Where(a => a.type == type);
+        }
     }
 }

@@ -9,6 +9,13 @@ namespace com.mapcolonies.yahalom.ReduxStore
 {
     public class ReduxStoreManager : IReduxStoreManager
     {
+        private readonly ActionsMiddleware _actionsMiddleware;
+
+        public ReduxStoreManager(ActionsMiddleware actionsMiddleware)
+        {
+            _actionsMiddleware = actionsMiddleware;
+        }
+
         public IStore<PartitionedState> Store
         {
             get;
@@ -23,12 +30,14 @@ namespace com.mapcolonies.yahalom.ReduxStore
             Slice<WorkspacesState, PartitionedState> workspacesSlice = StoreFactory.CreateSlice(WorkspacesReducer.SliceName, new WorkspacesState(), WorkspacesActions.AddActions);
 
             Store = StoreFactory.CreateStore(new ISlice<PartitionedState>[]
-            {
-                configurationSlice,
-                appSettingsSlice,
-                userSettingsSlice,
-                workspacesSlice
-            });
+                {
+                    configurationSlice,
+                    appSettingsSlice,
+                    userSettingsSlice,
+                    workspacesSlice
+                },
+                StoreFactory.ApplyMiddleware(_actionsMiddleware.Create()));
+
             return UniTask.CompletedTask;
         }
     }

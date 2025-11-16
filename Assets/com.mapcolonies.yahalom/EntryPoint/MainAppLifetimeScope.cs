@@ -34,6 +34,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
             Debug.Log("End Configure Startup Registrations");
             #region Services
 
+            builder.Register<ActionsMiddleware>(Lifetime.Singleton);
             builder.Register<ReduxStoreManager>(Lifetime.Singleton).AsSelf().As<IReduxStoreManager>();
             builder.Register<AppSettingsManager>(Lifetime.Singleton);
             builder.Register<UserSettingsManager>(Lifetime.Singleton);
