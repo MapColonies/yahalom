@@ -1,34 +1,29 @@
 using com.mapcolonies.core.Utilities;
-using com.mapcolonies.yahalom.AppSettings;
+using com.mapcolonies.yahalom.DataManagement.AppSettings;
+using com.mapcolonies.yahalom.DataManagement.UserSettings;
 using com.mapcolonies.yahalom.ReduxStore;
-using com.mapcolonies.yahalom.UserSettings;
 using Cysharp.Threading.Tasks;
 using Unity.AppUI.Redux;
 
-namespace com.mapcolonies.yahalom.Configuration
+namespace com.mapcolonies.yahalom.DataManagement.Configuration
 {
-    public class ConfigurationManager
+    public class ConfigurationManager : BaseDataManager
     {
-        private readonly IReduxStoreManager _reduxStoreManager;
-
-        public ConfigurationManager(IReduxStoreManager reduxStoreManager)
-        {
-            _reduxStoreManager = reduxStoreManager;
-        }
+        public ConfigurationManager(IReduxStoreManager reduxStoreManager) : base(reduxStoreManager){}
 
         public async UniTask Load()
         {
             ConfigurationState configurationState;
 
-            bool offline = _reduxStoreManager.Store.GetState(
+            bool offline = ReduxStoreManager.Store.GetState(
                 UserSettingsReducer.SliceName,
                 UserSettingsSelectors.OfflineSelector);
 
-            string offlineConfigurationPath = _reduxStoreManager.Store.GetState(
+            string offlineConfigurationPath = ReduxStoreManager.Store.GetState(
                 AppSettingsReducer.SliceName,
                 AppSettingsSelectors.OfflineConfigurationPathSelector);
 
-            string remoteConfigurationUrl = _reduxStoreManager.Store.GetState(
+            string remoteConfigurationUrl = ReduxStoreManager.Store.GetState(
                 AppSettingsReducer.SliceName,
                 AppSettingsSelectors.RemoteConfigurationUrlSelector);
 
@@ -41,7 +36,7 @@ namespace com.mapcolonies.yahalom.Configuration
                 configurationState = await JsonUtilityEx.LoadRemoteJsonAsync<ConfigurationState>(remoteConfigurationUrl);
             }
 
-            _reduxStoreManager.Store.Dispatch(ConfigurationActions.LoadConfigurationAction(configurationState));
+            ReduxStoreManager.Store.Dispatch(ConfigurationActions.LoadConfigurationAction(configurationState));
         }
     }
 }

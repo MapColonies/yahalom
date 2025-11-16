@@ -1,6 +1,6 @@
 using Unity.AppUI.Redux;
 
-namespace com.mapcolonies.yahalom.AppSettings
+namespace com.mapcolonies.yahalom.DataManagement.AppSettings
 {
     public static class AppSettingsReducer
     {

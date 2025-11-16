@@ -1,7 +1,7 @@
-using com.mapcolonies.yahalom.AppSettings;
-using com.mapcolonies.yahalom.Configuration;
-using com.mapcolonies.yahalom.UserSettings;
-using com.mapcolonies.yahalom.Workspaces;
+using com.mapcolonies.yahalom.DataManagement.AppSettings;
+using com.mapcolonies.yahalom.DataManagement.Configuration;
+using com.mapcolonies.yahalom.DataManagement.UserSettings;
+using com.mapcolonies.yahalom.DataManagement.Workspaces;
 using Cysharp.Threading.Tasks;
 using Unity.AppUI.Redux;
 

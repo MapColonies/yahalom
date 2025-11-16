@@ -1,12 +1,13 @@
 using System;
 using com.mapcolonies.core.Services.Analytics.Managers;
-using com.mapcolonies.yahalom.AppSettings;
-using com.mapcolonies.yahalom.Configuration;
+using com.mapcolonies.yahalom.DataManagement.AppSettings;
+using com.mapcolonies.yahalom.DataManagement.Configuration;
+using com.mapcolonies.yahalom.DataManagement.UserSettings;
+using com.mapcolonies.yahalom.DataManagement.Workspaces;
 using com.mapcolonies.yahalom.InitPipeline;
 using com.mapcolonies.yahalom.Preloader;
 using com.mapcolonies.yahalom.SceneManagement;
 using com.mapcolonies.yahalom.ReduxStore;
-using com.mapcolonies.yahalom.UserSettings;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -36,6 +37,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
             builder.Register<AppSettingsManager>(Lifetime.Singleton);
             builder.Register<UserSettingsManager>(Lifetime.Singleton);
             builder.Register<ConfigurationManager>(Lifetime.Singleton);
+            builder.Register<WorkspacesManager>(Lifetime.Singleton);
             builder.Register<ISceneController, SceneController>(Lifetime.Singleton);
             builder.Register<AnalyticsManager>(Lifetime.Singleton).AsSelf().As<IAnalyticsManager>().As<IDisposable>();
 

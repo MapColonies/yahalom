@@ -1,6 +1,6 @@
 using System;
 
-namespace com.mapcolonies.yahalom.AppSettings
+namespace com.mapcolonies.yahalom.DataManagement.AppSettings
 {
     [Serializable]
     public record AppSettingsState()
@@ -18,6 +18,12 @@ namespace com.mapcolonies.yahalom.AppSettings
         }
 
         public string UserSettingsPath
+        {
+            get;
+            set;
+        }
+
+        public string WorkspacesPath
         {
             get;
             set;

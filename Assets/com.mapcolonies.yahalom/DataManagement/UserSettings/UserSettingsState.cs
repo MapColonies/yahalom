@@ -1,6 +1,6 @@
 using System;
 
-namespace com.mapcolonies.yahalom.UserSettings
+namespace com.mapcolonies.yahalom.DataManagement.UserSettings
 {
     [Serializable]
     public class UserSettingsState

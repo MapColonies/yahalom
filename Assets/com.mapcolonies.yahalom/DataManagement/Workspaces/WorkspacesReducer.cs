@@ -1,6 +1,6 @@
 using Unity.AppUI.Redux;
 
-namespace com.mapcolonies.yahalom.Workspaces
+namespace com.mapcolonies.yahalom.DataManagement.Workspaces
 {
     public class WorkspacesReducer
     {

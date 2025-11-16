@@ -1,5 +1,6 @@
 {
   "userSettingsPath": "user_settings.json",
   "offlineConfigurationPath": "config.json",
+  "WorkspacesPath": "workspaces",
   "remoteConfigurationUrl": "https://example.com/config/getConfig?v=10"
 }

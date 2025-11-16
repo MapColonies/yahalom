@@ -1,6 +1,6 @@
 using System;
 
-namespace com.mapcolonies.yahalom.Configuration
+namespace com.mapcolonies.yahalom.DataManagement.Configuration
 {
     [Serializable]
     public record ConfigurationState()
