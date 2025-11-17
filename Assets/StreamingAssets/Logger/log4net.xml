@@ -29,10 +29,11 @@
 
     <appender name="HttpAppender"
               type="com.mapcolonies.core.Services.LoggerService.CustomAppenders.HttpAppender, com.mapcolonies.core">
-        <EndpointUrl value="https://your-logs-proxy.example.com/logs"/>
+        <EndpointUrl value="https://TODO/logs"/>
         <threshold value="WARN"/>
         <MaxPayloadSize value="5242880"/>
         <TimeThresholdMs value="30000"/>
+        <PersistenceDirectory value="C:\Yahalom\logs\offline"/>
     </appender>
 
     <root>
