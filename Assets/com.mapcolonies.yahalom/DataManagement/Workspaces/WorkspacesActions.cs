@@ -37,6 +37,7 @@ namespace com.mapcolonies.yahalom.DataManagement.Workspaces
         {
             return new ActionCreator<string>(AddWorkspace);
         }
+
         #endregion
     }
 }
