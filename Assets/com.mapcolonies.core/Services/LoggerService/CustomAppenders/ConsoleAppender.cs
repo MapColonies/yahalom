@@ -2,7 +2,7 @@ using System;
 using log4net.Appender;
 using log4net.Core;
 using UnityEngine;
-using IUnityLogger = UnityEngine.ILogger;
+using IUnityLogHandler = UnityEngine.ILogHandler;
 using Object = UnityEngine.Object;
 
 namespace com.mapcolonies.core.Services.LoggerService.CustomAppenders
@@ -10,30 +10,30 @@ namespace com.mapcolonies.core.Services.LoggerService.CustomAppenders
     public class ConsoleAppender : AppenderSkeleton
     {
         public const string UnityContext = "unity:context";
-        private readonly IUnityLogger _logger;
+        private readonly IUnityLogHandler _handler;
         private static readonly int ErrorLevel = Level.Error.Value;
         private static readonly int WarningLevel = Level.Warn.Value;
 
-        public ConsoleAppender(IUnityLogger logger)
+        public ConsoleAppender(IUnityLogHandler handler)
         {
-            _logger = logger;
+            _handler = handler;
         }
 
         protected override void Append(LoggingEvent loggingEvent)
         {
-            Level level = loggingEvent.Level;
+            if (_handler == null) return;
 
+            Level level = loggingEvent.Level;
             if (level == null) return;
 
             string message;
-
             try
             {
                 message = RenderLoggingEvent(loggingEvent);
             }
             catch (Exception e)
             {
-                _logger?.LogException(e, null);
+                _handler.LogFormat(LogType.Exception, null, "{0}", e);
                 return;
             }
 
@@ -47,7 +47,7 @@ namespace com.mapcolonies.core.Services.LoggerService.CustomAppenders
                 _ => LogType.Log
             };
 
-            _logger?.LogFormat(logType, ctx, "{0}", message);
+            _handler.LogFormat(logType, ctx, "{0}", message);
         }
     }
 }

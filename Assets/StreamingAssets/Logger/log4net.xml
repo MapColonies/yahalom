@@ -3,7 +3,7 @@
     <appender name="RollingInfoFileAppender" type="log4net.Appender.RollingFileAppender">
         <file type="log4net.Util.PatternString" value="%property{LogFilePath}info.log"/>
         <appendToFile value="true"/>
-        <maximumFileSize value="2MB"/>
+        <maximumFileSize value="10MB"/>
         <maxSizeRollBackups value="5"/>
         <staticLogFileName value="false"/>
         <preserveLogFileNameExtension value="true"/>
@@ -16,7 +16,7 @@
     <appender name="RollingErrorFileAppender" type="log4net.Appender.RollingFileAppender">
         <file type="log4net.Util.PatternString" value="%property{LogFilePath}error.log"/>
         <appendToFile value="true"/>
-        <maximumFileSize value="2MB"/>
+        <maximumFileSize value="10MB"/>
         <maxSizeRollBackups value="5"/>
         <staticLogFileName value="false"/>
         <preserveLogFileNameExtension value="true"/>
@@ -26,20 +26,19 @@
         </layout>
         <threshold value="WARN"/>
     </appender>
-    <appender name="UnityConsoleAppender"
-              type="com.mapcolonies.core.Services.LoggerService.CustomAppenders.ConsoleAppender, com.mapcolonies.core">
-        <threshold value="DEBUG"/>
-    </appender>
+
     <appender name="HttpAppender"
               type="com.mapcolonies.core.Services.LoggerService.CustomAppenders.HttpAppender, com.mapcolonies.core">
         <EndpointUrl value="https://your-logs-proxy.example.com/logs"/>
         <threshold value="WARN"/>
+        <MaxPayloadSize value="5242880"/>
+        <TimeThresholdMs value="30000"/>
     </appender>
+
     <root>
         <level value="ALL"/>
         <appender-ref ref="RollingInfoFileAppender"/>
         <appender-ref ref="RollingErrorFileAppender"/>
-        <appender-ref ref="UnityConsoleAppender"/>
-        <!-- <appender-ref ref="HttpAppender" /> -->
+        <appender-ref ref="HttpAppender"/>
     </root>
 </log4net>

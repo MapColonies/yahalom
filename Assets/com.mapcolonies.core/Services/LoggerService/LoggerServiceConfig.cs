@@ -72,11 +72,6 @@ namespace com.mapcolonies.core.Services.LoggerService
                 return Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), Application.companyName, Application.productName, "logs");
             }
 
-            if (Application.platform == RuntimePlatform.OSXPlayer || Application.platform == RuntimePlatform.OSXEditor)
-            {
-                return Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "Library", "Application Support", Application.companyName, Application.productName, "logs");
-            }
-
             return Application.persistentDataPath;
         }
     }
