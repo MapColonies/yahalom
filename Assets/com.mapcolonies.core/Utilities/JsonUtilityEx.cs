@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
@@ -41,12 +40,21 @@ namespace com.mapcolonies.core.Utilities
 
         public static async UniTask<T> LoadJsonAsync<T>(string relativePath, FileLocation location = FileLocation.StreamingAssets)
         {
-            string path = location switch
+            string path;
+
+            switch (location)
             {
-                FileLocation.PersistentData => Path.Combine(Application.streamingAssetsPath, relativePath),
-                FileLocation.StreamingAssets => Path.Combine(Application.streamingAssetsPath, relativePath),
-                _ => Path.Combine(Application.streamingAssetsPath, relativePath)
-            };
+                case FileLocation.PersistentData:
+                    path = Path.Combine(Application.persistentDataPath, relativePath);
+                    break;
+                case FileLocation.StreamingAssets:
+                    path = Path.Combine(Application.streamingAssetsPath, relativePath);
+                    break;
+                default:
+                    Debug.LogWarning("Unknown file location. Using streaming assets as default.");
+                    path = Path.Combine(Application.streamingAssetsPath, relativePath);
+                    break;
+            }
 
             return await FromJsonFileAsync<T>(path);
         }
@@ -59,12 +67,21 @@ namespace com.mapcolonies.core.Utilities
 
         public static async UniTask<bool> DoesJsonExistAsync(string relativePath, FileLocation location = FileLocation.PersistentData)
         {
-            string path = location switch
+            string path;
+
+            switch (location)
             {
-                FileLocation.PersistentData => Path.Combine(Application.streamingAssetsPath, relativePath),
-                FileLocation.StreamingAssets => Path.Combine(Application.streamingAssetsPath, relativePath),
-                _ => Path.Combine(Application.streamingAssetsPath, relativePath)
-            };
+                case FileLocation.PersistentData:
+                    path = Path.Combine(Application.persistentDataPath, relativePath);
+                    break;
+                case FileLocation.StreamingAssets:
+                    path = Path.Combine(Application.streamingAssetsPath, relativePath);
+                    break;
+                default:
+                    Debug.LogWarning("Unknown file location. Using persistent data as default.");
+                    path = Path.Combine(Application.persistentDataPath, relativePath);
+                    break;
+            }
 
             return await FileIOUtility.FileExistsAsync(path);
         }

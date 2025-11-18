@@ -34,6 +34,7 @@ namespace com.mapcolonies.yahalom.DataManagement.UserSettings
             if (exists)
             {
                 userSettingsState = await JsonUtilityEx.LoadJsonAsync<UserSettingsState>(_userSettingsPath, FileLocation.PersistentData);
+                ReduxStoreManager.Store.Dispatch(UserSettingsActions.LoadUserSettingsAction(userSettingsState));
             }
             else
             {
@@ -41,8 +42,6 @@ namespace com.mapcolonies.yahalom.DataManagement.UserSettings
                 //todo: Log("Saving new user settings state...");
                 await JsonUtilityEx.SaveJsonAsync(_userSettingsPath, userSettingsState);
             }
-
-            ReduxStoreManager.Store.Dispatch(UserSettingsActions.LoadUserSettingsAction(userSettingsState));
         }
     }
 }

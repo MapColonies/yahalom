@@ -1,6 +1,5 @@
 using System;
 using com.mapcolonies.core.Services.Analytics.Enums;
-using com.mapcolonies.core.Services.Analytics.Managers;
 using UnityEngine;
 
 namespace com.mapcolonies.core.Services.Analytics.Model
