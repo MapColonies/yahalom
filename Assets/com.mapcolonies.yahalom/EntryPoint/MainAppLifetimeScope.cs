@@ -24,7 +24,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
             #region StartUp
 
             builder.Register<PreloaderViewModel>(Lifetime.Scoped);
-            builder.Register<InitializationPipeline>(Lifetime.Scoped);
+            builder.Register<InitializationPipeline>(Lifetime.Transient);
             builder.Register<AppStartUpController>(Lifetime.Singleton).As<IAsyncStartable>();
 
             #endregion

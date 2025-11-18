@@ -90,7 +90,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
                     new ActionUnit("Load Target Scene", 0.10f, InitPolicy.Fail,
                         () =>
                         {
-                            var sceneController = scope.Container.Resolve<ISceneController>();
+                            ISceneController sceneController = scope.Container.Resolve<ISceneController>();
                             return sceneController.SwitchSceneAsync(Scenes.PlanningScene);
                         })
                 })
@@ -100,8 +100,25 @@ namespace com.mapcolonies.yahalom.EntryPoint
         async UniTask IAsyncStartable.StartAsync(CancellationToken cancellation = new CancellationToken())
         {
             Debug.Log("Start initializing");
-            await _pipeline.RunAsync(_initSteps);
+            await _pipeline.RunAsync(_initSteps,0f, 0.7f);
+
+            InitializationPipeline pl = _scope.Container.Resolve<InitializationPipeline>();
+            List<InitStep> testSteps = new List<InitStep>
+            {
+                new InitStep("PreInit", StepMode.Sequential, new IInitUnit[]
+                {
+                    new ActionUnit("aaa", 0.1f, InitPolicy.Fail,
+                        () => UniTask.Delay(1000)),
+                    new ActionUnit("bbb", 0.1f, InitPolicy.Fail,
+                        () => UniTask.Delay(1000)),
+                    new ActionUnit("ccc", 0.1f, InitPolicy.Fail,
+                        () => UniTask.Delay(1000))
+                })
+            };
+            await pl.RunAsync(testSteps,0.7f);
             Debug.Log("Initialized");
+
+
         }
 
         private IInitUnit UsageAnalyticsServices(LifetimeScope scope)

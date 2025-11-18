@@ -20,7 +20,10 @@ namespace com.mapcolonies.yahalom.InitPipeline
             _preloader = preloader;
         }
 
-        public async UniTask RunAsync(IEnumerable<InitStep> initSteps)
+        public async UniTask RunAsync(
+            IEnumerable<InitStep> initSteps,
+            float startPercentage = 0f,
+            float endPercentage = 1f)
         {
             float total = initSteps.SelectMany(s => s.InitUnits).Sum(u => u.Weight);
             float accumulated = 0f;
@@ -35,19 +38,24 @@ namespace com.mapcolonies.yahalom.InitPipeline
                         foreach (IInitUnit initUnit in step.InitUnits)
                         {
                             await initUnit.RunAsync();
-                            accumulated += initUnit.Weight / total;
-                            _preloader.ReportProgress($"{step.Name} .. {initUnit.Name}", accumulated);
-                        }
 
+                            accumulated += initUnit.Weight / total;
+                            float mappedProgress = Mathf.Lerp(startPercentage, endPercentage, accumulated);
+
+                            _preloader.ReportProgress($"{step.Name} .. {initUnit.Name}", mappedProgress);
+                        }
                         break;
+
                     case StepMode.Parallel:
                         float[] weights = step.InitUnits.Select(s => s.Weight / total).ToArray();
                         await UniTask.WhenAll(step.InitUnits.Select(u => u.RunAsync()));
 
-                        float block = weights.Sum();
-                        accumulated += block;
-                        _preloader.ReportProgress(step.Name, accumulated);
+                        accumulated += weights.Sum();
+                        float mappedStepProgress = Mathf.Lerp(startPercentage, endPercentage, accumulated);
+
+                        _preloader.ReportProgress(step.Name, mappedStepProgress);
                         break;
+
                     default:
                         Debug.LogError($"Unknown step mode {step.Mode}");
                         break;
@@ -56,7 +64,8 @@ namespace com.mapcolonies.yahalom.InitPipeline
                 Debug.Log($"Exit Init Step {step.Name}");
             }
 
-            _preloader.ReportProgress("Complete", 1f);
+            _preloader.ReportProgress("Complete", endPercentage);
         }
+
     }
 }
