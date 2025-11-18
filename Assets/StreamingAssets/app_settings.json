@@ -1,6 +1,6 @@
 {
   "userSettingsFile": "user_settings.json",
-  "offlineConfigurationFile": "config.json",
+  "offlineConfigurationFile": "offline_config.json",
   "workspacesDirectory": "workspaces",
   "remoteConfigurationUrl": "https://example.com/config/getConfig?v=10"
 }
