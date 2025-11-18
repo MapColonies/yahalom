@@ -5,7 +5,6 @@ using com.mapcolonies.yahalom.ReduxStore;
 using Cysharp.Threading.Tasks;
 using R3;
 using Unity.AppUI.Redux;
-using UnityEngine;
 
 namespace com.mapcolonies.yahalom.DataManagement.UserSettings
 {
@@ -22,8 +21,8 @@ namespace com.mapcolonies.yahalom.DataManagement.UserSettings
                 .Debounce(TimeSpan.FromSeconds(30))
                 .SubscribeAwait(async (state, token) =>
                 {
-                    Debug.Log("saving user settings");
-                    await JsonUtilityEx.SavePersistentJsonAsync(_userSettingsPath, state);
+                    //todo: Log("saving user settings");
+                    await JsonUtilityEx.SaveJsonAsync(_userSettingsPath, state);
                 })
                 .AddTo(Disposables);
         }
@@ -31,16 +30,16 @@ namespace com.mapcolonies.yahalom.DataManagement.UserSettings
         public async UniTask Load()
         {
             UserSettingsState userSettingsState;
-            bool exists = await JsonUtilityEx.DoesPersistentJsonExistAsync(_userSettingsPath);
+            bool exists = await JsonUtilityEx.DoesJsonExistAsync(_userSettingsPath);
             if (exists)
             {
-                userSettingsState = await JsonUtilityEx.LoadPersistentJsonAsync<UserSettingsState>(_userSettingsPath);
+                userSettingsState = await JsonUtilityEx.LoadJsonAsync<UserSettingsState>(_userSettingsPath, FileLocation.PersistentData);
             }
             else
             {
                 userSettingsState = ReduxStoreManager.Store.GetState<UserSettingsState>(UserSettingsReducer.SliceName);
-                Debug.Log("Saving new user settings state...");
-                await JsonUtilityEx.SavePersistentJsonAsync(_userSettingsPath, userSettingsState);
+                //todo: Log("Saving new user settings state...");
+                await JsonUtilityEx.SaveJsonAsync(_userSettingsPath, userSettingsState);
             }
 
             ReduxStoreManager.Store.Dispatch(UserSettingsActions.LoadUserSettingsAction(userSettingsState));

@@ -23,7 +23,7 @@ namespace com.mapcolonies.yahalom.DataManagement.Workspaces
                 .Where(_ => !_exists)
                 .SubscribeAwait(async (state, token) =>
                 {
-                    await JsonUtilityEx.SavePersistentJsonAsync(_workspacesFullPath, state);
+                    await JsonUtilityEx.SaveJsonAsync(_workspacesFullPath, state);
                 })
                 .AddTo(Disposables);
 
@@ -46,7 +46,7 @@ namespace com.mapcolonies.yahalom.DataManagement.Workspaces
             WorkspacesState workspacesState;
             if (_exists)
             {
-                workspacesState = await JsonUtilityEx.LoadPersistentJsonAsync<WorkspacesState>(_workspacesFullPath);
+                workspacesState = await JsonUtilityEx.LoadJsonAsync<WorkspacesState>(_workspacesFullPath, FileLocation.PersistentData);
             }
             else
             {

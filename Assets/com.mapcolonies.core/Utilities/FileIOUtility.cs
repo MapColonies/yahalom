@@ -1,9 +1,7 @@
 using System;
 using System.IO;
 using Cysharp.Threading.Tasks;
-using Newtonsoft.Json;
 using UnityEngine;
-using UnityEngine.Networking;
 
 namespace com.mapcolonies.core.Utilities
 {

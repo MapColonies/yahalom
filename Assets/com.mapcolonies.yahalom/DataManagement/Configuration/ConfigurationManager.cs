@@ -27,7 +27,7 @@ namespace com.mapcolonies.yahalom.DataManagement.Configuration
                     AppSettingsReducer.SliceName,
                     AppSettingsSelectors.OfflineConfigurationPathSelector);
 
-                configurationState = await JsonUtilityEx.LoadStreamingAssetsJsonAsync<ConfigurationState>(offlineConfigurationPath);
+                configurationState = await JsonUtilityEx.LoadJsonAsync<ConfigurationState>(offlineConfigurationPath);
             }
             else
             {

@@ -14,7 +14,7 @@ namespace com.mapcolonies.yahalom.DataManagement.AppSettings
 
         public async UniTask Load()
         {
-            AppSettingsState appState = await JsonUtilityEx.LoadStreamingAssetsJsonAsync<AppSettingsState>(SettingsFileName);
+            AppSettingsState appState = await JsonUtilityEx.LoadJsonAsync<AppSettingsState>(SettingsFileName);
             ReduxStoreManager.Store.Dispatch(AppSettingsActions.LoadAppSettingsAction(appState));
         }
     }
