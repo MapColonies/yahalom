@@ -7,6 +7,7 @@ namespace com.mapcolonies.yahalom.DataManagement.AppSettings
     public class AppSettingsManager : BaseDataManager
     {
         private const string SettingsFileName = "app_settings.json";
+
         public AppSettingsManager(IReduxStoreManager reduxStoreManager) : base(reduxStoreManager)
         {
         }

@@ -21,20 +21,20 @@ namespace com.mapcolonies.yahalom.DataManagement.Configuration
                 UserSettingsReducer.SliceName,
                 UserSettingsSelectors.OfflineSelector);
 
-            string offlineConfigurationPath = ReduxStoreManager.Store.GetState(
-                AppSettingsReducer.SliceName,
-                AppSettingsSelectors.OfflineConfigurationPathSelector);
-
-            string remoteConfigurationUrl = ReduxStoreManager.Store.GetState(
-                AppSettingsReducer.SliceName,
-                AppSettingsSelectors.RemoteConfigurationUrlSelector);
-
             if (offline)
             {
+                string offlineConfigurationPath = ReduxStoreManager.Store.GetState(
+                    AppSettingsReducer.SliceName,
+                    AppSettingsSelectors.OfflineConfigurationPathSelector);
+
                 configurationState = await JsonUtilityEx.LoadStreamingAssetsJsonAsync<ConfigurationState>(offlineConfigurationPath);
             }
             else
             {
+                string remoteConfigurationUrl = ReduxStoreManager.Store.GetState(
+                    AppSettingsReducer.SliceName,
+                    AppSettingsSelectors.RemoteConfigurationUrlSelector);
+
                 configurationState = await JsonUtilityEx.LoadRemoteJsonAsync<ConfigurationState>(remoteConfigurationUrl);
             }
 
