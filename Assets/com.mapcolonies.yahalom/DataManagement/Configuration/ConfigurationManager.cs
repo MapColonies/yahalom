@@ -34,7 +34,6 @@ namespace com.mapcolonies.yahalom.DataManagement.Configuration
                 string remoteConfigurationUrl = ReduxStoreManager.Store.GetState(
                     AppSettingsReducer.SliceName,
                     AppSettingsSelectors.RemoteConfigurationUrlSelector);
-
                 configurationState = await JsonUtilityEx.LoadRemoteJsonAsync<ConfigurationState>(remoteConfigurationUrl);
             }
 

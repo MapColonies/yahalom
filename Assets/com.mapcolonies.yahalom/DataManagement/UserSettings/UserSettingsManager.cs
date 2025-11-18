@@ -5,13 +5,13 @@ using com.mapcolonies.yahalom.ReduxStore;
 using Cysharp.Threading.Tasks;
 using R3;
 using Unity.AppUI.Redux;
+using UnityEngine;
 
 namespace com.mapcolonies.yahalom.DataManagement.UserSettings
 {
     public class UserSettingsManager : BaseDataManager
     {
         private readonly string _userSettingsPath;
-        private bool _exists;
 
         public UserSettingsManager(IReduxStoreManager reduxStoreManager) : base(reduxStoreManager)
         {
@@ -20,9 +20,9 @@ namespace com.mapcolonies.yahalom.DataManagement.UserSettings
             ReduxStoreManager.Store.Select<UserSettingsState>(UserSettingsReducer.SliceName)
                 .DistinctUntilChanged()
                 .Debounce(TimeSpan.FromSeconds(30))
-                .Where(_ => !_exists)
                 .SubscribeAwait(async (state, token) =>
                 {
+                    Debug.Log("saving user settings");
                     await JsonUtilityEx.SavePersistentJsonAsync(_userSettingsPath, state);
                 })
                 .AddTo(Disposables);
@@ -31,14 +31,16 @@ namespace com.mapcolonies.yahalom.DataManagement.UserSettings
         public async UniTask Load()
         {
             UserSettingsState userSettingsState;
-            _exists = await JsonUtilityEx.DoesPersistentJsonExistAsync(_userSettingsPath);
-            if (_exists)
+            bool exists = await JsonUtilityEx.DoesPersistentJsonExistAsync(_userSettingsPath);
+            if (exists)
             {
                 userSettingsState = await JsonUtilityEx.LoadPersistentJsonAsync<UserSettingsState>(_userSettingsPath);
             }
             else
             {
-                userSettingsState = new UserSettingsState();
+                userSettingsState = ReduxStoreManager.Store.GetState<UserSettingsState>(UserSettingsReducer.SliceName);
+                Debug.Log("Saving new user settings state...");
+                await JsonUtilityEx.SavePersistentJsonAsync(_userSettingsPath, userSettingsState);
             }
 
             ReduxStoreManager.Store.Dispatch(UserSettingsActions.LoadUserSettingsAction(userSettingsState));
