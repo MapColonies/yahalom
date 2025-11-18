@@ -5,7 +5,7 @@ namespace com.mapcolonies.yahalom.DataManagement.AppSettings
     [Serializable]
     public record AppSettingsState()
     {
-        public string OfflineConfigurationPath
+        public string OfflineConfigurationFile
         {
             get;
             set;
@@ -17,13 +17,13 @@ namespace com.mapcolonies.yahalom.DataManagement.AppSettings
             set;
         }
 
-        public string UserSettingsPath
+        public string UserSettingsFile
         {
             get;
             set;
         }
 
-        public string WorkspacesPath
+        public string WorkspacesDirectory
         {
             get;
             set;

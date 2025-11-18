@@ -26,12 +26,14 @@ namespace com.mapcolonies.yahalom.EntryPoint
             builder.Register<PreloaderViewModel>(Lifetime.Scoped);
             builder.Register<InitializationPipeline>(Lifetime.Scoped);
             builder.Register<AppStartUpController>(Lifetime.Singleton).As<IAsyncStartable>();
+
             #endregion
 
             //TODO: This is a Demo script, will be deleted in the near future.
             builder.RegisterComponentInHierarchy<DemoController>();
 
             Debug.Log("End Configure Startup Registrations");
+
             #region Services
 
             builder.Register<ActionsMiddleware>(Lifetime.Singleton);
@@ -43,7 +45,6 @@ namespace com.mapcolonies.yahalom.EntryPoint
             builder.Register<ISceneController, SceneController>(Lifetime.Singleton);
             builder.Register<TranslationService>(Lifetime.Singleton).As<ITranslationService>().As<IDisposable>();
             builder.Register<AnalyticsManager>(Lifetime.Singleton).AsSelf().As<IAnalyticsManager>().As<IDisposable>();
-
 
             #endregion
         }

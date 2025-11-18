@@ -7,7 +7,7 @@ namespace com.mapcolonies.yahalom.ReduxStore
     public class ActionsMiddleware : IDisposable
     {
         public readonly Subject<IAction> Actions = new Subject<IAction>();
-        private readonly CompositeDisposable _disposable = new CompositeDisposable();
+
 
         public Middleware<PartitionedState> Create()
         {
@@ -17,9 +17,9 @@ namespace com.mapcolonies.yahalom.ReduxStore
                 next(action); //next middleware
             };
         }
+
         public void Dispose()
         {
-            _disposable.Dispose();
         }
     }
 }

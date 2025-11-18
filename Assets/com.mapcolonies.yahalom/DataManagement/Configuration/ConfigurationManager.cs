@@ -9,7 +9,9 @@ namespace com.mapcolonies.yahalom.DataManagement.Configuration
 {
     public class ConfigurationManager : BaseDataManager
     {
-        public ConfigurationManager(IReduxStoreManager reduxStoreManager) : base(reduxStoreManager){}
+        public ConfigurationManager(IReduxStoreManager reduxStoreManager) : base(reduxStoreManager)
+        {
+        }
 
         public async UniTask Load()
         {

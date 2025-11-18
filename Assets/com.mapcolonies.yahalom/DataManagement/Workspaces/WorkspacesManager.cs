@@ -56,7 +56,5 @@ namespace com.mapcolonies.yahalom.DataManagement.Workspaces
             ReduxStoreManager.Store.Dispatch(WorkspacesActions.LoadWorkspacesAction(workspacesState));
             ReduxStoreManager.Store.Dispatch(WorkspacesActions.AddWorkspaceAction("MySuperWorkspace"));
         }
-
-
     }
 }

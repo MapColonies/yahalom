@@ -6,7 +6,9 @@ namespace com.mapcolonies.yahalom.DataManagement.AppSettings
 {
     public class AppSettingsManager : BaseDataManager
     {
-        public AppSettingsManager(IReduxStoreManager reduxStoreManager) : base(reduxStoreManager) { }
+        public AppSettingsManager(IReduxStoreManager reduxStoreManager) : base(reduxStoreManager)
+        {
+        }
 
         public async UniTask Load()
         {
