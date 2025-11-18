@@ -3,7 +3,7 @@ using System;
 namespace com.mapcolonies.yahalom.DataManagement.UserSettings
 {
     [Serializable]
-    public class UserSettingsState
+    public record UserSettingsState
     {
         public bool Offline
         {
@@ -55,7 +55,7 @@ namespace com.mapcolonies.yahalom.DataManagement.UserSettings
     }
 
     [Serializable]
-    public class BaseMap
+    public record BaseMap
     {
         public string MapId
         {
@@ -65,7 +65,7 @@ namespace com.mapcolonies.yahalom.DataManagement.UserSettings
     }
 
     [Serializable]
-    public class Minimap
+    public record Minimap
     {
         public bool Show
         {
@@ -93,7 +93,7 @@ namespace com.mapcolonies.yahalom.DataManagement.UserSettings
     }
 
     [Serializable]
-    public class ComponentDisplay
+    public record ComponentDisplay
     {
         public bool DisplayVisibleLayers
         {
@@ -133,7 +133,7 @@ namespace com.mapcolonies.yahalom.DataManagement.UserSettings
     }
 
     [Serializable]
-    public class ControlsSettings
+    public record ControlsSettings
     {
         public float AxisX
         {
@@ -155,7 +155,7 @@ namespace com.mapcolonies.yahalom.DataManagement.UserSettings
     }
 
     [Serializable]
-    public class CoordinateSystem
+    public record CoordinateSystem
     {
         public bool GeoDms
         {
@@ -177,7 +177,7 @@ namespace com.mapcolonies.yahalom.DataManagement.UserSettings
     }
 
     [Serializable]
-    public class Measurement
+    public record Measurement
     {
         public bool Imperial
         {
@@ -193,7 +193,7 @@ namespace com.mapcolonies.yahalom.DataManagement.UserSettings
     }
 
     [Serializable]
-    public class SpaceAndProcessing
+    public record SpaceAndProcessing
     {
         public CoordinateSystem CoordinateSystem
         {
@@ -209,7 +209,7 @@ namespace com.mapcolonies.yahalom.DataManagement.UserSettings
     }
 
     [Serializable]
-    public class SaveSettings
+    public record SaveSettings
     {
         public string SavePath
         {
@@ -231,7 +231,7 @@ namespace com.mapcolonies.yahalom.DataManagement.UserSettings
     }
 
     [Serializable]
-    public class VRSettings
+    public record VRSettings
     {
         public bool CorrectionAffectsPerformance
         {
