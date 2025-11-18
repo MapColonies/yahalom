@@ -49,7 +49,7 @@ jobs:
           key: Library-${{ matrix.targetPlatform }}
           restore-keys: Library-
 
-      - uses: ./.github/workflows/nugetforunity-restore.yaml
+      - uses: ./.github/actions/nugetforunity-restore.yaml
         with:
           working-directory: .
           
