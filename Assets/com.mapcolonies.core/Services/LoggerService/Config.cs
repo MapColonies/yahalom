@@ -8,5 +8,7 @@ namespace com.mapcolonies.core.Services.LoggerService
         public bool Enabled;
         public bool ConsoleEnabled;
         public string MinLogLevel;
+        public string HttpEndpointUrl;
+        public string HttpPersistenceDirectory;
     }
 }

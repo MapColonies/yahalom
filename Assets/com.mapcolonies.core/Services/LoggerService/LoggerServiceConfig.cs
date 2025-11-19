@@ -33,6 +33,18 @@ namespace com.mapcolonies.core.Services.LoggerService
             private set;
         }
 
+        public string HttpEndpointUrl
+        {
+            get;
+            private set;
+        }
+
+        public string HttpPersistenceDirectory
+        {
+            get;
+            private set;
+        }
+
         public void Init()
         {
             string filePath = Path.Combine(Application.streamingAssetsPath, JsonFileName);
@@ -58,6 +70,9 @@ namespace com.mapcolonies.core.Services.LoggerService
                 ServiceEnabled = _config.Enabled;
                 EnableConsole = _config.ConsoleEnabled;
                 MinLogLevel = _config.MinLogLevel;
+                HttpEndpointUrl = _config.HttpEndpointUrl;
+                HttpPersistenceDirectory = _config.HttpPersistenceDirectory;
+
             }
             catch (System.Exception ex)
             {
@@ -74,5 +89,12 @@ namespace com.mapcolonies.core.Services.LoggerService
 
             return Application.persistentDataPath;
         }
+
+        public string GetHttpPersistenceDirectory()
+        {
+            string baseLogsDirectory = GetSystemLogsDirectory();
+            return Path.Combine(baseLogsDirectory, "offline");
+        }
+
     }
 }

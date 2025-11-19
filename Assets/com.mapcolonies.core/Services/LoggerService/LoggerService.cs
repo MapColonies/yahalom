@@ -14,6 +14,8 @@ namespace com.mapcolonies.core.Services.LoggerService
     public class LoggerService : IDisposable
     {
         private const string LogFilePath = "LogFilePath";
+        private const string HttpEndpointUrl = "HttpEndpointUrl";
+        private const string HttpPersistenceDirectory = "HttpPersistenceDirectory";
         private const string Pattern = "%date %-5level %logger - %message%newline";
         private readonly LoggerServiceConfig _config;
 
@@ -60,6 +62,8 @@ namespace com.mapcolonies.core.Services.LoggerService
                 }
 
                 GlobalContext.Properties[LogFilePath] = logDirectory;
+                GlobalContext.Properties[HttpEndpointUrl] = _config.HttpEndpointUrl;
+                GlobalContext.Properties[HttpPersistenceDirectory] = _config.GetHttpPersistenceDirectory();
 
                 FileInfo logConfigFile = new FileInfo(logConfigFilePath);
                 XmlConfigurator.Configure(logConfigFile);
