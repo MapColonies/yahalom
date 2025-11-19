@@ -34,6 +34,7 @@ namespace com.mapcolonies.core.Services.LoggerService.Extensions
                     {
                         log.Warn($"IsEnabled called with unsupported LogType: {logType}");
                     }
+
                     return false;
             }
         }
