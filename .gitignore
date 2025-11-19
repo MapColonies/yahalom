@@ -107,5 +107,4 @@ InitTestScene*.unity*
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
 
 # NuGet Packages
-/[Aa]ssets/Packages
-/[Aa]ssets/Packages.meta
+/[Aa]ssets/Packages/
