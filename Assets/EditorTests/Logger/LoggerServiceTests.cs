@@ -27,7 +27,7 @@ namespace EditorTests.Logger
             LoggerServiceConfig config = new LoggerServiceConfig();
             ILogHandler before = Debug.unityLogger.logHandler;
 
-            using (LoggerService loggerService = new LoggerService(config))
+            using (new LoggerService(config))
             {
                 Assert.AreSame(before, Debug.unityLogger.logHandler);
             }
@@ -39,7 +39,7 @@ namespace EditorTests.Logger
             LoggerServiceConfig config = CreateConfigWithReflection(true, true, "DEBUG", "Logger/non_existing_file.xml");
             ILogHandler before = Debug.unityLogger.logHandler;
 
-            using (LoggerService loggerService = new LoggerService(config))
+            using (new LoggerService(config))
             {
                 Assert.AreSame(before, Debug.unityLogger.logHandler);
             }
