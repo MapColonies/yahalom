@@ -51,7 +51,7 @@ namespace com.mapcolonies.core.Utilities
                     path = Path.Combine(Application.streamingAssetsPath, relativePath);
                     break;
                 default:
-                    Debug.LogWarning("Unknown file location. Using streaming assets as default.");
+                    Debug.LogWarning($"Unknown file location {location}. Using streaming assets as default.");
                     path = Path.Combine(Application.streamingAssetsPath, relativePath);
                     break;
             }
@@ -78,7 +78,7 @@ namespace com.mapcolonies.core.Utilities
                     path = Path.Combine(Application.streamingAssetsPath, relativePath);
                     break;
                 default:
-                    Debug.LogWarning("Unknown file location. Using persistent data as default.");
+                    Debug.LogWarning($"Unknown file location {location}. Using persistent data as default.");
                     path = Path.Combine(Application.persistentDataPath, relativePath);
                     break;
             }
