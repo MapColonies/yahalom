@@ -72,7 +72,6 @@ namespace com.mapcolonies.core.Services.LoggerService
                 MinLogLevel = _config.MinLogLevel;
                 HttpEndpointUrl = _config.HttpEndpointUrl;
                 HttpPersistenceDirectory = _config.HttpPersistenceDirectory;
-
             }
             catch (System.Exception ex)
             {
@@ -95,6 +94,5 @@ namespace com.mapcolonies.core.Services.LoggerService
             string baseLogsDirectory = GetSystemLogsDirectory();
             return Path.Combine(baseLogsDirectory, "offline");
         }
-
     }
 }
