@@ -1,0 +1,9 @@
+{
+  "Enabled": true,
+  "ConsoleEnabled": true,
+  "Log4NetConfigXml": "Logger/log4net.xml",
+  "MinLogLevel": "DEBUG",
+  "StackTraceRowLimit": 0,
+  "HttpEndpointUrl": "https://TODO/logs",
+  "HttpPersistenceDirectory": "C:/Yahalom/logs/offline"
+}
