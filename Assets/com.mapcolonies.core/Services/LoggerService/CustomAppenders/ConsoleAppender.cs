@@ -41,9 +41,9 @@ namespace com.mapcolonies.core.Services.LoggerService.CustomAppenders
 
             LogType logType = level.Value switch
             {
-                var value when value < WarningLevel => LogType.Log,
-                var value when value >= WarningLevel && value < ErrorLevel => LogType.Warning,
-                var value when value >= ErrorLevel => LogType.Error,
+                int value when value < WarningLevel => LogType.Log,
+                int value when value >= WarningLevel && value < ErrorLevel => LogType.Warning,
+                int value when value >= ErrorLevel => LogType.Error,
                 _ => LogType.Log
             };
 

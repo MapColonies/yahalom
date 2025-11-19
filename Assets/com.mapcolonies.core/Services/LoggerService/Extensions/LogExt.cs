@@ -29,9 +29,13 @@ namespace com.mapcolonies.core.Services.LoggerService.Extensions
                     return log.IsErrorEnabled;
                 case LogType.Fatal:
                     return log.IsFatalEnabled;
+                default:
+                    if (log.IsWarnEnabled)
+                    {
+                        log.Warn($"IsEnabled called with unsupported LogType: {logType}");
+                    }
+                    return false;
             }
-
-            return false;
         }
 
         private static LogMethod? For(ILog log, LogType logType)
