@@ -37,6 +37,10 @@ jobs:
       - name: Checkout project
         uses: actions/checkout@v5
 
+      - uses: ./.github/actions/nugetforunity-restore
+        with:
+          working-directory: .
+
       - name: Run Unity Tests
         uses: game-ci/unity-test-runner@v4
         env:
@@ -73,6 +77,10 @@ jobs:
           key: Library-${{ matrix.targetPlatform }}
           restore-keys: Library-
 
+      - uses: ./.github/actions/nugetforunity-restore
+        with:
+          working-directory: .
+      
       # Build project.
       - uses: game-ci/unity-builder@v4
         env:
