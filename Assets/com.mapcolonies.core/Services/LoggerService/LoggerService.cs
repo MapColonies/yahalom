@@ -70,6 +70,7 @@ namespace com.mapcolonies.core.Services.LoggerService
 
                 Hierarchy hierarchy = (Hierarchy)LogManager.GetRepository();
 
+                //TODO:Get _config.ForceMinLogLevel and override
                 bool isDev = Application.isEditor || Debug.isDebugBuild;
                 Level prodThreshold = hierarchy.LevelMap[_config.MinLogLevel] ?? Level.Debug;
 
