@@ -89,8 +89,8 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
-          customParameters: -logFile UnityEditor.log
+          customParameters: -logFile /github/workspace/UnityEditor.log
 
       - name: Show Unity Editor Log
         if: failure()
-        run: Get-Content UnityEditor.log
+        run: cat /github/workspace/UnityEditor.log
