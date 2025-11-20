@@ -72,6 +72,7 @@ namespace com.mapcolonies.core.Services.LoggerService
 
                 bool isDev = Application.isEditor || Debug.isDebugBuild;
                 Level prodThreshold = hierarchy.LevelMap[_config.MinLogLevel] ?? Level.Debug;
+
                 if (!isDev)
                 {
                     foreach (var appender in hierarchy.GetAppenders())
@@ -83,13 +84,14 @@ namespace com.mapcolonies.core.Services.LoggerService
                         }
                     }
                 }
+
                 ConsoleAppender consoleAppender = new ConsoleAppender(_originalUnityLogHandler);
 
                 PatternLayout layout = new PatternLayout();
                 layout.ConversionPattern = Pattern;
                 layout.ActivateOptions();
                 consoleAppender.Layout = layout;
-                
+
                 consoleAppender.Threshold = isDev ? Level.Debug : prodThreshold;
                 consoleAppender.ActivateOptions();
 
