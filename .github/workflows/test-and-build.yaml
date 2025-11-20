@@ -27,7 +27,7 @@ jobs:
 
   format_check:
     uses: ./.github/workflows/format.yaml
-  
+
   test:
     name: Run Unity Tests
     needs: [checklicense, format_check]
@@ -80,7 +80,7 @@ jobs:
       - uses: ./.github/actions/nugetforunity-restore
         with:
           working-directory: .
-      
+
       # Build project.
       - uses: game-ci/unity-builder@v4
         env:
@@ -89,8 +89,8 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
-          customParameters: -logFile /github/workspace/UnityEditor.log
+          customParameters: -logFile UnityEditor.log
 
       - name: Show Unity Editor Log
         if: failure()
-        run: cat /github/workspace/UnityEditor.log
+        run: Get-Content UnityEditor.log
