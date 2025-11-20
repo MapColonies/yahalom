@@ -70,6 +70,22 @@ namespace com.mapcolonies.core.Services.LoggerService
 
                 Hierarchy hierarchy = (Hierarchy)LogManager.GetRepository();
 
+                //TODO:Get _config.ForceMinLogLevel and override
+                bool isDev = Application.isEditor || Debug.isDebugBuild;
+                Level prodThreshold = hierarchy.LevelMap[_config.MinLogLevel] ?? Level.Debug;
+
+                if (!isDev)
+                {
+                    foreach (var appender in hierarchy.GetAppenders())
+                    {
+                        if (appender is log4net.Appender.AppenderSkeleton sk)
+                        {
+                            sk.Threshold = prodThreshold;
+                            sk.ActivateOptions();
+                        }
+                    }
+                }
+
                 ConsoleAppender consoleAppender = new ConsoleAppender(_originalUnityLogHandler);
 
                 PatternLayout layout = new PatternLayout();
@@ -77,8 +93,7 @@ namespace com.mapcolonies.core.Services.LoggerService
                 layout.ActivateOptions();
                 consoleAppender.Layout = layout;
 
-                Level consoleThreshold = hierarchy.LevelMap[_config.MinLogLevel] ?? Level.Debug;
-                consoleAppender.Threshold = consoleThreshold;
+                consoleAppender.Threshold = isDev ? Level.Debug : prodThreshold;
                 consoleAppender.ActivateOptions();
 
                 hierarchy.Root.AddAppender(consoleAppender);

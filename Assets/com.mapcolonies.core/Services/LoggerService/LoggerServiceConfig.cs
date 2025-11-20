@@ -33,6 +33,12 @@ namespace com.mapcolonies.core.Services.LoggerService
             private set;
         }
 
+        public bool ForceMinLogLevel
+        {
+            get;
+            private set;
+        }
+
         public string HttpEndpointUrl
         {
             get;
@@ -70,6 +76,7 @@ namespace com.mapcolonies.core.Services.LoggerService
                 ServiceEnabled = _config.Enabled;
                 EnableConsole = _config.ConsoleEnabled;
                 MinLogLevel = _config.MinLogLevel;
+                ForceMinLogLevel = _config.ForceMinLogLevel;
                 HttpEndpointUrl = _config.HttpEndpointUrl;
                 HttpPersistenceDirectory = _config.HttpPersistenceDirectory;
             }
