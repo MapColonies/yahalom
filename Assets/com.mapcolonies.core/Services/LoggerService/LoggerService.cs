@@ -77,8 +77,13 @@ namespace com.mapcolonies.core.Services.LoggerService
                 layout.ActivateOptions();
                 consoleAppender.Layout = layout;
 
-                Level consoleThreshold = hierarchy.LevelMap[_config.MinLogLevel] ?? Level.Debug;
-                consoleAppender.Threshold = consoleThreshold;
+                bool isDev = Application.isEditor || Debug.isDebugBuild;
+                if (!isDev)
+                {
+                    Level consoleThreshold = hierarchy.LevelMap[_config.MinLogLevel] ?? Level.Debug;
+                    consoleAppender.Threshold = consoleThreshold;
+                }
+
                 consoleAppender.ActivateOptions();
 
                 hierarchy.Root.AddAppender(consoleAppender);
