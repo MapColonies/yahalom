@@ -4,35 +4,38 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using VContainer;
 
-public class DemoController : MonoBehaviour
+namespace com.mapcolonies.yahalom
 {
-    private ISceneController _sceneController;
-
-    [Inject]
-    public void Construct(ISceneController sceneController)
+    public class DemoController : MonoBehaviour
     {
-        _sceneController = sceneController;
-    }
+        private ISceneController _sceneController;
 
-    public void SwitchScene()
-    {
-        Scenes nextScene;
-        string currentSceneName = SceneManager.GetActiveScene().name;
-
-        if (currentSceneName.Equals(Scenes.SimulationScene.ToString()))
+        [Inject]
+        public void Construct(ISceneController sceneController)
         {
-            nextScene = Scenes.PlanningScene;
-        }
-        else if (currentSceneName.Equals(Scenes.PlanningScene.ToString()))
-        {
-            nextScene = Scenes.SimulationScene;
-        }
-        else
-        {
-            Debug.LogWarning($"Current scene '{currentSceneName}' is not part of the demo flow.");
-            return;
+            _sceneController = sceneController;
         }
 
-        _ = _sceneController.SwitchSceneAsync(nextScene);
+        public void SwitchScene()
+        {
+            Scenes nextScene;
+            string currentSceneName = SceneManager.GetActiveScene().name;
+
+            if (currentSceneName.Equals(Scenes.SimulationScene.ToString()))
+            {
+                nextScene = Scenes.PlanningScene;
+            }
+            else if (currentSceneName.Equals(Scenes.PlanningScene.ToString()))
+            {
+                nextScene = Scenes.SimulationScene;
+            }
+            else
+            {
+                Debug.LogWarning($"Current scene '{currentSceneName}' is not part of the demo flow.");
+                return;
+            }
+
+            _ = _sceneController.SwitchSceneAsync(nextScene);
+        }
     }
 }

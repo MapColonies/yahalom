@@ -75,7 +75,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
 
         private void SetupLogFile()
         {
-            _logFilePath = FileUtility.GetFullPath(AnalyticsFileName, $"session-{SessionId}.log");
+            _logFilePath = FileIOUtility.GetFullPath(AnalyticsFileName, $"session-{SessionId}.log");
         }
 
         private async UniTask PublishAnalytics(LogObject logObject)
@@ -104,7 +104,7 @@ namespace com.mapcolonies.core.Services.Analytics.Managers
 
             try
             {
-                await FileUtility.AppendLineToFileAsync(logContent, _logFilePath);
+                await FileIOUtility.AppendLineToFileAsync(logContent, _logFilePath);
             }
             catch (Exception e)
             {
