@@ -89,7 +89,8 @@ namespace com.mapcolonies.core.Services.LoggerService
                 layout.ConversionPattern = Pattern;
                 layout.ActivateOptions();
                 consoleAppender.Layout = layout;
-                consoleAppender.Threshold = isDev ? Level.All : prodThreshold;
+                
+                consoleAppender.Threshold = isDev ? Level.Debug : prodThreshold;
                 consoleAppender.ActivateOptions();
 
                 hierarchy.Root.AddAppender(consoleAppender);
