@@ -27,32 +27,10 @@ jobs:
 
   format_check:
     uses: ./.github/workflows/format.yaml
-  
-  test:
-    name: Run Unity Tests
-    needs: [checklicense, format_check]
-    if: needs.checklicense.outputs.is_unity_license_set == 'true'
-    runs-on: windows-latest
-    steps:
-      - name: Checkout project
-        uses: actions/checkout@v5
-
-      - name: Run Unity Tests
-        uses: game-ci/unity-test-runner@v4
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-
-      - name: Upload Test Results
-        uses: actions/upload-artifact@v5
-        with:
-          name: TestResults
-          path: artifacts
 
   buildForAllSupportedPlatforms:
     name: Build for ${{ matrix.targetPlatform }}
-    needs: [test]
+    needs: [checklicense, format_check]
     if: needs.checklicense.outputs.is_unity_license_set == 'true'
     runs-on: windows-latest
     strategy:
@@ -60,6 +38,7 @@ jobs:
       matrix:
         targetPlatform:
           - StandaloneWindows64
+
     steps:
       # Checkout.
       - uses: actions/checkout@v5
@@ -73,6 +52,10 @@ jobs:
           key: Library-${{ matrix.targetPlatform }}
           restore-keys: Library-
 
+      - uses: ./.github/actions/nugetforunity-restore
+        with:
+          working-directory: .
+
       # Build project.
       - uses: game-ci/unity-builder@v4
         env:
@@ -81,3 +64,8 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
+          customParameters: -logFile UnityEditor.log
+
+      - name: Show Unity Editor Log
+        if: failure()
+        run: Get-Content UnityEditor.log

@@ -20,8 +20,13 @@ namespace com.mapcolonies.core
         public void Construct(T viewModel)
         {
             Debug.Log($"Construct view for {typeof(T)}");
-
             _viewModel = viewModel;
+        }
+
+        private void OnEnable()
+        {
+            if (_viewModel == null) return;
+
             RootVisualElement = _uiDocument.rootVisualElement;
             RootVisualElement.dataSource = _viewModel;
         }
