@@ -64,51 +64,37 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
+          # Force Unity to write the editor log into the workspace
+          customParameters: -logFile ./UnityEditor.log
 
-
-      - name: Find Unity Editor log
+      # Check if UnityEditor.log exists
+      - name: Check for UnityEditor.log
         if: always()
-        id: find_unity_log
-        shell: pwsh
+        id: check_unity_log
+        shell: bash
         run: |
-          Write-Host "Searching for Unity Editor log..."
+          echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
+          if [ -f "UnityEditor.log" ]; then
+            echo "UnityEditor.log found in workspace."
+            echo "log_found=true" >> $GITHUB_OUTPUT
+            echo "log_path=UnityEditor.log" >> $GITHUB_OUTPUT
+          else
+            echo "UnityEditor.log NOT found in workspace."
+            echo "log_found=false" >> $GITHUB_OUTPUT
+          fi
 
-          # Common Windows Unity log locations
-          $candidates = @(
-            "$Env:LOCALAPPDATA\Unity\Editor\Editor.log",
-            "$Env:USERPROFILE\AppData\Local\Unity\Editor\Editor.log",
-            "$Env:HOME\AppData\Local\Unity\Editor\Editor.log",
-            "$Env:RUNNER_TEMP\_github_home\.config\unity3d\Editor.log"
-          )
-
-          $logPath = $null
-          foreach ($c in $candidates) {
-            if (Test-Path $c) {
-              $logPath = $c
-              break
-            }
-          }
-
-          if (-not $logPath) {
-            Write-Host "No UnityEditor.log found."
-            "log_found=false" >> $Env:GITHUB_OUTPUT
-          } else {
-            Write-Host "Found Unity log at: $logPath"
-            "log_found=true" >> $Env:GITHUB_OUTPUT
-            "log_path=$logPath" >> $Env:GITHUB_OUTPUT
-          }
-
-
+      # Print last lines to the job log
       - name: Print last 200 lines of Unity log
-        if: always() && steps.find_unity_log.outputs.log_found == 'true'
-        shell: pwsh
+        if: always() && steps.check_unity_log.outputs.log_found == 'true'
+        shell: bash
         run: |
-          Write-Host "=== LAST 200 LINES OF UnityEditor.log ==="
-          Get-Content -Path "${{ steps.find_unity_log.outputs.log_path }}" -Tail 200
+          echo "=== LAST 200 LINES OF UnityEditor.log ==="
+          tail -n 200 "${{ steps.check_unity_log.outputs.log_path }}"
 
+      # Upload log as artifact
       - name: Upload Unity log artifact
-        if: always() && steps.find_unity_log.outputs.log_found == 'true'
+        if: always() && steps.check_unity_log.outputs.log_found == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: UnityEditorLog
-          path: ${{ steps.find_unity_log.outputs.log_path }}
+          path: ${{ steps.check_unity_log.outputs.log_path }}
