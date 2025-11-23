@@ -63,9 +63,16 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
+          projectPath: .
           targetPlatform: ${{ matrix.targetPlatform }}
           customParameters: -logFile UnityEditor.log
-
+      
+      - name: Debug workspace
+        if: failure()
+        run: |
+          pwd
+          ls -R .
+    
       - name: Show Unity Editor Log
         if: failure()
         run: Get-Content UnityEditor.log
