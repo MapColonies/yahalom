@@ -67,7 +67,8 @@ jobs:
 
       - name: Show Unity Editor Log
         if: failure()
-        run: type ${{ github.workspace }}\UnityEditor.log
+        run: Get-Content ${{ github.workspace }}/UnityEditor.log
+        shell: powershell
 
       - name: Upload Build Artifacts
         if: success()
