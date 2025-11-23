@@ -78,12 +78,12 @@ namespace com.mapcolonies.yahalom.EntryPoint
                             return translationService.InitializeService(LocalizationConstants.HebrewLocaleIdentifier);
                         }),
                     UsageAnalyticsServices(scope),
-                    new ActionUnit("Configuration", 0.1f, InitPolicy.Fail,
+                    /*new ActionUnit("Configuration", 0.1f, InitPolicy.Fail,
                         () =>
                         {
                             ConfigurationManager config = scope.Container.Resolve<ConfigurationManager>();
                             return config.Load();
-                        })
+                        })*/
                 }),
                 new InitStep("SwitchScene", StepMode.Sequential, new IInitUnit[]
                 {
