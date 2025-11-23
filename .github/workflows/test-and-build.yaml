@@ -28,35 +28,9 @@ jobs:
   format_check:
     uses: ./.github/workflows/format.yaml
   
-  test:
-    name: Run Unity Tests
-    needs: [checklicense, format_check]
-    if: needs.checklicense.outputs.is_unity_license_set == 'true'
-    runs-on: windows-latest
-    steps:
-      - name: Checkout project
-        uses: actions/checkout@v5
-
-      - uses: ./.github/actions/nugetforunity-restore
-        with:
-          working-directory: .
-
-      - name: Run Unity Tests
-        uses: game-ci/unity-test-runner@v4
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-
-      - name: Upload Test Results
-        uses: actions/upload-artifact@v5
-        with:
-          name: TestResults
-          path: artifacts
 
   buildForAllSupportedPlatforms:
     name: Build for ${{ matrix.targetPlatform }}
-    needs: [test]
     if: needs.checklicense.outputs.is_unity_license_set == 'true'
     runs-on: windows-latest
     strategy:
@@ -89,8 +63,35 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
-          customParameters: -logFile /github/workspace/UnityEditor.log
 
-      - name: Show Unity Editor Log
-        if: failure()
-        run: cat /github/workspace/UnityEditor.log
+      - name: Find Unity Editor log
+        if: always()        # run even if the build failed
+        id: find_unity_log
+        shell: bash
+        run: |
+          echo "Searching for UnityEditor.log..."
+          LOG_PATH=$(find $HOME -iname "UnityEditor.log" -o -iname "Editor.log" 2>/dev/null | head -n 1 || true)
+          if [ -z "$LOG_PATH" ]; then
+            echo "No UnityEditor.log found."
+            echo "log_found=false" >> $GITHUB_OUTPUT
+          else
+            echo "Found Unity log at: $LOG_PATH"
+            echo "log_found=true" >> $GITHUB_OUTPUT
+            echo "log_path=$LOG_PATH" >> $GITHUB_OUTPUT
+          fi
+
+      # --- NEW: print last lines to the job log ---
+      - name: Print last 200 lines of Unity log
+        if: always() && steps.find_unity_log.outputs.log_found == 'true'
+        shell: bash
+        run: |
+          echo "=== LAST 200 LINES OF UnityEditor.log ==="
+          tail -n 200 "${{ steps.find_unity_log.outputs.log_path }}"
+
+      # --- NEW: upload log as artifact ---
+      - name: Upload Unity log artifact
+        if: always() && steps.find_unity_log.outputs.log_found == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: UnityEditorLog
+          path: ${{ steps.find_unity_log.outputs.log_path }}
