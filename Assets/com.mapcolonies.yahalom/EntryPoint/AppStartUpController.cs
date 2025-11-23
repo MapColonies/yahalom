@@ -9,8 +9,6 @@ using com.mapcolonies.yahalom.DataManagement.Workspaces;
 using com.mapcolonies.yahalom.InitPipeline;
 using com.mapcolonies.yahalom.InitPipeline.InitSteps;
 using com.mapcolonies.yahalom.InitPipeline.InitUnits;
-using com.mapcolonies.yahalom.SceneManagement;
-using com.mapcolonies.yahalom.SceneManagement.Enums;
 using com.mapcolonies.yahalom.ReduxStore;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -18,6 +16,9 @@ using VContainer;
 using VContainer.Unity;
 using com.mapcolonies.core.Localization;
 using com.mapcolonies.core.Localization.Constants;
+using com.mapcolonies.yahalom.AppMode;
+using com.mapcolonies.yahalom.AppMode.Modes;
+using SimulationMode = UnityEngine.SimulationMode;
 
 namespace com.mapcolonies.yahalom.EntryPoint
 {
@@ -83,15 +84,17 @@ namespace com.mapcolonies.yahalom.EntryPoint
                         {
                             ConfigurationManager config = scope.Container.Resolve<ConfigurationManager>();
                             return config.Load();
-                        })
-                }),
-                new InitStep("SwitchScene", StepMode.Sequential, new IInitUnit[]
-                {
-                    new ActionUnit("Load Target Scene", 0.10f, InitPolicy.Fail,
-                        () =>
+                        }),
+                    new RegisterScopeUnit("App Mode Switcher Init", 0.01f, _scope, InitPolicy.Fail, builder =>
                         {
-                            ISceneController sceneController = scope.Container.Resolve<ISceneController>();
-                            return sceneController.SwitchSceneAsync(Scenes.PlanningScene);
+                            builder.Register<PlanningMode>(Lifetime.Scoped);
+                            builder.Register<SimulationMode>(Lifetime.Scoped);
+                        },
+                        resolver =>
+                        {
+                            AppModeSwitcher appModeSwitcher = _scope.Container.Resolve<AppModeSwitcher>();
+                            appModeSwitcher.RegisterChildScope(resolver);
+                            return default;
                         })
                 })
             };
@@ -100,25 +103,11 @@ namespace com.mapcolonies.yahalom.EntryPoint
         async UniTask IAsyncStartable.StartAsync(CancellationToken cancellation = new CancellationToken())
         {
             Debug.Log("Start initializing");
-            await _pipeline.RunAsync(_initSteps,0f, 0.7f);
-
-            InitializationPipeline pl = _scope.Container.Resolve<InitializationPipeline>();
-            List<InitStep> testSteps = new List<InitStep>
-            {
-                new InitStep("PreInit", StepMode.Sequential, new IInitUnit[]
-                {
-                    new ActionUnit("aaa", 0.1f, InitPolicy.Fail,
-                        () => UniTask.Delay(1000)),
-                    new ActionUnit("bbb", 0.1f, InitPolicy.Fail,
-                        () => UniTask.Delay(1000)),
-                    new ActionUnit("ccc", 0.1f, InitPolicy.Fail,
-                        () => UniTask.Delay(1000))
-                })
-            };
-            await pl.RunAsync(testSteps,0.7f);
+            await _pipeline.RunAsync(_initSteps,0f, 0.8f, false);
             Debug.Log("Initialized");
 
-
+            AppModeSwitcher appModeSwitcher = _scope.Container.Resolve<AppModeSwitcher>();
+            await appModeSwitcher.SetInitialMode<PlanningMode>();
         }
 
         private IInitUnit UsageAnalyticsServices(LifetimeScope scope)

@@ -12,6 +12,7 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 using com.mapcolonies.core.Localization;
+using com.mapcolonies.yahalom.AppMode;
 
 namespace com.mapcolonies.yahalom.EntryPoint
 {
@@ -23,7 +24,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
 
             #region StartUp
 
-            builder.Register<PreloaderViewModel>(Lifetime.Scoped);
+            builder.Register<PreloaderViewModel>(Lifetime.Singleton);
             builder.Register<InitializationPipeline>(Lifetime.Transient);
             builder.Register<AppStartUpController>(Lifetime.Singleton).As<IAsyncStartable>();
 
@@ -45,7 +46,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
             builder.Register<ISceneController, SceneController>(Lifetime.Singleton);
             builder.Register<TranslationService>(Lifetime.Singleton).As<ITranslationService>().As<IDisposable>();
             builder.Register<AnalyticsManager>(Lifetime.Singleton).AsSelf().As<IAnalyticsManager>().As<IDisposable>();
-
+            builder.Register<AppModeSwitcher>(Lifetime.Singleton);
             #endregion
         }
     }
