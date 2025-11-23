@@ -71,7 +71,8 @@ jobs:
         if: always() && steps.unity_build.outcome == 'failure'
         run: |
           echo "=== UNITY BUILD LOG ==="
-          cat "${{ steps.unity_build.outputs.logPath }}"
+          Get-Content "${{ steps.unity_build.outputs.logPath }}" -Raw # Corrected command for PowerShell
+        shell: powershell
 
       # Upload Unity build log as an artifact if the build failed.
       - name: Upload Unity Build Log on failure
