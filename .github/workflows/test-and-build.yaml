@@ -5,7 +5,6 @@ on:
   workflow_dispatch: {}
 
 jobs:
-  # Checks Unity license.
   checklicense:
     name: Check for UNITY_LICENSE in GitHub Secrets
     runs-on: ubuntu-latest
@@ -16,8 +15,6 @@ jobs:
         id: checklicense_job
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         run: |
           if [[ -n "${UNITY_LICENSE}" ]]; then
             echo "is_unity_license_set=true" >> $GITHUB_OUTPUT
@@ -32,69 +29,45 @@ jobs:
     name: Build for ${{ matrix.targetPlatform }}
     needs: [checklicense, format_check]
     if: needs.checklicense.outputs.is_unity_license_set == 'true'
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix:
         targetPlatform:
           - StandaloneWindows64
 
     steps:
-      # Checkout.
       - uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
 
       - uses: ./.github/actions/nugetforunity-restore
-        with:
-          working-directory: .
 
-      # Cache Unity Library folder.
       - uses: actions/cache@v4
         with:
           path: Library
           key: Library-${{ matrix.targetPlatform }}
           restore-keys: Library-
 
-      # Build project.
-      - uses: game-ci/unity-builder@v4
+      - name: Build Unity Project
+        uses: game-ci/unity-builder@v4
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
-          # Force Unity to write the editor log into the workspace
-          customParameters: -logFile ./UnityEditor.log
+          customParameters: -logFile /github/workspace/UnityEditor.log
 
-      # Check if UnityEditor.log exists
-      - name: Check for UnityEditor.log
+      - name: Print Unity Log
         if: always()
-        id: check_unity_log
-        shell: bash
         run: |
-          echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
           if [ -f "UnityEditor.log" ]; then
-            echo "UnityEditor.log found in workspace."
-            echo "log_found=true" >> $GITHUB_OUTPUT
-            echo "log_path=UnityEditor.log" >> $GITHUB_OUTPUT
+            echo "=== LAST 200 LINES ==="
+            tail -n 200 UnityEditor.log
           else
-            echo "UnityEditor.log NOT found in workspace."
-            echo "log_found=false" >> $GITHUB_OUTPUT
+            echo "UnityEditor.log NOT FOUND"
+            ls -R .
           fi
 
-      # Print last lines to the job log
-      - name: Print last 200 lines of Unity log
-        if: always() && steps.check_unity_log.outputs.log_found == 'true'
-        shell: bash
-        run: |
-          echo "=== LAST 200 LINES OF UnityEditor.log ==="
-          tail -n 200 "${{ steps.check_unity_log.outputs.log_path }}"
-
-      # Upload log as artifact
-      - name: Upload Unity log artifact
-        if: always() && steps.check_unity_log.outputs.log_found == 'true'
+      - name: Upload Unity Log
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: UnityEditorLog
-          path: ${{ steps.check_unity_log.outputs.log_path }}
+          path: UnityEditor.log
