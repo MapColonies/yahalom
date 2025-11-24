@@ -5,7 +5,6 @@ on:
   workflow_dispatch: {}
 
 jobs:
-  # Checks Unity license.
   checklicense:
     name: Check for UNITY_LICENSE in GitHub Secrets
     runs-on: ubuntu-latest
@@ -32,21 +31,21 @@ jobs:
     name: Build for ${{ matrix.targetPlatform }}
     needs: [checklicense, format_check]
     if: needs.checklicense.outputs.is_unity_license_set == 'true'
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         targetPlatform:
           - StandaloneWindows64
+
     steps:
-      # Checkout.
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
-          
+
       - uses: ./.github/actions/nugetforunity-restore
         with:
-          working-directory: .    
+          working-directory: .
 
       # Cache Unity Library folder.
       - uses: actions/cache@v4
@@ -54,12 +53,36 @@ jobs:
           path: Library
           key: Library-${{ matrix.targetPlatform }}
           restore-keys: Library-
-      
+
       # Build project.
-      - uses: game-ci/unity-builder@v4
+      - name: Build Unity Project
+        uses: game-ci/unity-builder@v4
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
+          # Force Unity to write the editor log into the mounted workspace
+          customParameters: -logFile /github/workspace/UnityEditor.log
+
+      # Print Unity log (if exists)
+      - name: Print Unity Log
+        if: always()
+        run: |
+          echo "Workspace content:"
+          ls -R .
+          if [ -f "UnityEditor.log" ]; then
+            echo "=== LAST 200 LINES OF UnityEditor.log ==="
+            tail -n 200 UnityEditor.log
+          else
+            echo "UnityEditor.log NOT FOUND"
+          fi
+
+      # Upload Unity log as artifact
+      - name: Upload Unity Log
+        if: always() && hashFiles('UnityEditor.log') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: UnityEditorLog
+          path: UnityEditor.log

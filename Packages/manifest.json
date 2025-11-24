@@ -1,11 +1,10 @@
 {
   "dependencies": {
-    "com.cesium.unity": "1.17.0",
-	"com.cysharp.r3": "https://github.com/Cysharp/R3.git?path=src/R3.Unity/Assets/R3.Unity",
+    "com.cysharp.r3": "https://github.com/Cysharp/R3.git?path=src/R3.Unity/Assets/R3.Unity",
     "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
     "com.github-glitchenzo.nugetforunity": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity",
     "com.mapcolonies.yahalom-ui": "https://github.com/MapColonies/yahalom-ui-components.git?path=/Assets/YahalomUIPackage",
-	"com.unity.dt.app-ui": "2.1.1",
+    "com.unity.dt.app-ui": "2.1.1",
     "com.unity.ide.rider": "3.0.38",
     "com.unity.localization": "1.5.8",
     "com.unity.multiplayer.center": "1.0.0",
@@ -44,14 +43,5 @@
     "com.unity.modules.wind": "1.0.0",
     "com.unity.modules.xr": "1.0.0"
   },
-  "scopedRegistries": [
-    {
-      "name": "Cesium",
-      "url": "https://unity.pkg.cesium.com",
-      "scopes": [
-        "com.cesium.unity"
-      ],
-      "overrideBuiltIns": true
-    }
-  ]
+  "scopedRegistries": []
 }
