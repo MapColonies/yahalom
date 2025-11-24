@@ -27,7 +27,7 @@ jobs:
 
   format_check:
     uses: ./.github/workflows/format.yaml
-  
+
   buildForAllSupportedPlatforms:
     name: Build for ${{ matrix.targetPlatform }}
     needs: [checklicense, format_check]
@@ -40,7 +40,7 @@ jobs:
           - StandaloneWindows64
     steps:
       # Checkout.
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -54,7 +54,7 @@ jobs:
       - uses: ./.github/actions/nugetforunity-restore
         with:
           working-directory: .
-      
+
       # Build project.
       - name: Build Unity Project
         id: unity_build
