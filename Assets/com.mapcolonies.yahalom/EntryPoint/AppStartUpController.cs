@@ -18,7 +18,7 @@ using com.mapcolonies.core.Localization;
 using com.mapcolonies.core.Localization.Constants;
 using com.mapcolonies.yahalom.AppMode;
 using com.mapcolonies.yahalom.AppMode.Modes;
-using SimulationMode = UnityEngine.SimulationMode;
+using SimulationMode = com.mapcolonies.yahalom.AppMode.Modes.SimulationMode;
 
 namespace com.mapcolonies.yahalom.EntryPoint
 {
