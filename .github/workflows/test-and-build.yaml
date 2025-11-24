@@ -37,7 +37,7 @@ jobs:
       fail-fast: false
       matrix:
         targetPlatform:
-          - StandaloneWindows
+          - StandaloneWindows64
     steps:
       # Checkout.
       - uses: actions/checkout@v4
