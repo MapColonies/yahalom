@@ -51,6 +51,7 @@ namespace com.mapcolonies.yahalom.InitPipeline
 
                             _preloader.ReportProgress($"{step.Name} .. {initUnit.Name}", afterMappedProgress);
                         }
+
                         break;
 
                     case StepMode.Parallel:

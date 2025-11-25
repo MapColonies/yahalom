@@ -21,7 +21,7 @@ namespace com.mapcolonies.yahalom.AppMode
 
         public async UniTask ChangeMode<T>() where T : IAppMode
         {
-            if (_currentAppMode == (IAppMode) _resolver.Resolve<T>())
+            if (_currentAppMode == (IAppMode)_resolver.Resolve<T>())
                 return;
 
             await _currentAppMode.ExitMode();

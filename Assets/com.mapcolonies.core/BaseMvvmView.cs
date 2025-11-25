@@ -8,7 +8,10 @@ namespace com.mapcolonies.core
     [RequireComponent(typeof(UIDocument))]
     public abstract class BaseMvvmView<T> : MonoBehaviour where T : class
     {
-        protected CompositeDisposable  Disposables { get; } = new CompositeDisposable();
+        protected CompositeDisposable Disposables
+        {
+            get;
+        } = new CompositeDisposable();
 
         protected T ViewModel
         {

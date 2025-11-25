@@ -21,7 +21,11 @@ namespace com.mapcolonies.yahalom.Preloader
             private set;
         }
 
-        public ReactiveProperty<bool> Hidden { get; private set; } = new ReactiveProperty<bool>(false);
+        public ReactiveProperty<bool> Hidden
+        {
+            get;
+            private set;
+        } = new ReactiveProperty<bool>(false);
 
         public virtual void ReportProgress(string name, float progress)
         {
