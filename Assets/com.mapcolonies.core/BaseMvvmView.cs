@@ -1,3 +1,4 @@
+using R3;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;
@@ -7,7 +8,17 @@ namespace com.mapcolonies.core
     [RequireComponent(typeof(UIDocument))]
     public abstract class BaseMvvmView<T> : MonoBehaviour where T : class
     {
-        private T _viewModel;
+        protected CompositeDisposable Disposables
+        {
+            get;
+        } = new CompositeDisposable();
+
+        protected T ViewModel
+        {
+            get;
+            private set;
+        }
+
         [SerializeField] private UIDocument _uiDocument;
 
         protected VisualElement RootVisualElement
@@ -20,15 +31,20 @@ namespace com.mapcolonies.core
         public void Construct(T viewModel)
         {
             Debug.Log($"Construct view for {typeof(T)}");
-            _viewModel = viewModel;
+            ViewModel = viewModel;
         }
 
         private void OnEnable()
         {
-            if (_viewModel == null) return;
+            if (ViewModel == null) return;
 
             RootVisualElement = _uiDocument.rootVisualElement;
-            RootVisualElement.dataSource = _viewModel;
+            RootVisualElement.dataSource = ViewModel;
+        }
+
+        private void OnDestroy()
+        {
+            Disposables.Dispose();
         }
     }
 }
