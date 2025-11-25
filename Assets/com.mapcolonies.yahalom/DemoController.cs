@@ -1,41 +1,40 @@
-using com.mapcolonies.yahalom.SceneManagement;
+using com.mapcolonies.yahalom.AppMode;
+using com.mapcolonies.yahalom.AppMode.Modes;
 using com.mapcolonies.yahalom.SceneManagement.Enums;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using VContainer;
+using SimulationMode = com.mapcolonies.yahalom.AppMode.Modes.SimulationMode;
 
 namespace com.mapcolonies.yahalom
 {
     public class DemoController : MonoBehaviour
     {
-        private ISceneController _sceneController;
+        private AppModeSwitcher _appModeSwitcher;
 
         [Inject]
-        public void Construct(ISceneController sceneController)
+        public void Construct(AppModeSwitcher appModeSwitcher)
         {
-            _sceneController = sceneController;
+            _appModeSwitcher = appModeSwitcher;
         }
 
         public void SwitchScene()
         {
-            Scenes nextScene;
             string currentSceneName = SceneManager.GetActiveScene().name;
 
             if (currentSceneName.Equals(Scenes.SimulationScene.ToString()))
             {
-                nextScene = Scenes.PlanningScene;
+                _appModeSwitcher.ChangeMode<PlanningMode>().Forget();
             }
             else if (currentSceneName.Equals(Scenes.PlanningScene.ToString()))
             {
-                nextScene = Scenes.SimulationScene;
+                _appModeSwitcher.ChangeMode<SimulationMode>().Forget();
             }
             else
             {
                 Debug.LogWarning($"Current scene '{currentSceneName}' is not part of the demo flow.");
-                return;
             }
-
-            _ = _sceneController.SwitchSceneAsync(nextScene);
         }
     }
 }
