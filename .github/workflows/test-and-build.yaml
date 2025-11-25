@@ -28,9 +28,35 @@ jobs:
   format_check:
     uses: ./.github/workflows/format.yaml
 
+  test:
+    name: Run Unity Tests
+    needs: [checklicense, format_check]
+    if: needs.checklicense.outputs.is_unity_license_set == 'true'
+    runs-on: windows-latest
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v5
+
+      - uses: ./.github/actions/nugetforunity-restore
+        with:
+          working-directory: .
+
+      - name: Run Unity Tests
+        uses: game-ci/unity-test-runner@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v5
+        with:
+          name: TestResults
+          path: artifacts
+
   buildForAllSupportedPlatforms:
     name: Build for ${{ matrix.targetPlatform }}
-    needs: [checklicense, format_check]
+    needs: [test]
     if: needs.checklicense.outputs.is_unity_license_set == 'true'
     runs-on: windows-latest
     strategy:
@@ -40,7 +66,7 @@ jobs:
           - StandaloneWindows64
     steps:
       # Checkout.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -56,29 +82,15 @@ jobs:
           working-directory: .
 
       # Build project.
-      - name: Build Unity Project
-        id: unity_build
-        uses: game-ci/unity-builder@v4
+      - uses: game-ci/unity-builder@v4
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
+          customParameters: -logFile /github/workspace/UnityEditor.log
 
-      # Print Unity build log to the console if the build failed.
-      - name: Print Unity Build Log to console
-        if: always() && steps.unity_build.outcome == 'failure'
-        run: |
-          echo "=== UNITY BUILD LOG ==="
-          Get-Content "${{ steps.unity_build.outputs.logPath }}" -Raw # Corrected command for PowerShell
-        shell: powershell
-
-      # Upload Unity build log as an artifact if the build failed.
-      - name: Upload Unity Build Log on failure
-        if: always() && steps.unity_build.outcome == 'failure'
-        uses: actions/upload-artifact@v4
-        with:
-          name: UnityBuildLog-${{ matrix.targetPlatform }}
-          path: ${{ steps.unity_build.outputs.logPath }}
-          retention-days: 7
+      - name: Show Unity Editor Log
+        if: failure()
+        run: cat /github/workspace/UnityEditor.log
