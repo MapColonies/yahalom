@@ -38,10 +38,9 @@ jobs:
       matrix:
         targetPlatform:
           - StandaloneWindows64
-
     steps:
       # Checkout.
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -57,15 +56,29 @@ jobs:
           working-directory: .
 
       # Build project.
-      - uses: game-ci/unity-builder@v4
+      - name: Build Unity Project
+        id: unity_build
+        uses: game-ci/unity-builder@v4
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
-          customParameters: -logFile UnityEditor.log
 
-      - name: Show Unity Editor Log
-        if: failure()
-        run: Get-Content UnityEditor.log
+      # Print Unity build log to the console if the build failed.
+      - name: Print Unity Build Log to console
+        if: always() && steps.unity_build.outcome == 'failure'
+        run: |
+          echo "=== UNITY BUILD LOG ==="
+          Get-Content "${{ steps.unity_build.outputs.logPath }}" -Raw # Corrected command for PowerShell
+        shell: powershell
+
+      # Upload Unity build log as an artifact if the build failed.
+      - name: Upload Unity Build Log on failure
+        if: always() && steps.unity_build.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: UnityBuildLog-${{ matrix.targetPlatform }}
+          path: ${{ steps.unity_build.outputs.logPath }}
+          retention-days: 7
