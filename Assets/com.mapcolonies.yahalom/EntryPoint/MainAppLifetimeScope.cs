@@ -47,6 +47,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
             builder.Register<TranslationService>(Lifetime.Singleton).As<ITranslationService>().As<IDisposable>();
             builder.Register<AnalyticsManager>(Lifetime.Singleton).AsSelf().As<IAnalyticsManager>().As<IDisposable>();
             builder.Register<AppModeSwitcher>(Lifetime.Singleton);
+
             #endregion
         }
     }

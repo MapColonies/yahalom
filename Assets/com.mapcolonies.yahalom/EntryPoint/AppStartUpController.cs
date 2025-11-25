@@ -103,7 +103,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
         async UniTask IAsyncStartable.StartAsync(CancellationToken cancellation = new CancellationToken())
         {
             Debug.Log("Start initializing");
-            await _pipeline.RunAsync(_initSteps,0f, 0.8f, false);
+            await _pipeline.RunAsync(_initSteps, 0f, 0.8f, false);
             Debug.Log("Initialized");
 
             AppModeSwitcher appModeSwitcher = _scope.Container.Resolve<AppModeSwitcher>();
