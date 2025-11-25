@@ -56,18 +56,6 @@ jobs:
         with:
           working-directory: .
 
-      - name: Install .NET SDK + Roslyn Build Tools (Windows)
-        if: runner.os == 'Windows'
-        run: |
-            echo "Installing .NET 8 SDK..."
-            winget install -e --id Microsoft.DotNet.SDK.8 || true
-
-            echo "Installing Visual Studio Build Tools (MSBuild + Roslyn)..."
-            winget install -e --id Microsoft.VisualStudio.2022.BuildTools --silent --override `
-              "--wait --quiet --add Microsoft.VisualStudio.Component.Roslyn.Compiler --add Microsoft.VisualStudio.Component.MSBuild" || true
-
-            echo "Installation complete."
-
       # Build project.
       - uses: game-ci/unity-builder@v4
         env:
