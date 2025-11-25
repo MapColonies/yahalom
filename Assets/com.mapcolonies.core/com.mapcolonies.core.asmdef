@@ -1,26 +1,27 @@
 {
-    "name": "com.mapcolonies.core",
-    "rootNamespace": "",
-    "references": [
-        "VContainer",
-        "UniTask",
-        "Unity.Localization",
-        "Unity.ResourceManager"
-    ],
-    "includePlatforms": [
-        "Editor",
-        "WSA",
-        "WindowsStandalone32",
-        "WindowsStandalone64",
-        "WindowsStandalone32Server",
-        "WindowsStandalone64Server"
-    ],
-    "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": [],
-    "noEngineReferences": false
+  "name": "com.mapcolonies.core",
+  "rootNamespace": "",
+  "references": [
+    "VContainer",
+    "UniTask",
+    "Unity.AppUI.Redux",
+    "Unity.Localization",
+    "Unity.ResourceManager"
+  ],
+  "includePlatforms": [
+    "Editor",
+    "WSA",
+    "WindowsStandalone32",
+    "WindowsStandalone64",
+    "WindowsStandalone32Server",
+    "WindowsStandalone64Server"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
 }

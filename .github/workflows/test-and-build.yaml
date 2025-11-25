@@ -27,7 +27,7 @@ jobs:
 
   format_check:
     uses: ./.github/workflows/format.yaml
-  
+
   test:
     name: Run Unity Tests
     needs: [checklicense, format_check]
@@ -80,7 +80,7 @@ jobs:
       - uses: ./.github/actions/nugetforunity-restore
         with:
           working-directory: .
-      
+
       # Build project.
       - uses: game-ci/unity-builder@v4
         env:
