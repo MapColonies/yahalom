@@ -29,5 +29,11 @@ namespace com.mapcolonies.core.Localization.Models
             get;
             set;
         }
+
+        public string TargetStringTableName
+        {
+            get;
+            set;
+        }
     }
 }

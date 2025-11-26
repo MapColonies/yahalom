@@ -23,8 +23,6 @@ namespace com.mapcolonies.core.Localization
     {
         private bool _showTranslationWarnings;
 
-        private const string TargetStringTableName = "Yahalom_HardCoded_Translations";
-
         private Dictionary<string, TranslationEntry> _translations = new Dictionary<string, TranslationEntry>();
         private bool _isInitialized;
 
@@ -35,8 +33,8 @@ namespace com.mapcolonies.core.Localization
             _showTranslationWarnings = settings.ShowTranslationWarnings;
 
             await SetLanguage(settings.Locale);
-            await SetTranslations(settings.LocalFilePath, settings.RemoteConfigUrl);
-            await ApplyToUnityLocalization();
+            await SetTranslations(settings.TargetStringTableName, settings.LocalFilePath, settings.RemoteConfigUrl);
+            await ApplyToUnityLocalization(settings.TargetStringTableName);
 
             _isInitialized = true;
         }
@@ -61,7 +59,7 @@ namespace com.mapcolonies.core.Localization
             }
         }
 
-        private async UniTask<Dictionary<string, TranslationEntry>> LoadHardCodedTranslations()
+        private async UniTask<Dictionary<string, TranslationEntry>> LoadHardCodedTranslations(string localTranslationTable)
         {
             Dictionary<string, TranslationEntry> hardCodedTranslations = new Dictionary<string, TranslationEntry>();
             await LocalizationSettings.InitializationOperation.Task;
@@ -71,7 +69,7 @@ namespace com.mapcolonies.core.Localization
 
             foreach (Locale locale in LocalizationSettings.AvailableLocales.Locales)
             {
-                AsyncOperationHandle<StringTable> tableHandle = LocalizationSettings.StringDatabase.GetTableAsync(TargetStringTableName, locale);
+                AsyncOperationHandle<StringTable> tableHandle = LocalizationSettings.StringDatabase.GetTableAsync(localTranslationTable, locale);
                 StringTable table = await tableHandle.Task;
 
                 if (table != null)
@@ -87,7 +85,7 @@ namespace com.mapcolonies.core.Localization
 
             if (loadedTables.Count == 0)
             {
-                Debug.LogWarning($"TranslationService: StringTable '{TargetStringTableName}' not found for ANY locale at runtime.");
+                Debug.LogWarning($"TranslationService: StringTable '{localTranslationTable}' not found for ANY locale at runtime.");
                 return hardCodedTranslations;
             }
 
@@ -115,9 +113,9 @@ namespace com.mapcolonies.core.Localization
             return hardCodedTranslations;
         }
 
-        private async UniTask SetTranslations(string localFilePath, string remoteConfigUrl)
+        private async UniTask SetTranslations(string localTranslationTable, string localFilePath, string remoteConfigUrl)
         {
-            Dictionary<string, TranslationEntry> hardCodedTranslations = await LoadHardCodedTranslations();
+            Dictionary<string, TranslationEntry> hardCodedTranslations = await LoadHardCodedTranslations(localTranslationTable);
 
             Dictionary<string, TranslationEntry> fileTranslations = new Dictionary<string, TranslationEntry>();
             TranslationConfig fileConfig = await JsonUtilityEx.LoadJsonAsync<TranslationConfig>(localFilePath);
@@ -150,7 +148,7 @@ namespace com.mapcolonies.core.Localization
                 .ToDictionary(g => g.Key, g => g.Last().Value);
         }
 
-        private async UniTask ApplyToUnityLocalization()
+        private async UniTask ApplyToUnityLocalization(string targetStringTableName)
         {
             await LocalizationSettings.InitializationOperation.Task;
             Dictionary<string, StringTable> loadedStringTables = new Dictionary<string, StringTable>();
@@ -177,12 +175,12 @@ namespace com.mapcolonies.core.Localization
                             continue;
                         }
 
-                        AsyncOperationHandle<StringTable> tableHandle = LocalizationSettings.StringDatabase.GetTableAsync(TargetStringTableName, locale);
+                        AsyncOperationHandle<StringTable> tableHandle = LocalizationSettings.StringDatabase.GetTableAsync(targetStringTableName, locale);
                         targetTable = await tableHandle.Task;
 
                         if (targetTable == null)
                         {
-                            Debug.LogError($"TranslationService: Could not load String Table '{TargetStringTableName}' for locale '{localeCode}'.");
+                            Debug.LogError($"TranslationService: Could not load String Table '{targetStringTableName}' for locale '{localeCode}'.");
                             continue;
                         }
 
