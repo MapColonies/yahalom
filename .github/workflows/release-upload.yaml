@@ -38,7 +38,7 @@ jobs:
           - StandaloneWindows64
     steps:
       # Checkout the repository.
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
