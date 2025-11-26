@@ -15,9 +15,10 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 using com.mapcolonies.core.Localization;
-using com.mapcolonies.core.Localization.Constants;
+using com.mapcolonies.core.Localization.Models;
 using com.mapcolonies.yahalom.AppMode;
 using com.mapcolonies.yahalom.AppMode.Modes;
+using Unity.AppUI.Redux;
 using SimulationMode = com.mapcolonies.yahalom.AppMode.Modes.SimulationMode;
 
 namespace com.mapcolonies.yahalom.EntryPoint
@@ -74,9 +75,10 @@ namespace com.mapcolonies.yahalom.EntryPoint
                     new ActionUnit("Translation Service", 0.1f, InitPolicy.Fail,
                         () =>
                         {
-                            var translationService = scope.Container.Resolve<ITranslationService>();
-                            //TODO: Get start-up language from config
-                            return translationService.InitializeService(LocalizationConstants.HebrewLocaleIdentifier);
+                            ReduxStoreManager reduxStoreManager = scope.Container.Resolve<ReduxStoreManager>();
+                            TranslationSettings translationSettings = reduxStoreManager.Store.GetState(AppSettingsReducer.SliceName, AppSettingsSelectors.TranslationSettings);
+                            ITranslationService translationService = scope.Container.Resolve<ITranslationService>();
+                            return translationService.InitializeService(translationSettings);
                         }),
                     UsageAnalyticsServices(scope),
                     new ActionUnit("Configuration", 0.1f, InitPolicy.Fail,

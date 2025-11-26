@@ -1,4 +1,5 @@
 using System;
+using com.mapcolonies.core.Localization.Models;
 
 namespace com.mapcolonies.yahalom.DataManagement.AppSettings
 {
@@ -28,5 +29,11 @@ namespace com.mapcolonies.yahalom.DataManagement.AppSettings
             get;
             set;
         }
+
+        public TranslationSettings TranslationSettings
+        {
+            get;
+            set;
+        } = new TranslationSettings();
     }
 }

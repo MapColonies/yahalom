@@ -2,5 +2,11 @@
   "userSettingsFile": "DataManagement/UserSettings/user_settings.json",
   "offlineConfigurationFile": "DataManagement/offline_config.json",
   "workspacesDirectory": "DataManagement/workspaces",
-  "remoteConfigurationUrl": "https://example.com/config/getConfig?v=10"
+  "remoteConfigurationUrl": "https://example.com/config/getConfig?v=10",
+  "translationSettings": {
+    "locale": "he-IL",
+    "localFilePath": "Translations/Translations.json",
+    "remoteConfigUrl": "",
+    "showTranslationWarnings": true
+  }
 }
