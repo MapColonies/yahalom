@@ -1,38 +1,40 @@
-using com.mapcolonies.yahalom.SceneManagement;
+using com.mapcolonies.yahalom.AppMode;
+using com.mapcolonies.yahalom.AppMode.Modes;
 using com.mapcolonies.yahalom.SceneManagement.Enums;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using VContainer;
+using SimulationMode = com.mapcolonies.yahalom.AppMode.Modes.SimulationMode;
 
-public class DemoController : MonoBehaviour
+namespace com.mapcolonies.yahalom
 {
-    private ISceneController _sceneController;
-
-    [Inject]
-    public void Construct(ISceneController sceneController)
+    public class DemoController : MonoBehaviour
     {
-        _sceneController = sceneController;
-    }
+        private AppModeSwitcher _appModeSwitcher;
 
-    public void SwitchScene()
-    {
-        Scenes nextScene;
-        string currentSceneName = SceneManager.GetActiveScene().name;
-
-        if (currentSceneName.Equals(Scenes.SimulationScene.ToString()))
+        [Inject]
+        public void Construct(AppModeSwitcher appModeSwitcher)
         {
-            nextScene = Scenes.PlanningScene;
-        }
-        else if (currentSceneName.Equals(Scenes.PlanningScene.ToString()))
-        {
-            nextScene = Scenes.SimulationScene;
-        }
-        else
-        {
-            Debug.LogWarning($"Current scene '{currentSceneName}' is not part of the demo flow.");
-            return;
+            _appModeSwitcher = appModeSwitcher;
         }
 
-        _ = _sceneController.SwitchSceneAsync(nextScene);
+        public void SwitchScene()
+        {
+            string currentSceneName = SceneManager.GetActiveScene().name;
+
+            if (currentSceneName.Equals(Scenes.SimulationScene.ToString()))
+            {
+                _appModeSwitcher.ChangeMode<PlanningMode>().Forget();
+            }
+            else if (currentSceneName.Equals(Scenes.PlanningScene.ToString()))
+            {
+                _appModeSwitcher.ChangeMode<SimulationMode>().Forget();
+            }
+            else
+            {
+                Debug.LogWarning($"Current scene '{currentSceneName}' is not part of the demo flow.");
+            }
+        }
     }
 }

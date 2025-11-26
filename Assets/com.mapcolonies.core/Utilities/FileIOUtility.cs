@@ -1,12 +1,11 @@
 using System;
 using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace com.mapcolonies.core.Utilities
 {
-    public class FileUtility
+    public class FileIOUtility
     {
         public static string GetFullPath(string folderName, string fileName = null)
         {
@@ -22,7 +21,6 @@ namespace com.mapcolonies.core.Utilities
 
                 if (string.IsNullOrEmpty(fileName))
                 {
-                    Debug.Log($"Directory ready: {directoryPath}");
                     return directoryPath;
                 }
 
@@ -37,7 +35,7 @@ namespace com.mapcolonies.core.Utilities
             }
         }
 
-        public static async Task AppendLineToFileAsync(string line, string filePath)
+        public static async UniTask AppendLineToFileAsync(string line, string filePath)
         {
             if (string.IsNullOrEmpty(filePath))
             {
@@ -46,6 +44,30 @@ namespace com.mapcolonies.core.Utilities
             }
 
             await File.AppendAllTextAsync(filePath, line + Environment.NewLine);
+        }
+
+        public static async UniTask<string> ReadTextFileAsync(string path)
+        {
+            if (!File.Exists(path))
+                throw new FileNotFoundException($"File not found: {path}");
+
+            using StreamReader reader = new StreamReader(path);
+            return await reader.ReadToEndAsync();
+        }
+
+        public static async UniTask WriteTextFileAsync(string path, string text)
+        {
+            string? directory = Path.GetDirectoryName(path);
+            if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+
+            await using StreamWriter writer = new StreamWriter(path, false);
+            await writer.WriteAsync(text);
+        }
+
+        public static async UniTask<bool> FileExistsAsync(string path)
+        {
+            return await UniTask.RunOnThreadPool(() => File.Exists(path));
         }
     }
 }

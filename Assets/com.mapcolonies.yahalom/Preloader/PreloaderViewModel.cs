@@ -1,4 +1,5 @@
 using System;
+using R3;
 using UnityEngine;
 
 namespace com.mapcolonies.yahalom.Preloader
@@ -20,6 +21,12 @@ namespace com.mapcolonies.yahalom.Preloader
             private set;
         }
 
+        public ReactiveProperty<bool> Hidden
+        {
+            get;
+            private set;
+        } = new ReactiveProperty<bool>(false);
+
         public virtual void ReportProgress(string name, float progress)
         {
             Name = name;
@@ -28,8 +35,12 @@ namespace com.mapcolonies.yahalom.Preloader
             Debug.Log($"Name: {name} Progress: {progress}");
         }
 
+        public void Hide() => Hidden.Value = true;
+        public void Show() => Hidden.Value = false;
+
         public void Dispose()
         {
+            Hidden?.Dispose();
         }
     }
 }
