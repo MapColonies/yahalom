@@ -37,7 +37,6 @@ namespace com.mapcolonies.core.Utilities
             return JsonConvert.DeserializeObject<T>(request.downloadHandler.text);
         }
 
-
         public static async UniTask<T> LoadJsonAsync<T>(string relativePath, FileLocation location = FileLocation.StreamingAssets)
         {
             string path;

@@ -1,75 +1,74 @@
 {
-    "showTranslationWarnings": true,
-    "words": [
-        {
-            "key": "yahalom.example",
-            "localizedValues": {
-                "en": "example",
-                "he-IL": "דוגמה"
-            }
-        },
-        {
-            "key": "yahalom.home",
-            "localizedValues": {
-                "en": "home",
-                "he-IL": "בית"
-            }
-        },
-        {
-            "key": "yahalom.hello",
-            "localizedValues": {
-                "en": "hello",
-                "he-IL": "שלום"
-            }
-        },
-        {
-            "key": "yahalom.welcome",
-            "localizedValues": {
-                "en": "welcome",
-                "he-IL": "ברוך הבא"
-            }
-        },
-        {
-            "key": "yahalom.exit",
-            "localizedValues": {
-                "en": "exit",
-                "he-IL": "יציאה"
-            }
-        },
-        {
-            "key": "yahalom.settings",
-            "localizedValues": {
-                "en": "settings",
-                "he-IL": "הגדרות"
-            }
-        },
-        {
-            "key": "yahalom.language",
-            "localizedValues": {
-                "en": "language",
-                "he-IL": "שפה"
-            }
-        },
-        {
-            "key": "yahalom.confirm",
-            "localizedValues": {
-                "en": "confirm",
-                "he-IL": "אישור"
-            }
-        },
-        {
-            "key": "yahalom.cancel",
-            "localizedValues": {
-                "en": "cancel",
-                "he-IL": "ביטול"
-            }
-        },
-        {
-            "key": "yahalom.error",
-            "localizedValues": {
-                "en": "error",
-                "he-IL": "שגיאה"
-            }
-        }
-    ]
+  "words": [
+    {
+      "key": "yahalom.example",
+      "localizedValues": {
+        "en": "example",
+        "he-IL": "דוגמה"
+      }
+    },
+    {
+      "key": "yahalom.home",
+      "localizedValues": {
+        "en": "home",
+        "he-IL": "בית"
+      }
+    },
+    {
+      "key": "yahalom.hello",
+      "localizedValues": {
+        "en": "hello",
+        "he-IL": "שלום"
+      }
+    },
+    {
+      "key": "yahalom.welcome",
+      "localizedValues": {
+        "en": "welcome",
+        "he-IL": "ברוך הבא"
+      }
+    },
+    {
+      "key": "yahalom.exit",
+      "localizedValues": {
+        "en": "exit",
+        "he-IL": "יציאה"
+      }
+    },
+    {
+      "key": "yahalom.settings",
+      "localizedValues": {
+        "en": "settings",
+        "he-IL": "הגדרות"
+      }
+    },
+    {
+      "key": "yahalom.language",
+      "localizedValues": {
+        "en": "language",
+        "he-IL": "שפה"
+      }
+    },
+    {
+      "key": "yahalom.confirm",
+      "localizedValues": {
+        "en": "confirm",
+        "he-IL": "אישור"
+      }
+    },
+    {
+      "key": "yahalom.cancel",
+      "localizedValues": {
+        "en": "cancel",
+        "he-IL": "ביטול"
+      }
+    },
+    {
+      "key": "yahalom.error",
+      "localizedValues": {
+        "en": "error",
+        "he-IL": "שגיאה"
+      }
+    }
+  ]
 }
