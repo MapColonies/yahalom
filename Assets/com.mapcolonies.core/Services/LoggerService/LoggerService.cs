@@ -72,6 +72,7 @@ namespace com.mapcolonies.core.Services.LoggerService
 
                 //TODO:Get _config.ForceMinLogLevel and override
                 bool isDev = Application.isEditor || Debug.isDebugBuild;
+
                 if (!isDev)
                 {
                     foreach (var appender in hierarchy.GetAppenders())
@@ -100,7 +101,6 @@ namespace com.mapcolonies.core.Services.LoggerService
                             sk.ActivateOptions();
                         }
                     }
-
                 }
 
                 ConsoleAppender consoleAppender = new ConsoleAppender(_originalUnityLogHandler);
