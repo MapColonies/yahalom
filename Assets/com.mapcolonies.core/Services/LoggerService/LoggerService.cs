@@ -72,18 +72,35 @@ namespace com.mapcolonies.core.Services.LoggerService
 
                 //TODO:Get _config.ForceMinLogLevel and override
                 bool isDev = Application.isEditor || Debug.isDebugBuild;
-                Level prodThreshold = hierarchy.LevelMap[_config.MinLogLevel] ?? Level.Debug;
-
                 if (!isDev)
                 {
                     foreach (var appender in hierarchy.GetAppenders())
                     {
                         if (appender is log4net.Appender.AppenderSkeleton sk)
                         {
-                            sk.Threshold = prodThreshold;
+                            if (appender.Name.Contains("Console", StringComparison.OrdinalIgnoreCase))
+                            {
+                                sk.Threshold = hierarchy.LevelMap[_config.MinConsoleLogLevel] ?? Level.Debug;
+                            }
+                            else if (appender.Name.Contains("File", StringComparison.OrdinalIgnoreCase) ||
+                                     appender is log4net.Appender.RollingFileAppender)
+                            {
+                                sk.Threshold = hierarchy.LevelMap[_config.MinFileLogLevel] ?? Level.Debug;
+                            }
+                            else if (appender.Name.Contains("Http", StringComparison.OrdinalIgnoreCase) ||
+                                     appender is HttpAppender)
+                            {
+                                sk.Threshold = hierarchy.LevelMap[_config.MinHttpLogLevel] ?? Level.Debug;
+                            }
+                            else
+                            {
+                                sk.Threshold = Level.Debug;
+                            }
+
                             sk.ActivateOptions();
                         }
                     }
+
                 }
 
                 ConsoleAppender consoleAppender = new ConsoleAppender(_originalUnityLogHandler);
@@ -93,7 +110,7 @@ namespace com.mapcolonies.core.Services.LoggerService
                 layout.ActivateOptions();
                 consoleAppender.Layout = layout;
 
-                consoleAppender.Threshold = isDev ? Level.Debug : prodThreshold;
+                consoleAppender.Threshold = hierarchy.LevelMap[_config.MinConsoleLogLevel] ?? Level.Debug;
                 consoleAppender.ActivateOptions();
 
                 hierarchy.Root.AddAppender(consoleAppender);

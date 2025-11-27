@@ -13,7 +13,7 @@ namespace EditorTests.Logger
             Assert.IsTrue(config.ServiceEnabled);
             Assert.IsTrue(config.EnableConsole);
             Assert.AreEqual("Logger/log4net.xml", config.Log4NetConfigXml);
-            Assert.AreEqual("DEBUG", config.MinLogLevel);
+            Assert.AreEqual("DEBUG", config.MinConsoleLogLevel);
         }
     }
 }

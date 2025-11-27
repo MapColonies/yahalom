@@ -27,7 +27,19 @@ namespace com.mapcolonies.core.Services.LoggerService
             private set;
         }
 
-        public string MinLogLevel
+        public string MinConsoleLogLevel
+        {
+            get;
+            private set;
+        }
+
+        public string MinFileLogLevel
+        {
+            get;
+            private set;
+        }
+
+        public string MinHttpLogLevel
         {
             get;
             private set;
@@ -75,7 +87,9 @@ namespace com.mapcolonies.core.Services.LoggerService
                 Log4NetConfigXml = _config.Log4NetConfigXml;
                 ServiceEnabled = _config.Enabled;
                 EnableConsole = _config.ConsoleEnabled;
-                MinLogLevel = _config.MinLogLevel;
+                MinConsoleLogLevel = _config.MinLogLevel;
+                MinFileLogLevel = _config.MinFileLogLevel;
+                MinHttpLogLevel = _config.MinHttpLogLevel;
                 ForceMinLogLevel = _config.ForceMinLogLevel;
                 HttpEndpointUrl = _config.HttpEndpointUrl;
                 HttpPersistenceDirectory = _config.HttpPersistenceDirectory;
