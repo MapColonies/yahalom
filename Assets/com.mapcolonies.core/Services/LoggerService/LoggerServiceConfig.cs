@@ -16,12 +16,7 @@ namespace com.mapcolonies.core.Services.LoggerService
             private set;
         }
 
-        public void Init()
-        {
-            InitAsync().Forget();
-        }
-
-        private async UniTask InitAsync()
+        public async UniTask Init()
         {
             try
             {
@@ -37,6 +32,7 @@ namespace com.mapcolonies.core.Services.LoggerService
                 Debug.LogError($"Error loading {JsonFileName}: {ex.Message}");
             }
         }
+
 
         public string GetSystemLogsDirectory()
         {
