@@ -3,11 +3,13 @@ using System.IO;
 using com.mapcolonies.core.Services.LoggerService.CustomAppenders;
 using Cysharp.Threading.Tasks;
 using log4net;
+using log4net.Appender;
 using log4net.Config;
 using log4net.Core;
 using log4net.Layout;
 using log4net.Repository.Hierarchy;
 using UnityEngine;
+using ConsoleAppender = com.mapcolonies.core.Services.LoggerService.CustomAppenders.ConsoleAppender;
 using Debug = UnityEngine.Debug;
 
 namespace com.mapcolonies.core.Services.LoggerService
@@ -74,28 +76,17 @@ namespace com.mapcolonies.core.Services.LoggerService
                 XmlConfigurator.Configure(logConfigFile);
 
                 Hierarchy hierarchy = (Hierarchy)LogManager.GetRepository();
-
                 bool isDev = Application.isEditor || Debug.isDebugBuild;
 
                 if (!isDev)
                 {
-                    foreach (var appender in hierarchy.GetAppenders())
+                    foreach (IAppender appender in hierarchy.GetAppenders())
                     {
-                        if (appender is log4net.Appender.AppenderSkeleton sk)
+                        if (appender is AppenderSkeleton sk)
                         {
                             if (appender.Name.Contains(ConsoleAppenderName, StringComparison.OrdinalIgnoreCase))
                             {
                                 sk.Threshold = hierarchy.LevelMap[_config.Settings.MinConsoleLogLevel] ?? Level.Debug;
-                            }
-                            else if (appender.Name.Contains(FileAppenderName, StringComparison.OrdinalIgnoreCase) ||
-                                     appender is log4net.Appender.RollingFileAppender)
-                            {
-                                sk.Threshold = hierarchy.LevelMap[_config.Settings.MinFileLogLevel] ?? Level.Debug;
-                            }
-                            else if (appender.Name.Contains(HttpAppenderName, StringComparison.OrdinalIgnoreCase) ||
-                                     appender is HttpAppender)
-                            {
-                                sk.Threshold = hierarchy.LevelMap[_config.Settings.MinHttpLogLevel] ?? Level.Debug;
                             }
                             else
                             {
@@ -105,6 +96,8 @@ namespace com.mapcolonies.core.Services.LoggerService
                             sk.ActivateOptions();
                         }
                     }
+
+                    ApplyFileAndHttpThresholds(hierarchy, _config.Settings);
                 }
 
                 ConsoleAppender consoleAppender = new ConsoleAppender(_originalUnityLogHandler);
@@ -197,35 +190,38 @@ namespace com.mapcolonies.core.Services.LoggerService
             }
         }
 
-        public async UniTask<bool> UpdateAppenderSettings(LoggerSettings loggerSettings)
+        private void ApplyFileAndHttpThresholds(Hierarchy hierarchy, LoggerSettings settings)
         {
-            if (!loggerSettings.ForceMinLogLevel) return false;
+            foreach (IAppender appender in hierarchy.GetAppenders())
+            {
+                if (appender is AppenderSkeleton sk)
+                {
+                    if (appender.Name.Contains(FileAppenderName, StringComparison.OrdinalIgnoreCase) ||
+                        appender is RollingFileAppender)
+                    {
+                        sk.Threshold = hierarchy.LevelMap[settings.MinFileLogLevel] ?? Level.Debug;
+                    }
+                    else if (appender.Name.Contains(HttpAppenderName, StringComparison.OrdinalIgnoreCase) ||
+                             appender is HttpAppender)
+                    {
+                        sk.Threshold = hierarchy.LevelMap[settings.MinHttpLogLevel] ?? Level.Debug;
+                    }
+
+                    sk.ActivateOptions();
+                }
+            }
+        }
+
+        public async UniTask<bool> UpdateLoggerSettings(LoggerSettings settings)
+        {
+            if (!settings.ForceMinLogLevel) return false;
 
             Hierarchy hierarchy = (Hierarchy)LogManager.GetRepository();
             bool isDev = Application.isEditor || Debug.isDebugBuild;
 
-            if (!isDev)
-            {
-                foreach (var appender in hierarchy.GetAppenders())
-                {
-                    if (appender is log4net.Appender.AppenderSkeleton sk)
-                    {
-                        if (appender.Name.Contains(FileAppenderName, StringComparison.OrdinalIgnoreCase) ||
-                            appender is log4net.Appender.RollingFileAppender)
-                        {
-                            sk.Threshold = hierarchy.LevelMap[loggerSettings.MinFileLogLevel] ?? Level.Debug;
-                        }
-                        else if (appender.Name.Contains(HttpAppenderName, StringComparison.OrdinalIgnoreCase) ||
-                                 appender is HttpAppender)
-                        {
-                            sk.Threshold = hierarchy.LevelMap[loggerSettings.MinHttpLogLevel] ?? Level.Debug;
-                        }
+            if (isDev) return false;
 
-                        sk.ActivateOptions();
-                    }
-                }
-            }
-
+            ApplyFileAndHttpThresholds(hierarchy, settings);
             return true;
         }
     }

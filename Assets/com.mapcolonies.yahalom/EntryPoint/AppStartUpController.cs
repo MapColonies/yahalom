@@ -104,7 +104,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
                             ReduxStoreManager reduxStoreManager = scope.Container.Resolve<ReduxStoreManager>();
                             LoggerSettings loggerSettings = reduxStoreManager.Store.GetState(AppSettingsReducer.SliceName, AppSettingsSelectors.LoggerSettings);
                             LoggerService loggerService = scope.Container.Resolve<LoggerService>();
-                            return loggerService.UpdateAppenderSettings(loggerSettings);
+                            return loggerService.UpdateLoggerSettings(loggerSettings);
                         }),
                 })
             };
