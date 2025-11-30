@@ -18,6 +18,10 @@ namespace com.mapcolonies.core.Services.LoggerService
         private const string HttpEndpointUrl = "HttpEndpointUrl";
         private const string HttpPersistenceDirectory = "HttpPersistenceDirectory";
         private const string Pattern = "%date %-5level %logger - %message%newline";
+        private const string ConsoleAppenderName = "Console";
+        private const string FileAppenderName = "File";
+        private const string HttpAppenderName = "Http";
+
         private readonly LoggerServiceConfig _config;
 
         private ILogHandler _originalUnityLogHandler;
@@ -79,16 +83,16 @@ namespace com.mapcolonies.core.Services.LoggerService
                     {
                         if (appender is log4net.Appender.AppenderSkeleton sk)
                         {
-                            if (appender.Name.Contains("Console", StringComparison.OrdinalIgnoreCase))
+                            if (appender.Name.Contains(ConsoleAppenderName, StringComparison.OrdinalIgnoreCase))
                             {
                                 sk.Threshold = hierarchy.LevelMap[_config.Settings.MinConsoleLogLevel] ?? Level.Debug;
                             }
-                            else if (appender.Name.Contains("File", StringComparison.OrdinalIgnoreCase) ||
+                            else if (appender.Name.Contains(FileAppenderName, StringComparison.OrdinalIgnoreCase) ||
                                      appender is log4net.Appender.RollingFileAppender)
                             {
                                 sk.Threshold = hierarchy.LevelMap[_config.Settings.MinFileLogLevel] ?? Level.Debug;
                             }
-                            else if (appender.Name.Contains("Http", StringComparison.OrdinalIgnoreCase) ||
+                            else if (appender.Name.Contains(HttpAppenderName, StringComparison.OrdinalIgnoreCase) ||
                                      appender is HttpAppender)
                             {
                                 sk.Threshold = hierarchy.LevelMap[_config.Settings.MinHttpLogLevel] ?? Level.Debug;
@@ -206,12 +210,12 @@ namespace com.mapcolonies.core.Services.LoggerService
                 {
                     if (appender is log4net.Appender.AppenderSkeleton sk)
                     {
-                        if (appender.Name.Contains("File", StringComparison.OrdinalIgnoreCase) ||
+                        if (appender.Name.Contains(FileAppenderName, StringComparison.OrdinalIgnoreCase) ||
                             appender is log4net.Appender.RollingFileAppender)
                         {
                             sk.Threshold = hierarchy.LevelMap[loggerSettings.MinFileLogLevel] ?? Level.Debug;
                         }
-                        else if (appender.Name.Contains("Http", StringComparison.OrdinalIgnoreCase) ||
+                        else if (appender.Name.Contains(HttpAppenderName, StringComparison.OrdinalIgnoreCase) ||
                                  appender is HttpAppender)
                         {
                             sk.Threshold = hierarchy.LevelMap[loggerSettings.MinHttpLogLevel] ?? Level.Debug;
