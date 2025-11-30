@@ -1,4 +1,7 @@
 using System.IO;
+using com.mapcolonies.core.Utilities;
+using Cysharp.Threading.Tasks;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace com.mapcolonies.core.Services.LoggerService
@@ -7,77 +10,29 @@ namespace com.mapcolonies.core.Services.LoggerService
     {
         private const string JsonFileName = "Logger/LoggerConfig.json";
 
-        private Config _config;
-
-        public string Log4NetConfigXml
+        public LoggerSettings Settings
         {
             get;
             private set;
         }
 
-        public bool ServiceEnabled
+        public async UniTask Init()
         {
-            get;
-            private set;
-        }
-
-        public bool EnableConsole
-        {
-            get;
-            private set;
-        }
-
-        public string MinLogLevel
-        {
-            get;
-            private set;
-        }
-
-        public string HttpEndpointUrl
-        {
-            get;
-            private set;
-        }
-
-        public string HttpPersistenceDirectory
-        {
-            get;
-            private set;
-        }
-
-        public void Init()
-        {
-            string filePath = Path.Combine(Application.streamingAssetsPath, JsonFileName);
-
-            if (!File.Exists(filePath))
-            {
-                Debug.LogError($"File {JsonFileName} not found at: " + filePath);
-                return;
-            }
-
             try
             {
-                string jsonContent = File.ReadAllText(filePath);
-                _config = JsonUtility.FromJson<Config>(jsonContent);
+                Settings = await JsonUtilityEx.LoadJsonAsync<LoggerSettings>(JsonFileName, FileLocation.StreamingAssets);
 
-                if (_config == null)
+                if (Settings == null)
                 {
                     Debug.LogError($"Failed to deserialize {JsonFileName} JSON content.");
-                    return;
                 }
-
-                Log4NetConfigXml = _config.Log4NetConfigXml;
-                ServiceEnabled = _config.Enabled;
-                EnableConsole = _config.ConsoleEnabled;
-                MinLogLevel = _config.MinLogLevel;
-                HttpEndpointUrl = _config.HttpEndpointUrl;
-                HttpPersistenceDirectory = _config.HttpPersistenceDirectory;
             }
             catch (System.Exception ex)
             {
-                Debug.LogError($"Error parsing file: {ex.Message}");
+                Debug.LogError($"Error loading {JsonFileName}: {ex.Message}");
             }
         }
+
 
         public string GetSystemLogsDirectory()
         {
