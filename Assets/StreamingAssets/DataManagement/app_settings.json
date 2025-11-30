@@ -5,8 +5,8 @@
   "remoteConfigurationUrl": "https://example.com/config/getConfig?v=10",
   "loggerSettings": {
     "serviceEnabled": true,
-    "minFileLogLevel": "ERROR",
-    "minHttpLogLevel": "ERROR",
+    "minFileLogLevel": "WARN",
+    "minHttpLogLevel": "WARN",
     "forceMinLogLevel": false
   }
 }

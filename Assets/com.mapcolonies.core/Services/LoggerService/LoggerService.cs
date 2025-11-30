@@ -195,8 +195,10 @@ namespace com.mapcolonies.core.Services.LoggerService
             }
         }
 
-        public UniTask UpdateAppenderSettings(LoggerSettings loggerSettings)
+        public async UniTask<bool> UpdateAppenderSettings(LoggerSettings loggerSettings)
         {
+            if(!loggerSettings.ForceMinLogLevel) return false;
+
             Hierarchy hierarchy = (Hierarchy)LogManager.GetRepository();
             bool isDev = Application.isEditor || Debug.isDebugBuild;
 
@@ -222,7 +224,7 @@ namespace com.mapcolonies.core.Services.LoggerService
                 }
             }
 
-            return UniTask.CompletedTask;
+            return true;
         }
     }
 }
