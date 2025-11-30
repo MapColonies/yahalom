@@ -13,8 +13,8 @@ namespace EditorTests.Logger
             LoggerServiceConfig config = new LoggerServiceConfig();
             config.Init();
 
-            Assert.IsTrue(config.ServiceEnabled, "ServiceEnabled must be true for this integration test.");
-            Assert.IsFalse(string.IsNullOrEmpty(config.Log4NetConfigXml), "Log4NetConfigXml must point to a valid XML file.");
+            Assert.IsTrue(config.Settings.ServiceEnabled, "ServiceEnabled must be true for this integration test.");
+            Assert.IsFalse(string.IsNullOrEmpty(config.Settings.Log4NetConfigXml), "Log4NetConfigXml must point to a valid XML file.");
 
             string logsDir = config.GetSystemLogsDirectory();
             Directory.CreateDirectory(logsDir);

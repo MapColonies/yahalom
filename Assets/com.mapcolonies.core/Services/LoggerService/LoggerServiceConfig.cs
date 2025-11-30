@@ -1,4 +1,5 @@
 using System.IO;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace com.mapcolonies.core.Services.LoggerService
@@ -7,61 +8,7 @@ namespace com.mapcolonies.core.Services.LoggerService
     {
         private const string JsonFileName = "Logger/LoggerConfig.json";
 
-        private Config _config;
-
-        public string Log4NetConfigXml
-        {
-            get;
-            private set;
-        }
-
-        public bool ServiceEnabled
-        {
-            get;
-            private set;
-        }
-
-        public bool EnableConsole
-        {
-            get;
-            private set;
-        }
-
-        public string MinConsoleLogLevel
-        {
-            get;
-            private set;
-        }
-
-        public string MinFileLogLevel
-        {
-            get;
-            private set;
-        }
-
-        public string MinHttpLogLevel
-        {
-            get;
-            private set;
-        }
-
-        public bool ForceMinLogLevel
-        {
-            get;
-            private set;
-        }
-
-        public string HttpEndpointUrl
-        {
-            get;
-            private set;
-        }
-
-        public string HttpPersistenceDirectory
-        {
-            get;
-            private set;
-        }
+        public LoggerSettings Settings { get; private set; }
 
         public void Init()
         {
@@ -76,23 +23,11 @@ namespace com.mapcolonies.core.Services.LoggerService
             try
             {
                 string jsonContent = File.ReadAllText(filePath);
-                _config = JsonUtility.FromJson<Config>(jsonContent);
-
-                if (_config == null)
+                Settings = JsonConvert.DeserializeObject<LoggerSettings>(jsonContent);
+                if (Settings == null)
                 {
                     Debug.LogError($"Failed to deserialize {JsonFileName} JSON content.");
-                    return;
                 }
-
-                Log4NetConfigXml = _config.Log4NetConfigXml;
-                ServiceEnabled = _config.Enabled;
-                EnableConsole = _config.ConsoleEnabled;
-                MinConsoleLogLevel = _config.MinLogLevel;
-                MinFileLogLevel = _config.MinFileLogLevel;
-                MinHttpLogLevel = _config.MinHttpLogLevel;
-                ForceMinLogLevel = _config.ForceMinLogLevel;
-                HttpEndpointUrl = _config.HttpEndpointUrl;
-                HttpPersistenceDirectory = _config.HttpPersistenceDirectory;
             }
             catch (System.Exception ex)
             {

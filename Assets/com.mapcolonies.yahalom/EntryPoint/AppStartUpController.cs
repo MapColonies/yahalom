@@ -16,8 +16,10 @@ using VContainer;
 using VContainer.Unity;
 using com.mapcolonies.core.Localization;
 using com.mapcolonies.core.Localization.Constants;
+using com.mapcolonies.core.Services.LoggerService;
 using com.mapcolonies.yahalom.AppMode;
 using com.mapcolonies.yahalom.AppMode.Modes;
+using Unity.AppUI.Redux;
 using SimulationMode = com.mapcolonies.yahalom.AppMode.Modes.SimulationMode;
 
 namespace com.mapcolonies.yahalom.EntryPoint
@@ -95,7 +97,15 @@ namespace com.mapcolonies.yahalom.EntryPoint
                             AppModeSwitcher appModeSwitcher = _scope.Container.Resolve<AppModeSwitcher>();
                             appModeSwitcher.RegisterChildScope(resolver);
                             return default;
-                        })
+                        }),
+                    new ActionUnit("Logger Service", 0.1f, InitPolicy.Fail,
+                        () =>
+                        {
+                            ReduxStoreManager reduxStoreManager = scope.Container.Resolve<ReduxStoreManager>();
+                            LoggerSettings loggerSettings = reduxStoreManager.Store.GetState(AppSettingsReducer.SliceName, AppSettingsSelectors.LoggerSettings);
+                            LoggerService loggerService = scope.Container.Resolve<LoggerService>();
+                            return loggerService.UpdateAppenderSettings(loggerSettings);
+                        }),
                 })
             };
         }

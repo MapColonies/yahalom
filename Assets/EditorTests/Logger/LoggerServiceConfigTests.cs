@@ -10,10 +10,10 @@ namespace EditorTests.Logger
         {
             LoggerServiceConfig config = new LoggerServiceConfig();
             config.Init();
-            Assert.IsTrue(config.ServiceEnabled);
-            Assert.IsTrue(config.EnableConsole);
-            Assert.AreEqual("Logger/log4net.xml", config.Log4NetConfigXml);
-            Assert.AreEqual("DEBUG", config.MinConsoleLogLevel);
+            Assert.IsTrue(config.Settings.ServiceEnabled);
+            Assert.IsTrue(config.Settings.ConsoleEnabled);
+            Assert.AreEqual("Logger/log4net.xml", config.Settings.Log4NetConfigXml);
+            Assert.AreEqual("DEBUG", config.Settings.MinConsoleLogLevel);
         }
     }
 }

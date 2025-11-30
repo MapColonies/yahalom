@@ -1,4 +1,5 @@
 using System;
+using com.mapcolonies.core.Services.LoggerService;
 
 namespace com.mapcolonies.yahalom.DataManagement.AppSettings
 {
@@ -28,5 +29,11 @@ namespace com.mapcolonies.yahalom.DataManagement.AppSettings
             get;
             set;
         }
+
+        public LoggerSettings LoggerSettings
+        {
+            get;
+            set;
+        } = new LoggerSettings();
     }
 }

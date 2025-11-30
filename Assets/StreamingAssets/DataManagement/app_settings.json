@@ -2,5 +2,11 @@
   "userSettingsFile": "DataManagement/UserSettings/user_settings.json",
   "offlineConfigurationFile": "DataManagement/offline_config.json",
   "workspacesDirectory": "DataManagement/workspaces",
-  "remoteConfigurationUrl": "https://example.com/config/getConfig?v=10"
+  "remoteConfigurationUrl": "https://example.com/config/getConfig?v=10",
+  "loggerSettings": {
+    "serviceEnabled": true,
+    "minFileLogLevel": "ERROR",
+    "minHttpLogLevel": "ERROR",
+    "forceMinLogLevel": false
+  }
 }

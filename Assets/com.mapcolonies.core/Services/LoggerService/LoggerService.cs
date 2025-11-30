@@ -1,11 +1,13 @@
 using System;
 using System.IO;
 using com.mapcolonies.core.Services.LoggerService.CustomAppenders;
+using Cysharp.Threading.Tasks;
 using log4net;
 using log4net.Config;
 using log4net.Core;
 using log4net.Layout;
 using log4net.Repository.Hierarchy;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
@@ -26,7 +28,7 @@ namespace com.mapcolonies.core.Services.LoggerService
         {
             _config = config;
 
-            if (!config.ServiceEnabled) return;
+            if (!config.Settings.ServiceEnabled) return;
 
             bool success = InitializeLog4Net();
 
@@ -47,7 +49,7 @@ namespace com.mapcolonies.core.Services.LoggerService
             try
             {
                 _originalUnityLogHandler = Debug.unityLogger.logHandler;
-                string logConfigFilePath = Path.Combine(Application.streamingAssetsPath, _config.Log4NetConfigXml);
+                string logConfigFilePath = Path.Combine(Application.streamingAssetsPath, _config.Settings.Log4NetConfigXml);
 
                 if (!File.Exists(logConfigFilePath))
                 {
@@ -62,7 +64,7 @@ namespace com.mapcolonies.core.Services.LoggerService
                 }
 
                 GlobalContext.Properties[LogFilePath] = logDirectory;
-                GlobalContext.Properties[HttpEndpointUrl] = _config.HttpEndpointUrl;
+                GlobalContext.Properties[HttpEndpointUrl] = _config.Settings.HttpEndpointUrl;
                 GlobalContext.Properties[HttpPersistenceDirectory] = _config.GetHttpPersistenceDirectory();
 
                 FileInfo logConfigFile = new FileInfo(logConfigFilePath);
@@ -81,17 +83,17 @@ namespace com.mapcolonies.core.Services.LoggerService
                         {
                             if (appender.Name.Contains("Console", StringComparison.OrdinalIgnoreCase))
                             {
-                                sk.Threshold = hierarchy.LevelMap[_config.MinConsoleLogLevel] ?? Level.Debug;
+                                sk.Threshold = hierarchy.LevelMap[_config.Settings.MinConsoleLogLevel] ?? Level.Debug;
                             }
                             else if (appender.Name.Contains("File", StringComparison.OrdinalIgnoreCase) ||
                                      appender is log4net.Appender.RollingFileAppender)
                             {
-                                sk.Threshold = hierarchy.LevelMap[_config.MinFileLogLevel] ?? Level.Debug;
+                                sk.Threshold = hierarchy.LevelMap[_config.Settings.MinFileLogLevel] ?? Level.Debug;
                             }
                             else if (appender.Name.Contains("Http", StringComparison.OrdinalIgnoreCase) ||
                                      appender is HttpAppender)
                             {
-                                sk.Threshold = hierarchy.LevelMap[_config.MinHttpLogLevel] ?? Level.Debug;
+                                sk.Threshold = hierarchy.LevelMap[_config.Settings.MinHttpLogLevel] ?? Level.Debug;
                             }
                             else
                             {
@@ -110,12 +112,12 @@ namespace com.mapcolonies.core.Services.LoggerService
                 layout.ActivateOptions();
                 consoleAppender.Layout = layout;
 
-                consoleAppender.Threshold = hierarchy.LevelMap[_config.MinConsoleLogLevel] ?? Level.Debug;
+                consoleAppender.Threshold = hierarchy.LevelMap[_config.Settings.MinConsoleLogLevel] ?? Level.Debug;
                 consoleAppender.ActivateOptions();
 
                 hierarchy.Root.AddAppender(consoleAppender);
 
-                if (!_config.EnableConsole)
+                if (!_config.Settings.ConsoleEnabled)
                 {
                     hierarchy.Root.RemoveAppender(consoleAppender);
                 }
@@ -160,7 +162,7 @@ namespace com.mapcolonies.core.Services.LoggerService
                     success = false;
                 }
 
-                string logConfigFilePath = Path.Combine(Application.streamingAssetsPath, _config.Log4NetConfigXml);
+                string logConfigFilePath = Path.Combine(Application.streamingAssetsPath, _config.Settings.Log4NetConfigXml);
 
                 if (!success || !File.Exists(logConfigFilePath))
                 {
@@ -191,6 +193,36 @@ namespace com.mapcolonies.core.Services.LoggerService
                 Debug.unityLogger.logHandler = _originalUnityLogHandler;
                 _originalUnityLogHandler = null;
             }
+        }
+
+        public UniTask UpdateAppenderSettings(LoggerSettings loggerSettings)
+        {
+            Hierarchy hierarchy = (Hierarchy)LogManager.GetRepository();
+            bool isDev = Application.isEditor || Debug.isDebugBuild;
+
+            if (!isDev)
+            {
+                foreach (var appender in hierarchy.GetAppenders())
+                {
+                    if (appender is log4net.Appender.AppenderSkeleton sk)
+                    {
+                        if (appender.Name.Contains("File", StringComparison.OrdinalIgnoreCase) ||
+                                 appender is log4net.Appender.RollingFileAppender)
+                        {
+                            sk.Threshold = hierarchy.LevelMap[loggerSettings.MinFileLogLevel] ?? Level.Debug;
+                        }
+                        else if (appender.Name.Contains("Http", StringComparison.OrdinalIgnoreCase) ||
+                                 appender is HttpAppender)
+                        {
+                            sk.Threshold = hierarchy.LevelMap[loggerSettings.MinHttpLogLevel] ?? Level.Debug;
+                        }
+
+                        sk.ActivateOptions();
+                    }
+                }
+            }
+
+            return UniTask.CompletedTask;
         }
     }
 }

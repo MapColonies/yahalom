@@ -1,3 +1,4 @@
+using com.mapcolonies.core.Services.LoggerService;
 using Unity.AppUI.Redux;
 
 namespace com.mapcolonies.yahalom.DataManagement.AppSettings
@@ -8,5 +9,6 @@ namespace com.mapcolonies.yahalom.DataManagement.AppSettings
         public static readonly Selector<AppSettingsState, string> OfflineConfigurationPathSelector = (state) => state.OfflineConfigurationFile;
         public static readonly Selector<AppSettingsState, string> RemoteConfigurationUrlSelector = (state) => state.RemoteConfigurationUrl;
         public static readonly Selector<AppSettingsState, string> WorkspacesPathSelector = (state) => state.WorkspacesDirectory;
+        public static readonly Selector<AppSettingsState, LoggerSettings> LoggerSettings = (state) => state.LoggerSettings;
     }
 }
