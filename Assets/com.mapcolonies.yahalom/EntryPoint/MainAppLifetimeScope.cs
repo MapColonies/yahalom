@@ -23,20 +23,20 @@ namespace com.mapcolonies.yahalom.EntryPoint
         {
             Debug.Log("Begin Configure Startup Registrations");
 
-#region StartUp
+            #region StartUp
 
             builder.Register<PreloaderViewModel>(Lifetime.Singleton);
             builder.Register<InitializationPipeline>(Lifetime.Transient);
             builder.Register<AppStartUpController>(Lifetime.Singleton).As<IAsyncStartable>();
 
-#endregion
+            #endregion
 
             //TODO: This is a Demo script, will be deleted in the near future.
             builder.RegisterComponentInHierarchy<DemoController>();
 
             Debug.Log("End Configure Startup Registrations");
 
-#region Services
+            #region Services
 
             builder.Register<ActionsMiddleware>(Lifetime.Singleton);
             builder.Register<ReduxStoreManager>(Lifetime.Singleton).AsSelf().As<IReduxStoreManager>();
@@ -50,7 +50,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
             builder.Register<AppModeSwitcher>(Lifetime.Singleton);
             builder.RegisterInstance(LoggerInitializer.Logger).As<LoggerService>().As<IDisposable>();
 
-#endregion
+            #endregion
         }
     }
 }
