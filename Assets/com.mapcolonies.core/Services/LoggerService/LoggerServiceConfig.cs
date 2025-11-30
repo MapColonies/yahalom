@@ -1,4 +1,6 @@
 using System.IO;
+using com.mapcolonies.core.Utilities;
+using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -8,22 +10,23 @@ namespace com.mapcolonies.core.Services.LoggerService
     {
         private const string JsonFileName = "Logger/LoggerConfig.json";
 
-        public LoggerSettings Settings { get; private set; }
+        public LoggerSettings Settings
+        {
+            get;
+            private set;
+        }
 
         public void Init()
         {
-            string filePath = Path.Combine(Application.streamingAssetsPath, JsonFileName);
+            InitAsync().Forget();
+        }
 
-            if (!File.Exists(filePath))
-            {
-                Debug.LogError($"File {JsonFileName} not found at: " + filePath);
-                return;
-            }
-
+        private async UniTask InitAsync()
+        {
             try
             {
-                string jsonContent = File.ReadAllText(filePath);
-                Settings = JsonConvert.DeserializeObject<LoggerSettings>(jsonContent);
+                Settings = await JsonUtilityEx.LoadJsonAsync<LoggerSettings>(JsonFileName, FileLocation.StreamingAssets);
+
                 if (Settings == null)
                 {
                     Debug.LogError($"Failed to deserialize {JsonFileName} JSON content.");
@@ -31,7 +34,7 @@ namespace com.mapcolonies.core.Services.LoggerService
             }
             catch (System.Exception ex)
             {
-                Debug.LogError($"Error parsing file: {ex.Message}");
+                Debug.LogError($"Error loading {JsonFileName}: {ex.Message}");
             }
         }
 

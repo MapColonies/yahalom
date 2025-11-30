@@ -7,7 +7,6 @@ using log4net.Config;
 using log4net.Core;
 using log4net.Layout;
 using log4net.Repository.Hierarchy;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
@@ -72,7 +71,6 @@ namespace com.mapcolonies.core.Services.LoggerService
 
                 Hierarchy hierarchy = (Hierarchy)LogManager.GetRepository();
 
-                //TODO:Get _config.ForceMinLogLevel and override
                 bool isDev = Application.isEditor || Debug.isDebugBuild;
 
                 if (!isDev)
@@ -197,7 +195,7 @@ namespace com.mapcolonies.core.Services.LoggerService
 
         public async UniTask<bool> UpdateAppenderSettings(LoggerSettings loggerSettings)
         {
-            if(!loggerSettings.ForceMinLogLevel) return false;
+            if (!loggerSettings.ForceMinLogLevel) return false;
 
             Hierarchy hierarchy = (Hierarchy)LogManager.GetRepository();
             bool isDev = Application.isEditor || Debug.isDebugBuild;
@@ -209,7 +207,7 @@ namespace com.mapcolonies.core.Services.LoggerService
                     if (appender is log4net.Appender.AppenderSkeleton sk)
                     {
                         if (appender.Name.Contains("File", StringComparison.OrdinalIgnoreCase) ||
-                                 appender is log4net.Appender.RollingFileAppender)
+                            appender is log4net.Appender.RollingFileAppender)
                         {
                             sk.Threshold = hierarchy.LevelMap[loggerSettings.MinFileLogLevel] ?? Level.Debug;
                         }
