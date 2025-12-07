@@ -12,6 +12,7 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 using com.mapcolonies.core.Localization;
+using com.mapcolonies.core.Services.LoggerService;
 using com.mapcolonies.yahalom.AppMode;
 
 namespace com.mapcolonies.yahalom.EntryPoint
@@ -47,6 +48,7 @@ namespace com.mapcolonies.yahalom.EntryPoint
             builder.Register<TranslationService>(Lifetime.Singleton).As<ITranslationService>().As<IDisposable>();
             builder.Register<AnalyticsManager>(Lifetime.Singleton).AsSelf().As<IAnalyticsManager>().As<IDisposable>();
             builder.Register<AppModeSwitcher>(Lifetime.Singleton);
+            builder.RegisterInstance(LoggerInitializer.Logger).As<LoggerService>().As<IDisposable>();
 
             #endregion
         }
