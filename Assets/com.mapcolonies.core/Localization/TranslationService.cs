@@ -1,15 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using com.mapcolonies.core.Localization.Constants;
 using com.mapcolonies.core.Localization.Models;
-using Newtonsoft.Json;
+using com.mapcolonies.core.Utilities;
 using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
-using UnityEngine.Networking;
 using Cysharp.Threading.Tasks;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
@@ -17,41 +15,26 @@ namespace com.mapcolonies.core.Localization
 {
     public interface ITranslationService
     {
-        UniTask InitializeService(string localeIdentifier);
         string Translate(string key);
+        UniTask InitializeService(TranslationSettings settings);
     }
 
     public class TranslationService : ITranslationService, IDisposable
     {
-        private string _remoteConfigUrl;
         private bool _showTranslationWarnings;
 
-        private static readonly string LocalFilePath =
-            Path.ChangeExtension(
-                Path.Combine("Translations", LocalizationConstants.TranslationsFileName),
-                ".json"
-            );
-
-        private const string TargetStringTableName = "Yahalom_HardCoded_Translations";
-
         private Dictionary<string, TranslationEntry> _translations = new Dictionary<string, TranslationEntry>();
-
         private bool _isInitialized;
 
-        public TranslationService()
-        {
-        }
-
-        public async UniTask InitializeService(string localeIdentifier)
+        public async UniTask InitializeService(TranslationSettings settings)
         {
             if (_isInitialized) return;
 
-            //TODO: Get from global config file
-            _remoteConfigUrl = string.Empty;
+            _showTranslationWarnings = settings.ShowTranslationWarnings;
 
-            await SetLanguage(localeIdentifier);
-            await SetTranslations();
-            await ApplyToUnityLocalization();
+            await SetLanguage(settings.Locale);
+            await SetTranslations(settings.TargetStringTableName, settings.LocalFilePath, settings.RemoteConfigUrl);
+            await ApplyToUnityLocalization(settings.TargetStringTableName);
 
             _isInitialized = true;
         }
@@ -76,7 +59,7 @@ namespace com.mapcolonies.core.Localization
             }
         }
 
-        private async UniTask<Dictionary<string, TranslationEntry>> LoadHardCodedTranslations()
+        private async UniTask<Dictionary<string, TranslationEntry>> LoadHardCodedTranslations(string localTranslationTable)
         {
             Dictionary<string, TranslationEntry> hardCodedTranslations = new Dictionary<string, TranslationEntry>();
             await LocalizationSettings.InitializationOperation.Task;
@@ -86,7 +69,7 @@ namespace com.mapcolonies.core.Localization
 
             foreach (Locale locale in LocalizationSettings.AvailableLocales.Locales)
             {
-                AsyncOperationHandle<StringTable> tableHandle = LocalizationSettings.StringDatabase.GetTableAsync(TargetStringTableName, locale);
+                AsyncOperationHandle<StringTable> tableHandle = LocalizationSettings.StringDatabase.GetTableAsync(localTranslationTable, locale);
                 StringTable table = await tableHandle.Task;
 
                 if (table != null)
@@ -102,7 +85,7 @@ namespace com.mapcolonies.core.Localization
 
             if (loadedTables.Count == 0)
             {
-                Debug.LogWarning($"TranslationService: StringTable '{TargetStringTableName}' not found for ANY locale at runtime.");
+                Debug.LogWarning($"TranslationService: StringTable '{localTranslationTable}' not found for ANY locale at runtime.");
                 return hardCodedTranslations;
             }
 
@@ -130,79 +113,32 @@ namespace com.mapcolonies.core.Localization
             return hardCodedTranslations;
         }
 
-        private static async UniTask<TranslationConfig> LoadFromFileAsync()
+        private async UniTask SetTranslations(string localTranslationTable, string localFilePath, string remoteConfigUrl)
         {
-            string path = Path.Combine(Application.streamingAssetsPath, LocalFilePath);
-
-            if (!File.Exists(path))
-            {
-                Debug.LogWarning($"TranslationService: Local translation file not found at {path}");
-                return null;
-            }
-
-            try
-            {
-                string jsonContent = await File.ReadAllTextAsync(path);
-                return JsonConvert.DeserializeObject<TranslationConfig>(jsonContent);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"TranslationService: Failed to parse local file. Error: {ex.Message}");
-                return null;
-            }
-        }
-
-        private async UniTask<TranslationConfig> LoadFromRemoteAsync()
-        {
-            if (string.IsNullOrEmpty(_remoteConfigUrl))
-            {
-                Debug.LogWarning("TranslationService: Remote config URL is empty, skipping.");
-                return null;
-            }
-
-            using (UnityWebRequest www = UnityWebRequest.Get(_remoteConfigUrl))
-            {
-                try
-                {
-                    await www.SendWebRequest();
-
-                    if (www.result == UnityWebRequest.Result.Success)
-                    {
-                        string jsonContent = www.downloadHandler.text;
-                        return JsonConvert.DeserializeObject<TranslationConfig>(jsonContent);
-                    }
-
-                    Debug.LogError($"TranslationService: Failed to download remote config. Error: {www.error}");
-                    return null;
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogError($"TranslationService: Failed to parse remote config. Error: {ex.Message} (URL: {_remoteConfigUrl})");
-                    return null;
-                }
-            }
-        }
-
-        private async UniTask SetTranslations()
-        {
-            Dictionary<string, TranslationEntry> hardCodedTranslations = await LoadHardCodedTranslations();
+            Dictionary<string, TranslationEntry> hardCodedTranslations = await LoadHardCodedTranslations(localTranslationTable);
 
             Dictionary<string, TranslationEntry> fileTranslations = new Dictionary<string, TranslationEntry>();
-            TranslationConfig fileConfig = await LoadFromFileAsync();
+            TranslationConfig fileConfig = await JsonUtilityEx.LoadJsonAsync<TranslationConfig>(localFilePath);
 
             if (fileConfig != null)
             {
                 fileTranslations = ConfigToDictionary(fileConfig);
-                _showTranslationWarnings = fileConfig.ShowTranslationWarnings;
             }
 
             Dictionary<string, TranslationEntry> remoteTranslations = new Dictionary<string, TranslationEntry>();
-            TranslationConfig remoteConfig = await LoadFromRemoteAsync();
 
-            if (remoteConfig != null)
+            if (!string.IsNullOrEmpty(remoteConfigUrl))
             {
-                remoteTranslations = ConfigToDictionary(remoteConfig);
-                _showTranslationWarnings = remoteConfig.ShowTranslationWarnings;
+                TranslationConfig remoteConfig = await JsonUtilityEx.LoadRemoteJsonAsync<TranslationConfig>(remoteConfigUrl);
+
+                if (remoteConfig != null)
+                {
+                    remoteTranslations = ConfigToDictionary(remoteConfig);
+                }
+            }
+            else
+            {
+                Debug.LogWarning("TranslationService: Remote config URL is empty, skipping.");
             }
 
             _translations = hardCodedTranslations
@@ -212,7 +148,7 @@ namespace com.mapcolonies.core.Localization
                 .ToDictionary(g => g.Key, g => g.Last().Value);
         }
 
-        private async UniTask ApplyToUnityLocalization()
+        private async UniTask ApplyToUnityLocalization(string targetStringTableName)
         {
             await LocalizationSettings.InitializationOperation.Task;
             Dictionary<string, StringTable> loadedStringTables = new Dictionary<string, StringTable>();
@@ -239,12 +175,12 @@ namespace com.mapcolonies.core.Localization
                             continue;
                         }
 
-                        AsyncOperationHandle<StringTable> tableHandle = LocalizationSettings.StringDatabase.GetTableAsync(TargetStringTableName, locale);
+                        AsyncOperationHandle<StringTable> tableHandle = LocalizationSettings.StringDatabase.GetTableAsync(targetStringTableName, locale);
                         targetTable = await tableHandle.Task;
 
                         if (targetTable == null)
                         {
-                            Debug.LogError($"TranslationService: Could not load String Table '{TargetStringTableName}' for locale '{localeCode}'.");
+                            Debug.LogError($"TranslationService: Could not load String Table '{targetStringTableName}' for locale '{localeCode}'.");
                             continue;
                         }
 
