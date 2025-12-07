@@ -16,11 +16,11 @@ namespace com.mapcolonies.core.Services.LoggerService
             private set;
         }
 
-        public async UniTask Init()
+        public void Init()
         {
             try
             {
-                Settings = await JsonUtilityEx.LoadJsonAsync<LoggerSettings>(JsonFileName, FileLocation.StreamingAssets);
+                Settings = JsonUtilityEx.LoadJson<LoggerSettings>(JsonFileName);
 
                 if (Settings == null)
                 {

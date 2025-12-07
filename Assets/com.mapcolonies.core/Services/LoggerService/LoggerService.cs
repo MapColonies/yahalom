@@ -33,7 +33,7 @@ namespace com.mapcolonies.core.Services.LoggerService
         {
             _config = config;
 
-            if (!config.Settings.ServiceEnabled) return;
+            if (!_config.Settings.ServiceEnabled) return;
 
             bool success = InitializeLog4Net();
 

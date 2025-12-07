@@ -84,5 +84,29 @@ namespace com.mapcolonies.core.Utilities
 
             return await FileIOUtility.FileExistsAsync(path);
         }
+
+        public static T LoadJson<T>(string relativePath, FileLocation location = FileLocation.StreamingAssets)
+        {
+            string path;
+
+            switch (location)
+            {
+                case FileLocation.PersistentData:
+                    path = Path.Combine(Application.persistentDataPath, relativePath);
+                    break;
+
+                case FileLocation.StreamingAssets:
+                    path = Path.Combine(Application.streamingAssetsPath, relativePath);
+                    break;
+
+                default:
+                    Debug.LogWarning($"Unknown file location {location}. Using streaming assets as default.");
+                    path = Path.Combine(Application.streamingAssetsPath, relativePath);
+                    break;
+            }
+
+            string json = File.ReadAllText(path);
+            return JsonConvert.DeserializeObject<T>(json);
+        }
     }
 }

@@ -7,7 +7,12 @@ namespace com.mapcolonies.core.Services.LoggerService
     public static class LoggerInitializer
     {
         private const string AdditionalRevisionSeparator = "f";
-        public static LoggerService Logger;
+
+        public static LoggerService Logger
+        {
+            get;
+            private set;
+        }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         public static void Init()
