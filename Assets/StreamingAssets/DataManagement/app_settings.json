@@ -8,5 +8,12 @@
     "minFileLogLevel": "WARN",
     "minHttpLogLevel": "WARN",
     "forceMinLogLevel": false
+  },
+  "translationSettings": {
+    "locale": "he-IL",
+    "localFilePath": "Translations/Translations.json",
+    "remoteConfigUrl": "",
+    "showTranslationWarnings": true,
+    "TargetStringTableName": "Yahalom_HardCoded_Translations"
   }
 }

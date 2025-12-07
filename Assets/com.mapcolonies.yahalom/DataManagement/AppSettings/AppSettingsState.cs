@@ -1,5 +1,6 @@
 using System;
 using com.mapcolonies.core.Services.LoggerService;
+using com.mapcolonies.core.Localization.Models;
 
 namespace com.mapcolonies.yahalom.DataManagement.AppSettings
 {
@@ -35,5 +36,11 @@ namespace com.mapcolonies.yahalom.DataManagement.AppSettings
             get;
             set;
         } = new LoggerSettings();
+
+        public TranslationSettings TranslationSettings
+        {
+            get;
+            set;
+        } = new TranslationSettings();
     }
 }

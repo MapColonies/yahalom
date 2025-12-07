@@ -2,6 +2,7 @@ using System.Collections;
 using System.IO;
 using com.mapcolonies.core.Localization;
 using com.mapcolonies.core.Localization.Constants;
+using com.mapcolonies.core.Localization.Models;
 using Cysharp.Threading.Tasks;
 using NUnit.Framework;
 using UnityEngine.Localization.Settings;
@@ -42,7 +43,12 @@ namespace EditorTests.Localization
 
                 try
                 {
-                    await svc.InitializeService(LocalizationConstants.EnglishLocaleIdentifier);
+                    TranslationSettings settings = new TranslationSettings()
+                    {
+                        Locale = LocalizationConstants.EnglishLocaleIdentifier,
+                        LocalFilePath = "Translations/Translations.json"
+                    };
+                    await svc.InitializeService(settings);
                     LocalizationSettings.SelectedLocale =
                         LocalizationSettings.AvailableLocales.GetLocale(LocalizationConstants.EnglishLocaleIdentifier);
 
@@ -88,7 +94,13 @@ namespace EditorTests.Localization
 
                 try
                 {
-                    await svc.InitializeService(LocalizationConstants.EnglishLocaleIdentifier);
+                    TranslationSettings settings = new TranslationSettings()
+                    {
+                        Locale = LocalizationConstants.EnglishLocaleIdentifier,
+                        LocalFilePath = "Translations/Translations.json"
+                    };
+
+                    await svc.InitializeService(settings);
 
                     LocalizationSettings.SelectedLocale =
                         LocalizationSettings.AvailableLocales.GetLocale(LocalizationConstants.EnglishLocaleIdentifier);
